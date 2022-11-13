@@ -11,8 +11,8 @@
 class Score {
     firstInnings = true; // bool
     target = null; // only valid during the second innings
-    wickets;
-    runs;
+    wickets = 0;
+    runs = 0;
     overs = 0;
     maxOvers; // null => first-class
 
@@ -41,4 +41,4 @@ class Score {
     }
 };
 
-module.exports = Team;
+module.exports = Score;

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 Two = require('two.js');
+Score = require('score');
 
 // 1080p, but divided by 2 to be more visible on screen.
 const WIDTH = 1920;
@@ -10,26 +11,28 @@ const HEIGHT = 1080;
 const SCALE = 2;
 
 class Display {
+    _two = null; // note: brunch doesn't do `#private`
+
     constructor(parentElement) {
         // Modified from the two.js sample
         // Make an instance of two and place it on the page.
-        var params = {
+        let params = {
             width: WIDTH / SCALE,
             height: HEIGHT / SCALE,
         };
-        var two = new Two(params).appendTo(parentElement);
-        two.renderer.domElement.style.background = '#ddd'; // DEBUG
+        this._two = new Two(params).appendTo(parentElement);
+        this._two.renderer.domElement.style.background = '#ddd'; // DEBUG
 
         // Two.js has convenient methods to make shapes and insert them into the scene.
-        var radius = 50;
-        var x = two.width * 0.5;
-        var y = two.height * 0.5 - radius * 1.25;
-        var circle = two.makeCircle(x, y, radius);
+        let radius = 50;
+        let x = this._two.width * 0.5;
+        let y = this._two.height * 0.5 - radius * 1.25;
+        let circle = this._two.makeCircle(x, y, radius);
 
-        y = two.height * 0.5 + radius * 1.25;
-        var width = 100;
-        var height = 100;
-        var rect = two.makeRectangle(x, y, width, height);
+        y = this._two.height * 0.5 + radius * 1.25;
+        let width = 100;
+        let height = 100;
+        let rect = this._two.makeRectangle(x, y, width, height);
 
         // The object returned has many stylable properties:
         circle.fill = '#FF8000';
@@ -41,9 +44,16 @@ class Display {
         rect.opacity = 0.75;
         rect.noStroke();
 
-        two.update();
-        return two;
+        this._two.update();
     }
+
+    update(score) {
+        this._two.clear();
+        let wkts = new Two.Text(`${score.wickets}-${score.runs}`, 100, 100);
+        this._two.add(wkts);
+        this._two.update();
+    }
+
 }
 
 module.exports = Display;
