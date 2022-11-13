@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 Two = require('two.js');
+Team = require('team');
 
 console.log('Hello, world!')
 
