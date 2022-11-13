@@ -4,7 +4,8 @@
   "description": "A cricket scoreboard OSD for a US audience",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "p": "npx js-beautify -r --editorconfig index.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,8 @@
   "dependencies": {
     "parcel-bundler": "^1.12.5",
     "two.js": "^0.8.10"
+  },
+  "devDependencies": {
+    "js-beautify": "^1.14.7"
   }
 }
