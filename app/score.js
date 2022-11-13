@@ -2,7 +2,12 @@
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
 
-// The current score
+/**
+ * The current score
+ *
+ * @class Score
+ * @constructor
+ */
 class Score {
     firstInnings = true; // bool
     target = null; // only valid during the second innings
