@@ -2,7 +2,7 @@
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
 
-import Two from "two.js";
+Two = require('two.js');
 
 console.log('Hello, world!')
 

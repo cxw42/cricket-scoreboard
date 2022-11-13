@@ -1,3 +1,6 @@
+# brunch output
+/public/
+
 # Misc.
 *.sw*
 *~

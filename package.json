@@ -18,10 +18,10 @@
   },
   "homepage": "https://github.com/cxw42/cricket-scoreboard#readme",
   "dependencies": {
-    "parcel-bundler": "^1.12.5",
     "two.js": "^0.8.10"
   },
   "devDependencies": {
+    "brunch": "^4.0.1",
     "js-beautify": "^1.14.7"
   }
 }
