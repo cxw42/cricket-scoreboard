@@ -40,13 +40,15 @@ class Display {
         this._two = new Two(params).appendTo(parentElement);
         this._two.renderer.domElement.style.background = '#ddd'; // DEBUG
 
-        this._team1Banner = this._two.makeRectangle(BANNER_WIDTH / 2, BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
+        this._team1Banner = this._two.makeRectangle(BANNER_WIDTH / 2,
+            BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
         this._team1Banner.corner();
         this._team1Banner.fill = team1.color;
         this._team1Banner.opacity = 0.75;
         this._team1Banner.noStroke();
 
-        this._team2Banner = this._two.makeRectangle(WIDTH - BANNER_WIDTH / 2, BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
+        this._team2Banner = this._two.makeRectangle(WIDTH - BANNER_WIDTH /
+            2, BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
         this._team2Banner.corner();
         this._team2Banner.fill = team2.color;
         this._team2Banner.opacity = 0.75;
@@ -56,7 +58,8 @@ class Display {
     }
 
     update(score) {
-        let wkts = new Two.Text(`${score.wickets}-${score.runs}`, WIDTH / 2, BANNER_TOP + (BANNER_BOTTOM - BANNER_TOP) / 2);
+        let wkts = new Two.Text(`${score.wickets}-${score.runs}`, WIDTH / 2,
+            BANNER_TOP + (BANNER_BOTTOM - BANNER_TOP) / 2);
         this._two.add(wkts);
         this._two.update();
     }
