@@ -4,6 +4,7 @@
   "description": "A cricket scoreboard OSD for a US audience",
   "main": "index.js",
   "scripts": {
+    "doc": "npx yuidoc -o doc .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "p": "find app -name \\*.js -exec npx js-beautify -r --editorconfig {} + ; npx js-beautify -r --editorconfig brunch-config.js"
   },
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "brunch": "^4.0.1",
-    "js-beautify": "^1.14.7"
+    "js-beautify": "^1.14.7",
+    "yuidocjs": "^0.10.2"
   }
 }

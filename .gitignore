@@ -1,6 +1,9 @@
 # brunch output
 /public/
 
+# yuidoc output
+/doc/
+
 # Misc.
 *.sw*
 *~
