@@ -4,6 +4,7 @@
   "description": "A cricket scoreboard OSD for a US audience",
   "main": "index.js",
   "scripts": {
+    "start": "npx brunch watch -s",
     "doc": "npx yuidoc -o doc .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "p": "find app -name \\*.js -exec npx js-beautify -r --editorconfig {} + ; npx js-beautify -r --editorconfig brunch-config.js"
