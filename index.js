@@ -9,7 +9,7 @@ console.log('Hello, world!')
 // two.js sample
 // Make an instance of two and place it on the page.
 var params = {
-  fullscreen: true
+    fullscreen: true
 };
 var elem = document.body;
 var two = new Two(params).appendTo(elem);
