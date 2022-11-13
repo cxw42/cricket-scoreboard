@@ -8,7 +8,10 @@ Score = require('score');
 
 console.log('Hello, world!')
 
-display = new Display(document.body);
+team1 = new Team('England', 'ENG', '#fc2d38');
+team2 = new Team('India', 'IND', '#1f66e0');
+
+display = new Display(document.body, team1, team2, team1);
 
 score = new Score();
 score.wicket()

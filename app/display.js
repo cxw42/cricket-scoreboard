@@ -6,50 +6,57 @@ Two = require('two.js');
 Score = require('score');
 
 // 1080p, but divided by 2 to be more visible on screen.
-const WIDTH = 1920;
-const HEIGHT = 1080;
 const SCALE = 2;
+const WIDTH = 1920 / SCALE;
+const HEIGHT = 1080 / SCALE;
+const BANNER_WIDTH = 680 / SCALE;
+const BANNER_TOP = 900 / SCALE;
+const BANNER_BOTTOM = 1040 / SCALE;
 
 class Display {
     _two = null; // note: brunch doesn't do `#private`
+    _team1;
+    _team2;
+    _toss;
 
-    constructor(parentElement) {
+    /**
+     * toss === team1 or team2
+     */
+    constructor(parentElement, team1, team2, toss) {
+        this._team1 = team1;
+        this._team2 = team2;
+        this._toss = toss;
+
+        if ((toss !== team1) && (toss !== team2)) {
+            throw "Toss must have been won by one of the two teams"
+        }
+
         // Modified from the two.js sample
         // Make an instance of two and place it on the page.
         let params = {
-            width: WIDTH / SCALE,
-            height: HEIGHT / SCALE,
+            width: WIDTH,
+            height: HEIGHT,
         };
         this._two = new Two(params).appendTo(parentElement);
         this._two.renderer.domElement.style.background = '#ddd'; // DEBUG
 
-        // Two.js has convenient methods to make shapes and insert them into the scene.
-        let radius = 50;
-        let x = this._two.width * 0.5;
-        let y = this._two.height * 0.5 - radius * 1.25;
-        let circle = this._two.makeCircle(x, y, radius);
+        this._team1Banner = this._two.makeRectangle(BANNER_WIDTH / 2, BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
+        this._team1Banner.corner();
+        this._team1Banner.fill = team1.color;
+        this._team1Banner.opacity = 0.75;
+        this._team1Banner.noStroke();
 
-        y = this._two.height * 0.5 + radius * 1.25;
-        let width = 100;
-        let height = 100;
-        let rect = this._two.makeRectangle(x, y, width, height);
-
-        // The object returned has many stylable properties:
-        circle.fill = '#FF8000';
-        // And accepts all valid CSS color:
-        circle.stroke = 'orangered';
-        circle.linewidth = 5;
-
-        rect.fill = 'rgb(0, 200, 255)';
-        rect.opacity = 0.75;
-        rect.noStroke();
+        this._team2Banner = this._two.makeRectangle(WIDTH - BANNER_WIDTH / 2, BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
+        this._team2Banner.corner();
+        this._team2Banner.fill = team2.color;
+        this._team2Banner.opacity = 0.75;
+        this._team2Banner.noStroke();
 
         this._two.update();
     }
 
     update(score) {
-        this._two.clear();
-        let wkts = new Two.Text(`${score.wickets}-${score.runs}`, 100, 100);
+        let wkts = new Two.Text(`${score.wickets}-${score.runs}`, WIDTH / 2, BANNER_TOP + (BANNER_BOTTOM - BANNER_TOP) / 2);
         this._two.add(wkts);
         this._two.update();
     }

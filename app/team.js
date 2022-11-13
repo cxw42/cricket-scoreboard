@@ -15,6 +15,14 @@ class Team {
      * @property name
      */
     name = "Unknown";
+
+    /**
+     * The team's abbreviation
+     *
+     * @property abbrev
+     */
+    abbrev = 'UNK';
+
     /**
      * The team's main color.
      *
@@ -24,9 +32,13 @@ class Team {
      * @property color
      */
     color = "#5784E4";
-    constructor(name, color) {
+
+    constructor(name, abbrev, color) {
         if (name) {
             this.name = name;
+        }
+        if (abbrev) {
+            this.abbrev = abbrev;
         }
         if (color) {
             this.color = color;
