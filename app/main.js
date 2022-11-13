@@ -7,18 +7,20 @@ Two = require('two.js');
 console.log('Hello, world!')
 
 // 1080p, but divided by 2 to be more visible on screen.
+const WIDTH = 1920;
+const HEIGHT = 1080;
 const SCALE = 2;
 
 function create() {
     // two.js sample
     // Make an instance of two and place it on the page.
     var params = {
-        width: 1920 / SCALE,
-        height: 1080 / SCALE,
+        width: WIDTH / SCALE,
+        height: HEIGHT / SCALE,
     };
     var elem = document.body;
     var two = new Two(params).appendTo(elem);
-    two.renderer.domElement.style.background = '#ddd';  // DEBUG
+    two.renderer.domElement.style.background = '#ddd'; // DEBUG
 
     // Two.js has convenient methods to make shapes and insert them into the scene.
     var radius = 50;
