@@ -33,6 +33,24 @@ class Team {
      */
     color = "#5784E4";
 
+    /**
+     * Batters.
+     *
+     * Map from name to TODO.
+     *
+     * @property batters
+     */
+    batters = {};
+
+    /**
+     * Bowlers.
+     *
+     * Map from name to TODO.
+     *
+     * @property bowlers
+     */
+    batters = {};
+
     constructor(name, abbrev, color) {
         if (name) {
             this.name = name;

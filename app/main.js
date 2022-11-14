@@ -9,11 +9,35 @@ Score = require('score');
 console.log('Hello, world!')
 
 team1 = new Team('England', 'ENG', '#fc2d38');
+team1.batters = {
+    'Ali': {
+        runs: 0,
+        balls: 0
+    },
+    'Stokes': {
+        runs: 0,
+        balls: 0
+    },
+};
 team2 = new Team('India', 'IND', '#1f66e0');
+team2.batters = {
+    'Kohli': {
+        runs: 0,
+        balls: 0
+    },
+    'Shaw': {
+        runs: 0,
+        balls: 0
+    },
+};
 
-display = new Display(document.body, team1, team2, team1);
+display = new Display(document.body, team1, team2);
 
-score = new Score();
+// team1 won the toss and elected to bat
+score = new Score([team1, team2], team1);
+score.battingOrder = ['Ali', 'Stokes'];
+score.bowler = 'Kohli';
+
 score.wicket()
 score.addRuns(42);
 
