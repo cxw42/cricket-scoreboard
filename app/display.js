@@ -10,7 +10,7 @@ Textbox = require('textbox');
 const SCALE = 2;
 const WIDTH = 1920 / SCALE;
 const HEIGHT = 1080 / SCALE;
-const BANNER_WIDTH = 680 / SCALE;
+const BANNER_WIDTH = 600 / SCALE;
 const BANNER_TOP = 900 / SCALE;
 const BANNER_BOTTOM = 1040 / SCALE;
 
@@ -34,6 +34,10 @@ class Display {
         };
         this._two = new Two(params).appendTo(parentElement);
         this._two.renderer.domElement.style.background = '#ddd'; // DEBUG
+
+        this._bg = new Two.ImageSequence(['slc-sample.png'], WIDTH / 2,
+            HEIGHT / 2, 0);
+        this._two.add(this._bg);
 
         this._team1Banner = this._two.makeRectangle(BANNER_WIDTH / 2,
             BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH, BANNER_HEIGHT);
