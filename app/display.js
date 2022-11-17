@@ -4,6 +4,7 @@
 
 Two = require('two.js');
 Score = require('score');
+Textbox = require('textbox');
 
 // 1080p, but divided by 2 to be more visible on screen.
 const SCALE = 2;
@@ -35,31 +36,32 @@ class Display {
         this._two.renderer.domElement.style.background = '#ddd'; // DEBUG
 
         this._team1Banner = this._two.makeRectangle(BANNER_WIDTH / 2,
-            BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
+            BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH, BANNER_HEIGHT);
         this._team1Banner.corner();
         this._team1Banner.fill = team1.color;
         this._team1Banner.opacity = 0.75;
         this._team1Banner.noStroke();
 
         this._team2Banner = this._two.makeRectangle(WIDTH - BANNER_WIDTH /
-            2, BANNER_TOP, BANNER_WIDTH, BANNER_BOTTOM - BANNER_TOP);
+            2, BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH,
+            BANNER_HEIGHT);
         this._team2Banner.corner();
         this._team2Banner.fill = team2.color;
         this._team2Banner.opacity = 0.75;
         this._team2Banner.noStroke();
 
-        this.batterOnStrike = new Two.Text('striker', BANNER_WIDTH / 2,
-            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT / 2);
-        this._two.add(this.batterOnStrike);
+        this.batterOnStrike = new Textbox(
+            0, BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT / 2, 'tl');
+        this.batterOnStrike.addTo(this._two);
 
-        this.batterNotOnStrike = new Two.Text('non-striker', BANNER_WIDTH /
-            2, BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH,
-            BANNER_HEIGHT / 2);
-        this._two.add(this.batterNotOnStrike);
+        this.batterNotOnStrike = new Textbox(
+            0, BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH,
+            BANNER_HEIGHT / 2, 'tl');
+        this.batterNotOnStrike.addTo(this._two);
 
-        this.bowler = new Two.Text('bowler', WIDTH - BANNER_WIDTH / 2,
-            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT / 2);
-        this._two.add(this.bowler);
+        this.bowler = new Textbox(WIDTH - BANNER_WIDTH,
+            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, 'tl');
+        this.bowler.addTo(this._two);
 
         this.wkts = new Two.Text('0-0', WIDTH / 2,
             BANNER_TOP + (BANNER_BOTTOM - BANNER_TOP) / 2);
@@ -70,9 +72,9 @@ class Display {
 
     update(score) {
         this.wkts.value = `${score.wickets}-${score.runs}`;
-        this.batterOnStrike.value = score.battingOrder[0]; // XXX
-        this.batterNotOnStrike.value = score.battingOrder[1]; // XXX
-        this.bowler.value = score.bowler;
+        this.batterOnStrike.setValue(score.battingOrder[0]); // XXX
+        this.batterNotOnStrike.setValue(score.battingOrder[1]); // XXX
+        this.bowler.setValue(score.bowler);
 
         this._two.update();
 
