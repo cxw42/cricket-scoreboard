@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx brunch watch -s",
-    "doc": "npx yuidoc -o doc .",
+    "doc": "npx yuidoc -o doc -x .git,public .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "p": "find app -name \\*.js -exec npx js-beautify -r --editorconfig -w 80 {} + ; npx js-beautify -r --editorconfig -w 80 brunch-config.js"
   },
