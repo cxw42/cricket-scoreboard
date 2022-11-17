@@ -2,6 +2,12 @@
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
 
+/**
+ * A cricket scoreboard
+ *
+ * @module app
+ */
+
 Display = require('display');
 Team = require('team');
 Score = require('score');
