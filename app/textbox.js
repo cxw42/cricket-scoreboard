@@ -9,7 +9,6 @@ let Two = require('two.js');
  *
  * @class Textbox
  * @constructor
- * @param {Two} two The scene
  * @param {int} x Corner X
  * @param {int} y Corner Y
  * @param {int} w Width
@@ -23,11 +22,14 @@ class Textbox {
     twoX;
     twoY;
 
-    group;
-    outline;
-    text;
+    group; // the group of shapes
+    outline; // visible outline
+    text; // Two.Text instance
 
     constructor(x, y, w, h, corner = 'tl', styles = {}) {
+        // Clone the styles since we are going to change params
+        styles = structuredClone(styles);
+
         corner = corner.toLowerCase();
 
         if (corner.includes('t')) {
@@ -42,10 +44,13 @@ class Textbox {
 
         if (corner.includes('l')) {
             this.twoX = x + w / 2;
+            styles.alignment = 'left';
         } else if (corner.includes('c')) {
             this.twoX = x;
+            styles.alignment = 'center';
         } else if (corner.includes('r')) {
             this.twoX = x - w / 2;
+            styles.alignment = 'right';
         } else {
             throw "corner must specify l, c, or r";
         }
