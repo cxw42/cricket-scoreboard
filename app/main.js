@@ -37,9 +37,8 @@ team2.batters = {
     },
 };
 
-display = new Display(document.body, team1, team2);
-
 // team2 won the toss and elected to bat
+display = new Display(document.body, team2, team1);
 score = new Score([team1, team2], team2);
 score.battingOrder = ['Dhananjaya', 'Wellalage'];
 score.bowler = 'Nauman';

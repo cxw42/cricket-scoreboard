@@ -54,17 +54,22 @@ class Display {
         this._team2Banner.opacity = 0.75;
         this._team2Banner.noStroke();
 
+        let textStyles = {
+            family: 'Rubik, sans-serif',
+            size: '2em',
+        };
+
         this.batterOnStrike = new Textbox(
-            0, BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT / 2, 'tl');
+            0, BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT / 2, 'tl', textStyles);
         this.batterOnStrike.addTo(this._two);
 
         this.batterNotOnStrike = new Textbox(
             0, BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH,
-            BANNER_HEIGHT / 2, 'tl');
+            BANNER_HEIGHT / 2, 'tl', textStyles);
         this.batterNotOnStrike.addTo(this._two);
 
         this.bowler = new Textbox(WIDTH - BANNER_WIDTH,
-            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, 'tl');
+            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, 'tl', textStyles);
         this.bowler.addTo(this._two);
 
         this.wkts = new Two.Text('0-0', WIDTH / 2,
