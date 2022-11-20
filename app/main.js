@@ -14,38 +14,40 @@ Score = require('score');
 
 console.log('Hello, world!')
 
-team1 = new Team('England', 'ENG', '#fc2d38');
+team1 = new Team('Pakistan', 'PAK', '#069d32');
 team1.batters = {
-    'Ali': {
+    'Nauman': {
         runs: 0,
         balls: 0
     },
-    'Stokes': {
+    'Azam': {
         runs: 0,
         balls: 0
     },
 };
 team2 = new Team('Sri Lanka', 'SL', '#0c4da1');
 team2.batters = {
-    'Hasaranga': {
-        runs: 0,
-        balls: 0
+    'Dhananjaya': {
+        runs: 64,
+        balls: 118,
     },
-    'Shanaka': {
-        runs: 0,
-        balls: 0
+    'Wellalage': {
+        runs: 14,
+        balls: 2,
     },
 };
 
 display = new Display(document.body, team1, team2);
 
-// team1 won the toss and elected to bat
-score = new Score([team1, team2], team1);
-score.battingOrder = ['Ali', 'Stokes'];
-score.bowler = 'Hasaranga';
+// team2 won the toss and elected to bat
+score = new Score([team1, team2], team2);
+score.battingOrder = ['Dhananjaya', 'Wellalage'];
+score.bowler = 'Nauman';
 
-score.wicket()
-score.addRuns(42);
+for(let i=0; i<6; ++i) {
+    score.wicket()
+}
+score.addRuns(264);
 
 setTimeout(() => {
     display.update(score);
