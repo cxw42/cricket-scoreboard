@@ -43,11 +43,11 @@ score = new Score([team1, team2], team2);
 score.battingOrder = ['Dhananjaya', 'Wellalage'];
 score.bowler = 'Nauman';
 
-for(let i=0; i<6; ++i) {
+for (let i = 0; i < 6; ++i) {
     score.wicket()
 }
 score.addRuns(264);
 
 setTimeout(() => {
     display.update(score);
-}, 1000);
+}, 100);
