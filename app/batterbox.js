@@ -29,8 +29,9 @@ class BatterBox {
     runsLabel; // "R" label for runs
     tBalls; // batter's ball count
     ballsLabel; // "B" label for balls
+    onStrikeIcon;
 
-    constructor(ulx, uly, w, h, styles = {}) {
+    constructor(ulx, uly, w, h, styles = {}, onStrike = false) {
         const VSHIFT = 5; // XXX TODO figure out a better way to center
         // alignment=baseline text
 
@@ -76,6 +77,15 @@ class BatterBox {
 
         this.group = new Two.Group(this.outline, this.tName, this.tRuns,
             this.runsLabel, this.tBalls, this.ballsLabel);
+
+        // On strike?
+        if (onStrike) {
+            this.onStrikeIcon = new Two.ImageSequence(['bat-icon.png'], ulx,
+                this.twoY, 0);
+            this.onStrikeIcon.scale = 0.15; // hack --- FIXME
+            this.group.add(this.onStrikeIcon);
+        }
+
     }
 
     addTo(two) {

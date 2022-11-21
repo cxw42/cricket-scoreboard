@@ -80,7 +80,8 @@ class Display {
 
         this.batterOnStrike = new BatterBox(
             ACTION_MARGIN_W, BANNER_TOP, BANNER_WIDTH,
-            (BANNER_HEIGHT / 2), textStyles);
+            (BANNER_HEIGHT / 2), textStyles, true // onStrike
+        );
         this.batterOnStrike.addTo(this._two);
 
         this.batterNotOnStrike = new BatterBox(
