@@ -93,10 +93,13 @@ class Display {
         this.bowler.addTo(this._two);
 
         // Innings score
-        this.wkts = new Textbox(WIDTH / 2, BANNER_TOP + BANNER_HEIGHT / 2,
-            100, BANNER_HEIGHT, 'mc', Object.assign({}, textStyles, {
-                weight: 700
-            }));
+        this.wkts = new Textbox(WIDTH / 2, BANNER_TOP,
+            125, BANNER_HEIGHT * 0.75, 'tc', Object.assign({},
+                textStyles, {
+                    weight: 700,
+                    bgFill: '#fff',
+                    size: '1.5em',
+                }));
         this.wkts.setValue('0-0');
         this.wkts.addTo(this._two);
 
@@ -117,7 +120,7 @@ class Display {
     }
 
     update(score) {
-        this.wkts.setValue(`${score.wickets}-${score.runs}`);
+        this.wkts.setValue(`w ${score.wickets}-${score.runs} r`);
         this.batterOnStrike.name = score.battingOrder[0]; // XXX
         this.batterOnStrike.runs = 64;
         this.batterOnStrike.balls = 118;
