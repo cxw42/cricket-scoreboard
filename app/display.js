@@ -13,11 +13,20 @@ const SCALE = 2;
 const WIDTH = 1920 / SCALE;
 const HEIGHT = 1080 / SCALE;
 const BANNER_WIDTH = 600 / SCALE;
-const BANNER_TOP = 950 / SCALE;
-const BANNER_BOTTOM = 1040 / SCALE;
+const BANNER_HEIGHT = 90 / SCALE;
 
 // Computed dimensions
-const BANNER_HEIGHT = BANNER_BOTTOM - BANNER_TOP;
+
+// Dimensions from <https://tech.ebu.ch/docs/techreview/trev_280-baker.pdf>
+const ACTION_MARGIN_W = (WIDTH * 0.035) | 0; // action-safe area, 16:9
+const ACTION_MARGIN_H = (HEIGHT * 0.035) | 0;
+const GRAPHICS_MARGIN_W = (WIDTH * 0.10) | 0; // graphics-safe area, 16:9
+const GRAPHICS_MARGIN_H = (HEIGHT * 0.05) | 0;
+
+const BANNER_BOTTOM = HEIGHT - ACTION_MARGIN_H;
+const BANNER_TOP = BANNER_BOTTOM - BANNER_HEIGHT;
+// banner extends to the edges of the screen
+const BANNER_FULL_WIDTH = BANNER_WIDTH + ACTION_MARGIN_W;
 
 class Display {
     _two = null; // note: brunch doesn't do `#private`
@@ -37,24 +46,26 @@ class Display {
         this._two = new Two(params).appendTo(parentElement);
         this._two.renderer.domElement.style.background = '#ddd'; // DEBUG
 
+        // Background image
         this._bg = new Two.ImageSequence(['slc-sample.png'], WIDTH / 2,
             HEIGHT / 2, 0);
         this._two.add(this._bg);
 
         // Color backgrounds
-        this._team1Banner = this._two.makeRectangle(BANNER_WIDTH / 2,
-            BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH, BANNER_HEIGHT);
+        this._team1Banner = this._two.makeRectangle(BANNER_FULL_WIDTH / 2,
+            BANNER_TOP + BANNER_HEIGHT / 2, BANNER_FULL_WIDTH,
+            BANNER_HEIGHT);
         this._team1Banner.corner();
         this._team1Banner.fill = team1.color;
-        this._team1Banner.opacity = 0.75;
+        this._team1Banner.opacity = 1;
         this._team1Banner.noStroke();
 
-        this._team2Banner = this._two.makeRectangle(WIDTH - BANNER_WIDTH /
-            2, BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH,
-            BANNER_HEIGHT);
+        this._team2Banner = this._two.makeRectangle(WIDTH -
+            (BANNER_FULL_WIDTH / 2), BANNER_TOP + BANNER_HEIGHT / 2,
+            BANNER_FULL_WIDTH, BANNER_HEIGHT);
         this._team2Banner.corner();
         this._team2Banner.fill = team2.color;
-        this._team2Banner.opacity = 0.75;
+        this._team2Banner.opacity = 1;
         this._team2Banner.noStroke();
 
         // Players' names
@@ -66,41 +77,54 @@ class Display {
             alignment: 'right',
         };
 
-        this.batterOnStrike = new Textbox(
-            0, BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT / 2, 'tl',
-            textStyles);
+        this.batterOnStrike = new BatterBox(
+            ACTION_MARGIN_W, BANNER_TOP, BANNER_WIDTH,
+            (BANNER_HEIGHT / 2), textStyles);
         this.batterOnStrike.addTo(this._two);
 
-        this.batterNotOnStrike = new Textbox(
-            0, BANNER_TOP + BANNER_HEIGHT / 2, BANNER_WIDTH,
-            BANNER_HEIGHT / 2, 'tl', textStyles);
+        this.batterNotOnStrike = new BatterBox(
+            ACTION_MARGIN_W, BANNER_TOP + BANNER_HEIGHT / 2,
+            BANNER_WIDTH,
+            BANNER_HEIGHT / 2, textStyles);
         this.batterNotOnStrike.addTo(this._two);
 
-        this.bowler = new Textbox(WIDTH - BANNER_WIDTH,
+        this.bowler = new Textbox(WIDTH - BANNER_FULL_WIDTH,
             BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, 'tl', textStyles);
         this.bowler.addTo(this._two);
 
         // Innings score
-        this.wkts = new Two.Text('0-0', WIDTH / 2,
-            BANNER_TOP + (BANNER_BOTTOM - BANNER_TOP) / 2);
-        this._two.add(this.wkts);
+        this.wkts = new Textbox(WIDTH / 2, BANNER_TOP + BANNER_HEIGHT / 2,
+            100, BANNER_HEIGHT, 'mc', Object.assign({}, textStyles, {
+                weight: 700
+            }));
+        this.wkts.setValue('0-0');
+        this.wkts.addTo(this._two);
 
-        this.batterbox = new BatterBox(100, 100, BANNER_WIDTH,
-            BANNER_HEIGHT / 2, textStyles);
-        this.batterbox.addTo(this._two);
+        // EBU margins
+        this.actionSafeArea = this._two.makeRectangle(WIDTH / 2, HEIGHT / 2,
+            WIDTH - (2 * ACTION_MARGIN_W), HEIGHT - (2 *
+                ACTION_MARGIN_H));
+        this.actionSafeArea.fill = 'none';
+        this.actionSafeArea.stroke = '#00958e';
+
+        this.graphicsSafeArea = this._two.makeRectangle(WIDTH / 2, HEIGHT /
+            2, WIDTH - (2 * GRAPHICS_MARGIN_W), HEIGHT - (2 *
+                GRAPHICS_MARGIN_H));
+        this.graphicsSafeArea.fill = 'none';
+        this.graphicsSafeArea.stroke = '#a72b30';
 
         this._two.update();
     }
 
     update(score) {
-        this.wkts.value = `${score.wickets}-${score.runs}`;
-        this.batterOnStrike.setValue(score.battingOrder[0]); // XXX
-        this.batterNotOnStrike.setValue(score.battingOrder[1]); // XXX
+        this.wkts.setValue(`${score.wickets}-${score.runs}`);
+        this.batterOnStrike.name = score.battingOrder[0]; // XXX
+        this.batterOnStrike.runs = 64;
+        this.batterOnStrike.balls = 118;
+        this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
+        this.batterNotOnStrike.runs = 14;
+        this.batterNotOnStrike.balls = 22;
         this.bowler.setValue(score.bowler);
-
-        this.batterbox.name = score.battingOrder[0];
-        this.batterbox.runs = 64;
-        this.batterbox.balls = 118;
 
         this._two.update();
     }

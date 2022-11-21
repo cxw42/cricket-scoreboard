@@ -31,16 +31,19 @@ class BatterBox {
     ballsLabel; // "B" label for balls
 
     constructor(ulx, uly, w, h, styles = {}) {
+        const VSHIFT = 5; // XXX TODO figure out a better way to center
+        // alignment=baseline text
+
         // Grid params: where to put the components as a percentage of width
         // TODO make parameterizable
         let leftPadding = 10; // units???
         let namePct = 0.5;
-        let runsPct = 0.25;
-        let ballsPct = 0.125;
+        let runsPct = 0.3;
+        let ballsPct = 0.15;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);
-        styles.baseline = 'middle';
+        styles.baseline = 'baseline';
 
         this.twoX = ulx + w / 2;
         this.twoY = uly + h / 2;
@@ -50,24 +53,26 @@ class BatterBox {
 
         // Name: left-aligned
         styles.alignment = 'left';
-        this.tName = new Two.Text('name', ulx + leftPadding, this.twoY,
+        this.tName = new Two.Text('name', ulx + leftPadding, this.twoY +
+            VSHIFT,
             styles);
 
         // Runs and balls
         styles.alignment = 'right';
-        this.tRuns = new Two.Text('42', ulx + w * (namePct + runsPct), this
-            .twoY, styles);
+        this.tRuns = new Two.Text('42', ulx + w * (namePct + runsPct),
+            this.twoY + VSHIFT, styles);
+
+        styles.size = 'small'; // TODO make parameterizable
         this.tBalls = new Two.Text('84', ulx + w * (namePct + runsPct +
-            ballsPct), this.twoY, styles);
+            ballsPct), this.twoY + VSHIFT, styles);
 
         // Labels
         styles.alignment = 'left';
-        styles.size = 'small'; // TODO make parameterizable
 
         this.runsLabel = new Two.Text('R', ulx + w * (namePct + runsPct),
-            this.twoY, styles);
+            this.twoY + VSHIFT, styles);
         this.ballsLabel = new Two.Text('B', ulx + w * (namePct + runsPct +
-            ballsPct), this.twoY, styles);
+            ballsPct), this.twoY + VSHIFT, styles);
 
         this.group = new Two.Group(this.outline, this.tName, this.tRuns,
             this.runsLabel, this.tBalls, this.ballsLabel);
