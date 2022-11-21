@@ -76,6 +76,7 @@ class Display {
             size: '1em',
             alignment: 'right',
         };
+        textStyles.fill = '#fff';
 
         this.batterOnStrike = new BatterBox(
             ACTION_MARGIN_W, BANNER_TOP, BANNER_WIDTH,
@@ -88,13 +89,14 @@ class Display {
             BANNER_HEIGHT / 2, textStyles);
         this.batterNotOnStrike.addTo(this._two);
 
+        delete textStyles.fill;
         this.bowler = new Textbox(WIDTH - BANNER_FULL_WIDTH,
             BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, 'tl', textStyles);
         this.bowler.addTo(this._two);
 
         // Innings score
-        this.wkts = new Textbox(WIDTH / 2, BANNER_TOP,
-            125, BANNER_HEIGHT * 0.75, 'tc', Object.assign({},
+        this.wkts = new Textbox(WIDTH / 2, HEIGHT - GRAPHICS_MARGIN_H,
+            125, BANNER_HEIGHT * 0.65, 'bc', Object.assign({},
                 textStyles, {
                     weight: 700,
                     bgFill: '#fff',
@@ -120,7 +122,7 @@ class Display {
     }
 
     update(score) {
-        this.wkts.setValue(`w ${score.wickets}-${score.runs} r`);
+        this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
         this.batterOnStrike.name = score.battingOrder[0]; // XXX
         this.batterOnStrike.runs = 64;
         this.batterOnStrike.balls = 118;
