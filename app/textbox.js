@@ -15,7 +15,9 @@ let Two = require('two.js');
  * @param {int} h Height
  * @param {String} corner Which corner `x` and `y` relate to.
  *                        Must be `[TMB][LCR]`.
- * @param {Object} styles Styles per [Two.Text](https://two.js.org/docs/text/)
+ * @param {Object} styles Styles per [Two.Text](https://two.js.org/docs/text/),
+ *                        plus 'bgFill' which, if set, is used as a background
+ *                        fill.
  */
 class Textbox {
     // two.js coordinates
@@ -28,7 +30,9 @@ class Textbox {
 
     constructor(x, y, w, h, corner = 'tl', styles = {}) {
         // Clone the styles since we are going to change params
+        let bgFill = styles['bgFill'] || 'none';
         styles = structuredClone(styles);
+        delete styles['bgfill'];
 
         corner = corner.toLowerCase();
 
@@ -57,7 +61,7 @@ class Textbox {
 
         this.text = new Two.Text('', this.twoX, this.twoY, styles);
         this.outline = new Two.Rectangle(this.twoX, this.twoY, w, h);
-        this.outline.fill = 'none';
+        this.outline.fill = bgFill;
         this.group = new Two.Group(this.outline, this.text);
     }
 
