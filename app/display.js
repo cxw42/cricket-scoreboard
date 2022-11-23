@@ -70,7 +70,7 @@ class Display {
 
         // Players' names
         let textStyles = {
-            family: 'Rubik, sans-serif',
+            family: "'Atkinson Hyperlegible', Rubik, sans-serif",
             style: 'italic',
             weight: 550,
             size: '1em',
