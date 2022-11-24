@@ -51,3 +51,11 @@ score.addRuns(264);
 setTimeout(() => {
     display.update(score);
 }, 100);
+
+// XXX for debugging, export our internals.
+module.exports = {
+    display,
+    score,
+    team1,
+    team2
+};
