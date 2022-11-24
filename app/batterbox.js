@@ -60,7 +60,9 @@ class BatterBox {
 
         // Name: left-aligned
         styles.alignment = 'left';
-        this.tName = new Two.Text('name', 0, 0, styles);
+        // Use "My Name" as the initial value so it will have both
+        // ascenders and descenders.
+        this.tName = new Two.Text('My Name', 0, 0, styles);
 
         // Runs and balls
         styles.alignment = 'right';
@@ -84,7 +86,7 @@ class BatterBox {
         this.group = new Two.Group(this.textGroup);
 
         // On strike?
-        if (false /* XXX */ && onStrike) {    // TODO put this back
+        if (false /* XXX */ && onStrike) { // TODO put this back
             this.onStrikeIcon = new Two.ImageSequence(['bat-icon.png'], 0,
                 0, 0);
             this.onStrikeIcon.scale = 0.15; // hack --- FIXME
@@ -97,6 +99,7 @@ class BatterBox {
         // Add the group off-screen so we can find out where it is.
         this.group.position.x = this.group.position.y = -1000;
         this.group.addTo(two);
+        two.update()
         const where = this.group.getBoundingClientRect();
 
         // Get the baseline location.  E.g., top = -1010 means
@@ -111,17 +114,19 @@ class BatterBox {
 
         // Center textGroup vertically within group
         const vmargin = this.bbox.h - where.height;
-        this.textGroup.position.y = vmargin/2;
+        this.textGroup.position.y = vmargin / 2;
 
         // Add the outline now that we have a center
+        // XXX figure out why we need the -1s
         this.outline = new Two.Rectangle(
-            this.bbox.w/2, 0, this.bbox.w, this.bbox.h
+            this.bbox.w / 2, 0, this.bbox.w - 1, this.bbox.h - 1
         );
         this.outline.fill = 'none';
         this.group.add(this.outline);
 
         // Move the group vertically, with center vspacing.
-        this.group.position.y = this.bbox.uly + dyTopToBaseline + vmargin/2;
+        this.group.position.y = this.bbox.uly + dyTopToBaseline + vmargin /
+            2;
 
 
 
