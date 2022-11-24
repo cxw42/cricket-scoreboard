@@ -27,6 +27,7 @@ class BatterBox {
     outline; // visible outline
 
     // Two.Text instances
+    textGroup;
     tName; // batter's name
     tRuns; // batter's run count
     runsLabel; // "R" label for runs
@@ -59,7 +60,7 @@ class BatterBox {
 
         // Name: left-aligned
         styles.alignment = 'left';
-        this.tName = new Two.Text('name', leftPadding, 0, styles);
+        this.tName = new Two.Text('name', 0, 0, styles);
 
         // Runs and balls
         styles.alignment = 'right';
@@ -77,8 +78,10 @@ class BatterBox {
         this.ballsLabel = new Two.Text('B',
             w * (namePct + runsPct + ballsPct), 0, styles);
 
-        this.group = new Two.Group(this.tName, this.tRuns,
+        this.textGroup = new Two.Group(this.tName, this.tRuns,
             this.runsLabel, this.tBalls, this.ballsLabel);
+
+        this.group = new Two.Group(this.textGroup);
 
         // On strike?
         if (false /* XXX */ && onStrike) {    // TODO put this back
@@ -96,23 +99,30 @@ class BatterBox {
         this.group.addTo(two);
         const where = this.group.getBoundingClientRect();
 
-        // Move the group horizontally, left-justified
-        // E.g., where.left = -1010 => move position.x +10 (right)
-        this.group.position.x = this.bbox.ulx + (-1000 - where.left);
-
-        // Move the group vertically, with center vspacing.
-        // First, get the baseline location.  E.g., top = -1010 means
+        // Get the baseline location.  E.g., top = -1010 means
         // the top is 10px above the baseline === baseline is 10px below
         // the top.
         const dyTopToBaseline = -1000 - where.top;
-        const vmargin = this.bbox.h - where.height;
-        this.group.position.y = this.bbox.uly + (vmargin/2) + dyTopToBaseline;
 
-        // Add the outline now that we know where
-        this.outline = new Two.Rectangle(this.twoX, this.twoY, this.bbox.w,
-            this.bbox.h);
+        // Move the group horizontally, left-justified
+        // E.g., where.left = -1010 => move position.x +10 (right)
+        this.group.position.x = this.bbox.ulx;
+        this.textGroup.position.x = (-1000 - where.left);
+
+        // Center textGroup vertically within group
+        const vmargin = this.bbox.h - where.height;
+        this.textGroup.position.y = vmargin/2;
+
+        // Add the outline now that we have a center
+        this.outline = new Two.Rectangle(
+            this.bbox.w/2, 0, this.bbox.w, this.bbox.h
+        );
         this.outline.fill = 'none';
         this.group.add(this.outline);
+
+        // Move the group vertically, with center vspacing.
+        this.group.position.y = this.bbox.uly + dyTopToBaseline + vmargin/2;
+
 
 
     }
