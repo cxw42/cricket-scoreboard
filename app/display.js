@@ -72,8 +72,8 @@ class Display {
         let textStyles = {
             family: "'Atkinson Hyperlegible', Rubik, sans-serif",
             style: 'italic',
-            weight: 550,
-            size: '1em',
+            weight: 700,
+            size: '0.9em',
             alignment: 'right',
         };
         textStyles.fill = '#fff';
