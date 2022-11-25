@@ -10,6 +10,7 @@ let Two = require('two.js');
  *
  * @class BatterBox
  * @constructor
+ * @param {Snap} svg SVG surface
  * @param {int} ulx Upper-left X
  * @param {int} uly Upper-left Y
  * @param {int} w Width
@@ -35,7 +36,7 @@ class BatterBox {
     ballsLabel; // "B" label for balls
     onStrikeIcon;
 
-    constructor(ulx, uly, w, h, styles = {}, onStrike = false) {
+    constructor(svg, ulx, uly, w, h, styles = {}, onStrike = false) {
         this.bbox.ulx = ulx;
         this.bbox.uly = uly;
         this.bbox.w = w;
@@ -55,47 +56,64 @@ class BatterBox {
         this.twoX = ulx + w / 2;
         this.twoY = uly + h / 2;
 
+        this.textGroup = svg.g();
+
         // Create shapes.  All have baseline x = 0, y=0.  addTo() will
         // position the group containing the shapes.
 
         // Name: left-aligned
-        styles.alignment = 'left';
+        styles['text-align'] = 'start';
+
         // Use "My Name" as the initial value so it will have both
         // ascenders and descenders.
-        this.tName = new Two.Text('My Name', 0, 0, styles);
+        this.tName = svg.text(0, 0, 'My Name').attr(styles);
+        this.textGroup.add(this.tName);
 
         // Runs and balls
-        styles.alignment = 'right';
-        this.tRuns = new Two.Text('42', w * (namePct + runsPct), 0, styles);
+        styles['text-align'] = 'end';
+        this.tRuns = svg.text(w * (namePct + runsPct), 0, '42').attr(
+        styles);
+        this.textGroup.add(this.tRuns);
 
-        styles.size = 'small'; // TODO make parameterizable
-        this.tBalls = new Two.Text('84', w * (namePct + runsPct + ballsPct),
-            0, styles);
+        styles['font-size'] = 'small'; // TODO make parameterizable
+        this.tBalls = svg.text(w * (namePct + runsPct + ballsPct),
+            0, '84').attr(styles);
+        this.textGroup.add(this.tBalls);
 
         // Labels
-        styles.alignment = 'left';
+        styles['text-align'] = 'start';
 
-        this.runsLabel = new Two.Text('R', w * (namePct + runsPct), 0,
-            styles);
-        this.ballsLabel = new Two.Text('B',
-            w * (namePct + runsPct + ballsPct), 0, styles);
+        this.runsLabel = svg.text(w * (namePct + runsPct), 0,
+            'R').attr(styles);
+        this.textGroup.add(this.runsLabel);
+        this.ballsLabel = svg.text(
+            w * (namePct + runsPct + ballsPct), 0, 'B').attr(styles);
+        this.textGroup.add(this.ballsLabel);
 
-        this.textGroup = new Two.Group(this.tName, this.tRuns,
-            this.runsLabel, this.tBalls, this.ballsLabel);
+        // DEBUG
+        let bbox = this.textGroup.getBBox();
 
-        this.group = new Two.Group(this.textGroup);
+        this.group = svg.g();
+        this.group.add(this.textGroup);
+        this.group.add(svg.rect(bbox.x, bbox.y, bbox.width, bbox.height)
+            .attr({
+                fill: 'none',
+                stroke: '#ff0'
+            }));
 
         // On strike?
-        if (false /* XXX */ && onStrike) { // TODO put this back
-            this.onStrikeIcon = new Two.ImageSequence(['bat-icon.png'], 0,
-                0, 0);
+        if (false // XXX
+            &&
+            onStrike) { // TODO put this back
+            this.onStrikeIcon = svg.image('/bat-icon.png', 0, 0);
             this.onStrikeIcon.scale = 0.15; // hack --- FIXME
             this.group.add(this.onStrikeIcon);
         }
 
-    }
+        // this.group.transform('t100,100');   // XXX DEBUG for visibility
 
-    addTo(two) {
+        // Position the group
+        /*
         // Add the group off-screen so we can find out where it is.
         this.group.position.x = this.group.position.y = -1000;
         this.group.addTo(two);
@@ -127,10 +145,8 @@ class BatterBox {
         // Move the group vertically, with center vspacing.
         this.group.position.y = this.bbox.uly + dyTopToBaseline + vmargin /
             2;
-
-
-
-    }
+            */
+    } // ctor
 
     set name(value) {
         this.tName.value = value;

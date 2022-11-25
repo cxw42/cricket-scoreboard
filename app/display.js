@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 Two = require('two.js');
+Snap = require('snapsvg');
 
 BatterBox = require('batterbox');
 Score = require('score');
@@ -29,7 +30,7 @@ const BANNER_TOP = BANNER_BOTTOM - BANNER_HEIGHT;
 const BANNER_FULL_WIDTH = BANNER_WIDTH + ACTION_MARGIN_W;
 
 class Display {
-    _two = null; // note: brunch doesn't do `#private`
+    svg = null; // note: brunch doesn't do `#private`
     _team1;
     _team2;
 
@@ -37,59 +38,55 @@ class Display {
         this._team1 = team1;
         this._team2 = team2;
 
-        // Modified from the two.js sample
-        // Make an instance of two and place it on the page.
-        let params = {
-            width: WIDTH,
-            height: HEIGHT,
-        };
-        this._two = new Two(params).appendTo(parentElement);
-        this._two.renderer.domElement.style.background = '#ddd'; // DEBUG
+        // Thanks to https://jsfiddle.net/x5qf7bz4/
+        let svg = this.svg = Snap(WIDTH, HEIGHT);
+        document.getElementById('container').appendChild(this.svg.node);
+        this.svg.node.id = 'disp'; // for convenience in debugging
+
+        // Background
+        svg.rect(0, 0, '100%', '100%').attr({
+            fill: '#ddd'
+        });
 
         // Background image
-        this._bg = new Two.ImageSequence(['slc-sample.png'], WIDTH / 2,
-            HEIGHT / 2, 0);
-        this._two.add(this._bg);
+        this._bg = svg.image('/slc-sample.png', 0, 0, '100%', '100%')
 
         // Color backgrounds
-        this._team1Banner = this._two.makeRectangle(BANNER_FULL_WIDTH / 2,
-            BANNER_TOP + BANNER_HEIGHT / 2, BANNER_FULL_WIDTH,
+        this._team1Banner = svg.rect(0, BANNER_TOP, BANNER_FULL_WIDTH,
             BANNER_HEIGHT);
-        this._team1Banner.corner();
-        this._team1Banner.fill = team1.color;
-        this._team1Banner.opacity = 1;
-        this._team1Banner.noStroke();
+        this._team1Banner.attr({
+            fill: team1.color,
+            stroke: 'none',
+        });
 
-        this._team2Banner = this._two.makeRectangle(WIDTH -
-            (BANNER_FULL_WIDTH / 2), BANNER_TOP + BANNER_HEIGHT / 2,
+        this._team2Banner = svg.rect(WIDTH - BANNER_FULL_WIDTH, BANNER_TOP,
             BANNER_FULL_WIDTH, BANNER_HEIGHT);
-        this._team2Banner.corner();
-        this._team2Banner.fill = team2.color;
-        this._team2Banner.opacity = 1;
-        this._team2Banner.noStroke();
+        this._team2Banner.attr({
+            fill: team2.color,
+            stroke: 'none',
+        });
 
         // Players' names
         let textStyles = {
-            family: "'Atkinson Hyperlegible', Rubik, sans-serif",
-            style: 'italic',
+            'font-family': "'Atkinson Hyperlegible', Rubik, sans-serif",
+            'font-style': 'oblique',
             weight: 700,
             size: '0.9em',
-            alignment: 'right',
+            'text-align': 'end',
         };
         textStyles.fill = '#fff';
 
-        this.batterOnStrike = new BatterBox(
+        this.batterOnStrike = new BatterBox(svg,
             ACTION_MARGIN_W, BANNER_TOP, BANNER_WIDTH,
             (BANNER_HEIGHT / 2), textStyles, true // onStrike
         );
-        this.batterOnStrike.addTo(this._two);
 
-        this.batterNotOnStrike = new BatterBox(
+        this.batterNotOnStrike = new BatterBox(svg,
             ACTION_MARGIN_W, BANNER_TOP + BANNER_HEIGHT / 2,
             BANNER_WIDTH,
             BANNER_HEIGHT / 2, textStyles);
-        this.batterNotOnStrike.addTo(this._two);
 
+        /*
         delete textStyles.fill;
         this.bowler = new Textbox(WIDTH - BANNER_FULL_WIDTH,
             BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, 'tl', textStyles);
@@ -120,9 +117,11 @@ class Display {
         this.graphicsSafeArea.stroke = '#a72b30';
 
         this._two.update();
+        */
     }
 
     update(score) {
+        /*
         this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
         this.batterOnStrike.name = score.battingOrder[0]; // XXX
         this.batterOnStrike.runs = 64;
@@ -133,6 +132,7 @@ class Display {
         this.bowler.setValue(score.bowler);
 
         this._two.update();
+        */
     }
 
 }
