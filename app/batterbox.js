@@ -72,7 +72,7 @@ class BatterBox {
         // Runs and balls
         styles['text-align'] = 'end';
         this.tRuns = svg.text(w * (namePct + runsPct), 0, '42').attr(
-        styles);
+            styles);
         this.textGroup.add(this.tRuns);
 
         styles['font-size'] = 'small'; // TODO make parameterizable
@@ -90,11 +90,12 @@ class BatterBox {
             w * (namePct + runsPct + ballsPct), 0, 'B').attr(styles);
         this.textGroup.add(this.ballsLabel);
 
-        // DEBUG
-        let bbox = this.textGroup.getBBox();
 
         this.group = svg.g();
         this.group.add(this.textGroup);
+
+        // DEBUG
+        let bbox = this.textGroup.getBBox();
         this.group.add(svg.rect(bbox.x, bbox.y, bbox.width, bbox.height)
             .attr({
                 fill: 'none',
@@ -113,39 +114,37 @@ class BatterBox {
         // this.group.transform('t100,100');   // XXX DEBUG for visibility
 
         // Position the group
-        /*
         // Add the group off-screen so we can find out where it is.
-        this.group.position.x = this.group.position.y = -1000;
-        this.group.addTo(two);
-        two.update()
-        const where = this.group.getBoundingClientRect();
+        this.group.attr('transform', 'translate(-1000, -1000)');
+        const where = this.group.getBBox();
 
         // Get the baseline location.  E.g., top = -1010 means
         // the top is 10px above the baseline === baseline is 10px below
         // the top.
-        const dyTopToBaseline = -1000 - where.top;
-
-        // Move the group horizontally, left-justified
-        // E.g., where.left = -1010 => move position.x +10 (right)
-        this.group.position.x = this.bbox.ulx;
-        this.textGroup.position.x = (-1000 - where.left);
+        const dyTopToBaseline = -1000 - where.y;
 
         // Center textGroup vertically within group
         const vmargin = this.bbox.h - where.height;
-        this.textGroup.position.y = vmargin / 2;
+
+        // Move the group horizontally, left-justified
+        // E.g., where.left = -1010 => move position.x +10 (right)
+        this.textGroup.attr('transform',
+            `translate(${-1000 - where.left}, ${vmargin/2})`);
+
+        this.group.attr('transform',
+            `translate(${this.bbox.ulx}, ${this.bbox.uly + dyTopToBaseline + vmargin/2*0})`
+            // XXX *0 seems to make it look better --- why?
+        );
 
         // Add the outline now that we have a center
         // XXX figure out why we need the -1s
-        this.outline = new Two.Rectangle(
-            this.bbox.w / 2, 0, this.bbox.w - 1, this.bbox.h - 1
-        );
-        this.outline.fill = 'none';
+        this.outline = svg.rect(0, -dyTopToBaseline, this.bbox.w, this.bbox
+            .h).attr({
+            fill: 'none',
+            stroke: '#0ff'
+        });
         this.group.add(this.outline);
 
-        // Move the group vertically, with center vspacing.
-        this.group.position.y = this.bbox.uly + dyTopToBaseline + vmargin /
-            2;
-            */
     } // ctor
 
     set name(value) {

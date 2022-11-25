@@ -121,18 +121,14 @@ class Display {
     }
 
     update(score) {
-        /*
-        this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
+        //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
         this.batterOnStrike.name = score.battingOrder[0]; // XXX
         this.batterOnStrike.runs = 64;
         this.batterOnStrike.balls = 118;
         this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
         this.batterNotOnStrike.runs = 14;
         this.batterNotOnStrike.balls = 22;
-        this.bowler.setValue(score.bowler);
-
-        this._two.update();
-        */
+        //this.bowler.setValue(score.bowler);
     }
 
 }
