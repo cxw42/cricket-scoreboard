@@ -72,9 +72,9 @@ class Display {
             'font-style': 'oblique',
             weight: 700,
             size: '0.9em',
-            'text-align': 'end',
+            'letter-spacing': '1', // empirical
+            fill: '#fff', // XXX
         };
-        textStyles.fill = '#fff';
 
         this.batterOnStrike = new BatterBox(svg,
             ACTION_MARGIN_W, BANNER_TOP, BANNER_WIDTH,

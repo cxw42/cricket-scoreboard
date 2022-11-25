@@ -62,7 +62,7 @@ class BatterBox {
         // position the group containing the shapes.
 
         // Name: left-aligned
-        styles['text-align'] = 'start';
+        styles['text-align'] = styles['text-anchor'] = 'start';
 
         // Use "My Name" as the initial value so it will have both
         // ascenders and descenders.
@@ -70,7 +70,7 @@ class BatterBox {
         this.textGroup.add(this.tName);
 
         // Runs and balls
-        styles['text-align'] = 'end';
+        styles['text-align'] = styles['text-anchor'] = 'end';
         this.tRuns = svg.text(w * (namePct + runsPct), 0, '42').attr(
             styles);
         this.textGroup.add(this.tRuns);
@@ -81,11 +81,13 @@ class BatterBox {
         this.textGroup.add(this.tBalls);
 
         // Labels
-        styles['text-align'] = 'start';
+        styles['text-align'] = styles['text-anchor'] = 'start';
 
         this.runsLabel = svg.text(w * (namePct + runsPct), 0,
             'R').attr(styles);
         this.textGroup.add(this.runsLabel);
+
+        styles['font-size'] = 'x-small';
         this.ballsLabel = svg.text(
             w * (namePct + runsPct + ballsPct), 0, 'B').attr(styles);
         this.textGroup.add(this.ballsLabel);
@@ -94,6 +96,7 @@ class BatterBox {
         this.group = svg.g();
         this.group.add(this.textGroup);
 
+        /*
         // DEBUG
         let bbox = this.textGroup.getBBox();
         this.group.add(svg.rect(bbox.x, bbox.y, bbox.width, bbox.height)
@@ -101,6 +104,7 @@ class BatterBox {
                 fill: 'none',
                 stroke: '#ff0'
             }));
+        */
 
         // On strike?
         if (false // XXX
@@ -132,7 +136,7 @@ class BatterBox {
             `translate(${-1000 - where.left}, ${vmargin/2})`);
 
         this.group.attr('transform',
-            `translate(${this.bbox.ulx}, ${this.bbox.uly + dyTopToBaseline + vmargin/2*0})`
+            `translate(${this.bbox.ulx}, ${this.bbox.uly + dyTopToBaseline})`
             // XXX *0 seems to make it look better --- why?
         );
 
@@ -141,22 +145,28 @@ class BatterBox {
         this.outline = svg.rect(0, -dyTopToBaseline, this.bbox.w, this.bbox
             .h).attr({
             fill: 'none',
-            stroke: '#0ff'
+            stroke: 'none', // '#0ff'
         });
         this.group.add(this.outline);
 
     } // ctor
 
     set name(value) {
-        this.tName.value = value;
+        this.tName.attr({
+            text: value
+        });
     }
 
     set runs(value) {
-        this.tRuns.value = value;
+        this.tRuns.attr({
+            text: value
+        });
     }
 
     set balls(value) {
-        this.tBalls.value = value;
+        this.tBalls.attr({
+            text: value
+        });
     }
 
 };
