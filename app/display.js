@@ -6,6 +6,7 @@ Two = require('two.js');
 Snap = require('snapsvg');
 
 BatterBox = require('batterbox');
+BowlerBox = require('bowlerbox');
 Score = require('score');
 Textbox = require('textbox');
 
@@ -86,12 +87,10 @@ class Display {
             BANNER_WIDTH,
             BANNER_HEIGHT / 2, textStyles);
 
-        /*
         delete textStyles.fill;
-        this.bowler = new Textbox(WIDTH - BANNER_FULL_WIDTH,
-            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, 'tl', textStyles);
-        this.bowler.addTo(this._two);
-
+        this.bowler = new BowlerBox(svg, WIDTH - BANNER_FULL_WIDTH,
+            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, textStyles);
+        /*
         // Innings score
         this.wkts = new Textbox(WIDTH / 2, HEIGHT - GRAPHICS_MARGIN_H,
             125, BANNER_HEIGHT * 0.65, 'bc', Object.assign({},
@@ -128,7 +127,10 @@ class Display {
         this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
         this.batterNotOnStrike.runs = 14;
         this.batterNotOnStrike.balls = 22;
-        //this.bowler.setValue(score.bowler);
+        this.bowler.name = score.bowler;
+        this.bowler.wickets = 1;
+        this.bowler.runs = 43;
+        this.bowler.balls = 12 * 6 + 2; // 12.2 ov.
     }
 
 }
