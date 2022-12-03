@@ -47,8 +47,8 @@ class BatterBox {
         // TODO make parameterizable
         let leftPadding = 10; // units???
         let namePct = 0.5;
-        let runsPct = 0.3;
-        let ballsPct = 0.15;
+        let runsPct = 0.2;
+        let ballsPct = 0.2;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);

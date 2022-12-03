@@ -52,8 +52,8 @@ class BowlerBox {
         // TODO make parameterizable
         let leftPadding = 10; // units???
         let namePct = 0.5;
-        let scorePct = 0.2; // wkt-run
-        let ballsPct = 0.3;
+        let scorePct = 0.3; // wkt-run
+        let ballsPct = 0.2;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);

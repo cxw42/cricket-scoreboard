@@ -17,6 +17,7 @@ const WIDTH = 1920 / SCALE;
 const HEIGHT = 1080 / SCALE;
 const BANNER_WIDTH = 600 / SCALE;
 const BANNER_HEIGHT = 90 / SCALE;
+const NAME_BOX_WIDTH = BANNER_WIDTH * 0.7;
 
 // Computed dimensions
 
@@ -79,18 +80,19 @@ class Display {
         };
 
         this.batterOnStrike = new BatterBox(svg,
-            ACTION_MARGIN_W, BANNER_TOP, BANNER_WIDTH,
+            ACTION_MARGIN_W, BANNER_TOP, NAME_BOX_WIDTH,
             (BANNER_HEIGHT / 2), textStyles, true // onStrike
         );
 
         this.batterNotOnStrike = new BatterBox(svg,
             ACTION_MARGIN_W, BANNER_TOP + BANNER_HEIGHT / 2,
-            BANNER_WIDTH,
+            NAME_BOX_WIDTH,
             BANNER_HEIGHT / 2, textStyles);
 
         delete textStyles.fill;
-        this.bowler = new BowlerBox(svg, WIDTH - BANNER_FULL_WIDTH,
-            BANNER_TOP, BANNER_WIDTH, BANNER_HEIGHT, textStyles);
+        this.bowler = new BowlerBox(svg, WIDTH - NAME_BOX_WIDTH -
+            ACTION_MARGIN_W,
+            BANNER_TOP, NAME_BOX_WIDTH, BANNER_HEIGHT, textStyles);
         /*
         // Innings score
         this.wkts = new Textbox(WIDTH / 2, HEIGHT - GRAPHICS_MARGIN_H,
