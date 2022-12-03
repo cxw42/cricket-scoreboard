@@ -1,11 +1,17 @@
 // cricket-scoreboard
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
+"use strict";
 
 //let Textbox = require('textbox');
 
 /**
- * The box showing a bowler's information
+ * The box showing a bowler's information.
+ *
+ * ```
+ * Name         W${w}-${r}R   ${o}o${b}b
+ * . . . . . .
+ * ```
  *
  * @class BatterBox
  * @constructor
@@ -14,6 +20,7 @@
  * @param {int} uly Upper-left Y
  * @param {int} w Width
  * @param {int} h Height
+ * @param {Object} styles Text styles
  */
 class BowlerBox {
     // User-specified bounding-box coordinates
@@ -21,14 +28,18 @@ class BowlerBox {
 
     group; // the group of shapes
     outline; // visible outline
+    textGroup; // the text on the first line
+    // TODO second line with what's happened this over
+
+    // Raw data
+    currWickets; // bowler's wickets taken
+    currRuns; // bowler's runs allowed
+    currBalls; // legal deliveries
 
     // Two.Text instances
-    textGroup;
     tName; // bowler's name
-    tWickets; // bowler's wickets taken
-    tRuns; // bowler's runs allowed
-    //runsLabel; // "R" label for runs
-    tBalls; // bowler's ball count (legal deliveries)
+    tFigures; // wkts-runs
+    tOvers; // bowler's ball count (legal deliveries)
     //ballsLabel; // "B" label for balls
 
     constructor(svg, ulx, uly, w, h, styles = {}) {
@@ -41,7 +52,7 @@ class BowlerBox {
         // TODO make parameterizable
         let leftPadding = 10; // units???
         let namePct = 0.5;
-        let runsPct = 0.3;
+        let scorePct = 0.3; // wkt-run
         let ballsPct = 0.15;
 
         // Clone the styles since we are going to change params
@@ -61,35 +72,16 @@ class BowlerBox {
         this.tName = svg.text(0, 0, 'My Name').attr(styles);
         this.textGroup.add(this.tName);
 
-        // Runs and balls
+        // Figures and overs
         styles['text-align'] = styles['text-anchor'] = 'end';
-        this.tRuns = svg.text(w * (namePct + runsPct), 0, '42').attr(
+        this.tFigures = svg.text(w * (namePct + scorePct), 0, '42').attr(
             styles);
-        this.textGroup.add(this.tRuns);
+        this.textGroup.add(this.tFigures);
 
-        this.tWickets = svg.text(w * (namePct + runsPct - 0.1), 0, '99')
-            .attr(
-                styles);
-        this.textGroup.add(this.tWickets);
-
-        styles['font-size'] = 'small'; // TODO make parameterizable
-        this.tBalls = svg.text(w * (namePct + runsPct + ballsPct),
+        //styles['font-size'] = 'small'; // TODO make parameterizable
+        this.tOvers = svg.text(w * (namePct + scorePct + ballsPct),
             0, '8o4b').attr(styles);
-        this.textGroup.add(this.tBalls);
-
-        /*
-        // Labels
-        styles['text-align'] = styles['text-anchor'] = 'start';
-
-        this.runsLabel = svg.text(w * (namePct + runsPct), 0,
-            'R').attr(styles);
-        this.textGroup.add(this.runsLabel);
-
-        styles['font-size'] = 'x-small';
-        this.ballsLabel = svg.text(
-            w * (namePct + runsPct + ballsPct), 0, 'B').attr(styles);
-        this.textGroup.add(this.ballsLabel);
-        */
+        this.textGroup.add(this.tOvers);
 
         this.group = svg.g();
         this.group.add(this.textGroup);
@@ -140,6 +132,12 @@ class BowlerBox {
 
     } // ctor
 
+    _updateFigures() {
+        this.tFigures.attr({
+            text: ["w", `${this.currWickets}-${this.currRuns}`, "r"]
+        });
+    }
+
     set name(value) {
         this.tName.attr({
             text: value
@@ -147,21 +145,19 @@ class BowlerBox {
     }
 
     set wickets(value) {
-        this.tWickets.attr({
-            text: value
-        });
+        this.currWickets = value
+        this._updateFigures();
     }
 
     set runs(value) {
-        this.tRuns.attr({
-            text: value
-        });
+        this.currRuns = value;
+        this._updateFigures();
     }
 
     set balls(value) {
         const completedOvers = Math.floor(value / 6);
         const ballsThisOver = value % 6;
-        this.tBalls.attr({
+        this.tOvers.attr({
             text: `${completedOvers}o${ballsThisOver}b`
         });
     }
