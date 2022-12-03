@@ -1,14 +1,15 @@
 // cricket-scoreboard
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
+"use strict";
 
-Two = require('two.js');
-Snap = require('snapsvg');
+let Two = require('two.js');
+let Snap = require('snapsvg');
 
-BatterBox = require('batterbox');
-BowlerBox = require('bowlerbox');
-Score = require('score');
-Textbox = require('textbox');
+let BatterBox = require('batterbox');
+let BowlerBox = require('bowlerbox');
+let Score = require('score');
+let Textbox = require('textbox');
 
 // 1080p, but divided by 2 to be more visible on screen.
 const SCALE = 2;

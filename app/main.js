@@ -1,6 +1,7 @@
 // cricket-scoreboard
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
+"use strict";
 
 /**
  * A cricket scoreboard
@@ -8,13 +9,13 @@
  * @module app
  */
 
-Display = require('display');
-Team = require('team');
-Score = require('score');
+let Display = require('display');
+let Team = require('team');
+let Score = require('score');
 
 console.log('Hello, world!')
 
-team1 = new Team('Pakistan', 'PAK', '#069d32');
+let team1 = new Team('Pakistan', 'PAK', '#069d32');
 team1.batters = {
     'Nauman': {
         runs: 0,
@@ -25,7 +26,7 @@ team1.batters = {
         balls: 0
     },
 };
-team2 = new Team('Sri Lanka', 'SL', '#0c4da1');
+let team2 = new Team('Sri Lanka', 'SL', '#0c4da1');
 team2.batters = {
     'Dhananjaya': {
         runs: 64,
@@ -38,8 +39,8 @@ team2.batters = {
 };
 
 // team2 won the toss and elected to bat
-display = new Display(document.body, team2, team1);
-score = new Score([team1, team2], team2);
+let display = new Display(document.body, team2, team1);
+let score = new Score([team1, team2], team2);
 score.battingOrder = ['Dhananjaya', 'Wellalage'];
 score.bowler = 'Nauman';
 

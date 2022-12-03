@@ -1,6 +1,7 @@
 // cricket-scoreboard
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
+"use strict";
 
 /**
  * A team in a match
