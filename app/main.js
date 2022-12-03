@@ -32,7 +32,9 @@ team2.batters = {
         runs: 64,
         balls: 118,
     },
-    'Wellalage': {
+    'Jayawickrama': {
+        // actually Wellalage in the sample, but use this name since it's
+        // longer and therefore useful for sizing the boxes.
         runs: 14,
         balls: 2,
     },
@@ -41,8 +43,8 @@ team2.batters = {
 // team2 won the toss and elected to bat
 let display = new Display(document.body, team2, team1);
 let score = new Score([team1, team2], team2);
-score.battingOrder = ['Dhananjaya', 'Wellalage'];
-score.bowler = 'Nauman';
+score.battingOrder = ['Dhananjaya', 'Jayawickrama'];
+score.bowler = 'Jayawickrama'; // actually Nauman
 
 for (let i = 0; i < 6; ++i) {
     score.wicket()
