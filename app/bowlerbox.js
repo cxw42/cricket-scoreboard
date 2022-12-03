@@ -13,7 +13,7 @@
  * . . . . . .
  * ```
  *
- * @class BatterBox
+ * @class BowlerBox
  * @constructor
  * @param {Snap} svg SVG surface
  * @param {int} ulx Upper-left X
@@ -29,7 +29,7 @@ class BowlerBox {
     group; // the group of shapes
     outline; // visible outline
     textGroup; // the text on the first line
-    // TODO second line with what's happened this over
+    thisOverGroup;  // shapes on the second line - what happened this over
 
     // Raw data
     currWickets; // bowler's wickets taken
@@ -149,8 +149,23 @@ class BowlerBox {
             // XXX *0 seems to make it look better --- why?
         );
 
+        // Second line - XXX placeholder
+        this.thisOverGroup = svg.g();/*svg.rect(0, -dyTopToBaseline + this.bbox.h/2, this.bbox.w,
+            this.bbox.h/2).attr({
+            fill: '#eee',
+            stroke: 'none',
+        });*/
+        this.group.add(this.thisOverGroup);
+
+        const ballIconHeight = this.bbox.h * 0.4;
+        const ballIconTop = -dyTopToBaseline + this.bbox.h/2 + 0.5 * (this.bbox.h/2 - ballIconHeight);
+        for(let i=0; i<6; ++i) {
+            let rect = svg.circle(i*(ballIconHeight*1.10)+ballIconHeight/2, ballIconTop+ballIconHeight/2, ballIconHeight/2, ballIconHeight/2);
+            rect.attr({fill: '#fff', 'fill-opacity': '35%'});
+            this.thisOverGroup.add(rect);
+        }
+
         // Add the outline now that we have a center
-        // XXX figure out why we need the -1s
         this.outline = svg.rect(0, -dyTopToBaseline, this.bbox.w, this.bbox
             .h).attr({
             fill: 'none',
