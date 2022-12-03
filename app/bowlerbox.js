@@ -52,8 +52,8 @@ class BowlerBox {
         // TODO make parameterizable
         let leftPadding = 10; // units???
         let namePct = 0.5;
-        let scorePct = 0.3; // wkt-run
-        let ballsPct = 0.15;
+        let scorePct = 0.2; // wkt-run
+        let ballsPct = 0.3;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);
@@ -72,15 +72,43 @@ class BowlerBox {
         this.tName = svg.text(0, 0, 'My Name').attr(styles);
         this.textGroup.add(this.tName);
 
-        // Figures and overs
+        // Figures
+        const labelTextSize = '50%'; // empirical
+
         styles['text-align'] = styles['text-anchor'] = 'end';
-        this.tFigures = svg.text(w * (namePct + scorePct), 0, '42').attr(
+        this.tFigures = svg.text(w * (namePct + scorePct), 0,
+            ["W", "1-2", "R"]).attr(
             styles);
+        let kids = this.tFigures.children();
+        kids[0].attr({
+            'font-size': labelTextSize
+        });
+        kids[1].attr({
+            'class': 'bowlingFigures'
+        });
+        kids[2].attr({
+            'font-size': labelTextSize
+        });
         this.textGroup.add(this.tFigures);
 
+        // Overs
         //styles['font-size'] = 'small'; // TODO make parameterizable
         this.tOvers = svg.text(w * (namePct + scorePct + ballsPct),
-            0, '8o4b').attr(styles);
+            0, ["1", "O", "2", "B"]).attr(styles);
+        kids = this.tOvers.children();
+        kids[0].attr({
+            'class': 'bowlingCompletedOvers'
+        });
+        kids[1].attr({
+            'font-size': labelTextSize,
+            'font-weight': 1000
+        });
+        kids[2].attr({
+            'class': 'bowlingBalls'
+        });
+        kids[3].attr({
+            'font-size': labelTextSize
+        });
         this.textGroup.add(this.tOvers);
 
         this.group = svg.g();
@@ -133,8 +161,8 @@ class BowlerBox {
     } // ctor
 
     _updateFigures() {
-        this.tFigures.attr({
-            text: ["w", `${this.currWickets}-${this.currRuns}`, "r"]
+        this.tFigures.select('.bowlingFigures').attr({
+            text: `${this.currWickets}-${this.currRuns}`,
         });
     }
 
@@ -157,9 +185,12 @@ class BowlerBox {
     set balls(value) {
         const completedOvers = Math.floor(value / 6);
         const ballsThisOver = value % 6;
-        this.tOvers.attr({
-            text: `${completedOvers}o${ballsThisOver}b`
-        });
+        this.tOvers.select('.bowlingCompletedOvers').attr({
+            text: completedOvers
+        })
+        this.tOvers.select('.bowlingBalls').attr({
+            text: ballsThisOver
+        })
     }
 
 };
