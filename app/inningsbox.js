@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Utils = require('utils');
+
 require('3rdparty/snap.svg.free_transform');
 
 /**
@@ -45,26 +47,32 @@ class InningsBox {
 
         // Grid params: where to put the components as a percentage of width
         // TODO make parameterizable
-        let leftPadding = 10; // units???
-        let namePct = 0.5;
-        let scorePct = 0.3; // wkt-run
-        let ballsPct = 0.2;
+        let team1Pct = 0.25;
+        let team2Pct = 0.75;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);
         styles.baseline = 'baseline';
 
         this.group = svg.g();
-        //this.group.attr('transform', `translate(${ulx}, ${uly})`);
-        let ft = svg.freeTransform(this.group);
-        ft.attrs.translate.x = ulx;
-        ft.attrs.translate.y = uly;
-        ft.hideHandles();
-        ft.apply();
+        Utils.freeTransformTo(this.group, ulx, uly);
         // Now you can say things like
         //  this.group.freeTransform.attrs.translate.y -= 20;
         //  this.group.freeTransform.apply();
         // to move the box around.
+
+        styles['text-align'] = styles['text-anchor'] = 'middle';
+        styles['baseline'] = styles['alignment-baseline'] = 'top';
+        this.tTeam1 = svg.text(w * team1Pct, 0, ["SLC", "H T"]).attr(
+        styles);
+        this.tTeam1.children()[1].attr({
+            y: this.tTeam1.children()[0].getBBox().height,
+            dx: 0
+        })
+        this.tTeam1.children().map((o) => {
+            o.attr(styles);
+        });
+        this.group.add(this.tTeam1);
 
         if (false) { // XXX
 
