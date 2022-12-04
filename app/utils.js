@@ -32,17 +32,20 @@ function freeTransformTo(el, ulx, uly) {
 
 /**
  * Position a group that contains baseline-aligned text starting at y=0 to
- * start at (ulx, uly).
+ * start (end) at (x, uly).
  *
  * @method positionTextBoxAt
  * @param {Snap object} group The group containing the text
  * @param {Snap object} text The text
- * @param {int} ulx Upper-left X
+ * @param {int} x Upper-left X, or upper-right x if opts.ralign
  * @param {int} uly Upper-left Y
  * @param {int} w Width
  * @param {int} h Height
+ * @param {Object} opts Options:
+ *  - ralign to right-align the text
  */
-function positionGroupAt(group, text, ulx, uly, w, h) {
+function positionGroupAt(group, text, x, uly, w, h, opts = {}) {
+    const ulx = (opts.ralign ? x - w : x);
     const svg = Snap(group.node.ownerSVGElement);
     let ftg = svg.freeTransform(group);
     let ftt = svg.freeTransform(text);

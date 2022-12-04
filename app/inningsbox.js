@@ -34,12 +34,13 @@ class InningsBox {
 
     // text nodes
     // TODO
-    // tName; // bowler's name
-    tTeam1Label;
-    tTeam2Label;
-    tTeam1HomeToss
-    ; // whether team1 is playing at home, and whether team1 won the toss
-    tTeam2HomeToss;
+    // Team 1's abbreviation, plus whether team1 is playing at home, and
+    // whether team1 won the toss.
+    tTeam1;
+    tTeam2; // ditto for team2
+
+    tTeam1Score;
+    tTeam2Score;
 
     makeTeam(svg, x, y, abbr, icons, styles) {
         styles = structuredClone(styles);
@@ -69,6 +70,7 @@ class InningsBox {
         const topPadding = 5; // XXX
         let team1Pct = 0.1;
         let team2Pct = 0.9;
+        let scoreMiddlePct = 0.5;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);
@@ -81,12 +83,41 @@ class InningsBox {
         //  this.group.freeTransform.apply();
         // to move the box around.
 
+        // Team abbrevs and icons
         this.tTeam1 = this.makeTeam(svg, w * team1Pct, topPadding, 'SLC',
             HOME, styles);
         this.group.add(this.tTeam1);
         this.tTeam2 = this.makeTeam(svg, w * team2Pct, topPadding, 'PAK',
             TOSS, styles);
         this.group.add(this.tTeam2);
+
+        // --- Scores ---
+        const labelTextSize = '50%'; // from BowlerBox
+
+        // Batting side
+        this.scoresGroup = svg.g();
+        styles['text-align'] = styles['text-anchor'] = 'end';
+        this.tTeam1Score = svg.text(w * scoreMiddlePct, 0,
+            ["W", "1-2", "R"]).attr(styles);
+        let kids = this.tTeam1Score.children();
+        kids[0].attr({
+            'font-size': labelTextSize
+        });
+        kids[1].attr({
+            'class': 'bowlingFigures'
+        });
+        kids[2].attr({
+            'font-size': labelTextSize
+        });
+        this.scoresGroup.add(this.tTeam1Score);
+        Utils.positionGroupAt(this.scoresGroup, this.tTeam1Score, w * 0.3,
+            topPadding, w * (0.5 - 0.3), h, {
+                ralign: true
+            });
+        this.group.add(this.scoresGroup);
+
+        // Bowling side
+        // TODO
 
         if (false) { // XXX
 
