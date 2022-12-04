@@ -13,6 +13,24 @@ require('3rdparty/snap.svg.free_transform');
  */
 
 /**
+ * Position a snapsvg element and return its freeTransform instance
+ *
+ * @method positionTextBoxAt
+ * @param {Snap object} el The element
+ * @param {int} ulx Upper-left X
+ * @param {int} uly Upper-left Y
+ */
+function freeTransformTo(el, ulx, uly) {
+    const svg = Snap(el.node.ownerSVGElement);
+    let ft = svg.freeTransform(el);
+    ft.attrs.translate.x = ulx;
+    ft.attrs.translate.y = uly;
+    ft.hideHandles();
+    ft.apply();
+    return ft;
+}
+
+/**
  * Position a group that contains baseline-aligned text starting at y=0 to
  * start at (ulx, uly).
  *
@@ -66,5 +84,6 @@ function positionGroupAt(group, text, ulx, uly, w, h) {
 }
 
 module.exports = {
+    freeTransformTo,
     positionGroupAt,
 };
