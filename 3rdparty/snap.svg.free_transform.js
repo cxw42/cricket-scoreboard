@@ -846,7 +846,9 @@ Snap.plugin(function(Snap, Element, Paper, global, Fragment) {
                 ft.updateHandles();
             });
 
-            ft.group.transform( ft.origGlobalMatrix );
+            if(ft.group) {
+                ft.group.transform( ft.origGlobalMatrix );
+            }
 
             return ft;
         };
