@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-let Two = require('two.js');
-let Snap = require('snapsvg');
+const Snap = require('snapsvg');
 
-let BatterBox = require('batterbox');
-let BowlerBox = require('bowlerbox');
-let Score = require('score');
-let Textbox = require('textbox');
+const BatterBox = require('batterbox');
+const BowlerBox = require('bowlerbox');
+//const Score = require('score');
+//const Textbox = require('textbox');
+const InningsBox = require('inningsbox');
 
 // 1080p, but divided by 2 to be more visible on screen.
 const SCALE = 2;
@@ -30,7 +30,7 @@ const GRAPHICS_MARGIN_H = (HEIGHT * 0.05) | 0;
 const BANNER_BOTTOM = HEIGHT - ACTION_MARGIN_H;
 const BANNER_TOP = BANNER_BOTTOM - BANNER_HEIGHT;
 // banner extends to the edges of the screen
-const BANNER_FULL_WIDTH = BANNER_WIDTH + ACTION_MARGIN_W;
+const BANNER_FULL_WIDTH = WIDTH/2;  //BANNER_WIDTH + ACTION_MARGIN_W;
 
 class Display {
     svg = null; // note: brunch doesn't do `#private`
@@ -93,6 +93,13 @@ class Display {
         this.bowler = new BowlerBox(svg, WIDTH - NAME_BOX_WIDTH -
             ACTION_MARGIN_W,
             BANNER_TOP, NAME_BOX_WIDTH, BANNER_HEIGHT, textStyles);
+
+        textStyles.size = '1.2em';
+        this.inningScore = new InningsBox(svg,
+            ACTION_MARGIN_W+NAME_BOX_WIDTH,
+            BANNER_TOP,
+            this.bowler.bbox.ulx - (ACTION_MARGIN_W+NAME_BOX_WIDTH),
+            BANNER_HEIGHT);
         /*
         // Innings score
         this.wkts = new Textbox(WIDTH / 2, HEIGHT - GRAPHICS_MARGIN_H,
