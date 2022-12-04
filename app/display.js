@@ -30,7 +30,7 @@ const GRAPHICS_MARGIN_H = (HEIGHT * 0.05) | 0;
 const BANNER_BOTTOM = HEIGHT - ACTION_MARGIN_H;
 const BANNER_TOP = BANNER_BOTTOM - BANNER_HEIGHT;
 // banner extends to the edges of the screen
-const BANNER_FULL_WIDTH = WIDTH/2;  //BANNER_WIDTH + ACTION_MARGIN_W;
+const BANNER_FULL_WIDTH = WIDTH / 2; //BANNER_WIDTH + ACTION_MARGIN_W;
 
 class Display {
     svg = null; // note: brunch doesn't do `#private`
@@ -96,9 +96,9 @@ class Display {
 
         textStyles.size = '1.2em';
         this.inningScore = new InningsBox(svg,
-            ACTION_MARGIN_W+NAME_BOX_WIDTH,
+            ACTION_MARGIN_W + NAME_BOX_WIDTH,
             BANNER_TOP,
-            this.bowler.bbox.ulx - (ACTION_MARGIN_W+NAME_BOX_WIDTH),
+            this.bowler.bbox.ulx - (ACTION_MARGIN_W + NAME_BOX_WIDTH),
             BANNER_HEIGHT);
         /*
         // Innings score

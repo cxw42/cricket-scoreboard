@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-let Two = require('two.js');
-//let Textbox = require('textbox');
+const Utils = require('utils');
 
 /**
  * The box showing a batter's information
@@ -28,7 +27,7 @@ class BatterBox {
     group; // the group of shapes
     outline; // visible outline
 
-    // Two.Text instances
+    // text nodes
     textGroup;
     tName; // batter's name
     tRuns; // batter's run count
@@ -119,32 +118,11 @@ class BatterBox {
         // this.group.transform('t100,100');   // XXX DEBUG for visibility
 
         // Position the group
-        // Add the group off-screen so we can find out where it is.
-        this.group.attr('transform', 'translate(-1000, -1000)');
-        const where = this.group.getBBox();
-
-        // Get the baseline location.  E.g., top = -1010 means
-        // the top is 10px above the baseline === baseline is 10px below
-        // the top.
-        const dyTopToBaseline = -1000 - where.y;
-
-        // Center textGroup vertically within group
-        const vmargin = this.bbox.h - where.height;
-
-        // Move the group horizontally, left-justified
-        // E.g., where.left = -1010 => move position.x +10 (right)
-        this.textGroup.attr('transform',
-            `translate(${-1000 - where.left}, ${vmargin/2})`);
-
-        this.group.attr('transform',
-            `translate(${this.bbox.ulx}, ${this.bbox.uly + dyTopToBaseline})`
-            // XXX *0 seems to make it look better --- why?
-        );
+        const pos = Utils.positionGroupAt(this.group, this.textGroup,
+            ulx, uly, w, h);
 
         // Add the outline now that we have a center
-        // XXX figure out why we need the -1s
-        this.outline = svg.rect(0, -dyTopToBaseline, this.bbox.w, this.bbox
-            .h).attr({
+        this.outline = svg.rect(pos.xInGroup, pos.yInGroup, w, h).attr({
             fill: 'none',
             stroke: 'none', // '#0ff'
         });

@@ -55,7 +55,16 @@ class InningsBox {
         styles.baseline = 'baseline';
 
         this.group = svg.g();
-        this.group.attr('transform', `translate(${ulx}, ${uly})`);
+        //this.group.attr('transform', `translate(${ulx}, ${uly})`);
+        let ft = svg.freeTransform(this.group);
+        ft.attrs.translate.x = ulx;
+        ft.attrs.translate.y = uly;
+        ft.hideHandles();
+        ft.apply();
+        // Now you can say things like
+        //  this.group.freeTransform.attrs.translate.y -= 20;
+        //  this.group.freeTransform.apply();
+        // to move the box around.
 
         if (false) { // XXX
 

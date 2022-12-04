@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-//let Textbox = require('textbox');
+const Utils = require('utils');
 
 /**
  * The box showing a bowler's information.
@@ -126,40 +126,15 @@ class BowlerBox {
 
         // Position the group.  TODO refactor this code, common with BatterBox,
         // to a single place.
-
-        // Add the group off-screen so we can find out where it is.
-        this.group.attr('transform', 'translate(-1000, -1000)');
-        const where = this.group.getBBox();
-
-        // Get the baseline location.  E.g., top = -1010 means
-        // the top is 10px above the baseline === baseline is 10px below
-        // the top.
-        const dyTopToBaseline = -1000 - where.y;
-
-        // Center textGroup vertically within group
-        const vmargin = this.bbox.h - where.height;
-
-        // Move the group horizontally, left-justified
-        // E.g., where.left = -1010 => move position.x +10 (right)
-        this.textGroup.attr('transform',
-            `translate(${-1000 - where.left}, ${vmargin/2})`);
-
-        this.group.attr('transform',
-            `translate(${this.bbox.ulx}, ${this.bbox.uly + dyTopToBaseline})`
-            // XXX *0 seems to make it look better --- why?
-        );
+        const pos = Utils.positionGroupAt(this.group, this.textGroup,
+            ulx, uly, w, h);
 
         // Second line - XXX placeholder
         this.thisOverGroup = svg.g();
-        /*svg.rect(0, -dyTopToBaseline + this.bbox.h/2, this.bbox.w,
-                    this.bbox.h/2).attr({
-                    fill: '#eee',
-                    stroke: 'none',
-                });*/
         this.group.add(this.thisOverGroup);
 
         const ballIconHeight = this.bbox.h * 0.4;
-        const ballIconTop = -dyTopToBaseline + this.bbox.h / 2 + 0.5 * (this
+        const ballIconTop = pos.yInGroup + this.bbox.h / 2 + 0.5 * (this
             .bbox.h / 2 - ballIconHeight);
         for (let i = 0; i < 6; ++i) {
             let rect = svg.circle(i * (ballIconHeight * 1.10) +
@@ -174,8 +149,7 @@ class BowlerBox {
 
         /*
         // Add the outline now that we have a center
-        this.outline = svg.rect(0, -dyTopToBaseline, this.bbox.w, this.bbox
-            .h).attr({
+        this.outline = svg.rect(pos.xInGroup, pos.yInGroup, w, h).attr({
             fill: 'none',
             stroke: '#0ff'
         });
