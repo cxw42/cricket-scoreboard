@@ -3,17 +3,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-//let Textbox = require('textbox');
-
 /**
- * The box showing a bowler's information.
+ * The box showing the innings, toss, and team scores
  *
- * ```
- * Name         W${w}-${r}R   ${o}o${b}b
- * . . . . . .
- * ```
- *
- * @class BowlerBox
+ * @class InningsBox
  * @constructor
  * @param {Snap} svg SVG surface
  * @param {int} ulx Upper-left X
@@ -22,25 +15,24 @@
  * @param {int} h Height
  * @param {Object} styles Text styles
  */
-class BowlerBox {
+class InningsBox {
     // User-specified bounding-box coordinates
     bbox = {};
 
     group; // the group of shapes
     outline; // visible outline
-    textGroup; // the text on the first line
-    thisOverGroup;  // shapes on the second line - what happened this over
+    textGroup; // Text boxes
 
     // Raw data
-    currWickets; // bowler's wickets taken
-    currRuns; // bowler's runs allowed
-    currBalls; // legal deliveries
+    // TODO
 
-    // Two.Text instances
-    tName; // bowler's name
-    tFigures; // wkts-runs
-    tOvers; // bowler's ball count (legal deliveries)
-    //ballsLabel; // "B" label for balls
+    // text nodes
+    // TODO
+    // tName; // bowler's name
+    tTeam1Label;
+    tTeam2Label;
+    tTeam1HomeToss; // whether team1 is playing at home, and whether team1 won the toss
+    tTeam2HomeToss;
 
     constructor(svg, ulx, uly, w, h, styles = {}) {
         this.bbox.ulx = ulx;
@@ -212,4 +204,4 @@ class BowlerBox {
 
 };
 
-module.exports = BowlerBox;
+module.exports = InningsBox;
