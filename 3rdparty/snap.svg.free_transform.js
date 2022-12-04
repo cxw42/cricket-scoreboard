@@ -1,5 +1,7 @@
 'use strict';
 
+const Snap = require('snapsvg');
+
 SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(elem) {
         return elem.getScreenCTM().inverse().multiply(this.getScreenCTM());
     };
@@ -21,15 +23,15 @@ Snap.plugin(function(Snap, Element, Paper, global, Fragment) {
 
     // Get a cursor point accounting for the screen matrix conversion, eg zoomed in scrolled etc
     Element.prototype.getCursorPoint = function( x, y ) {
-        var pt = this.paper.node.createSVGPoint();      
+        var pt = this.paper.node.createSVGPoint();
         pt.x = x; pt.y = y;
-        return pt.matrixTransform( this.paper.node.getScreenCTM().inverse()); 
+        return pt.matrixTransform( this.paper.node.getScreenCTM().inverse());
     }
 
     // This is for dragging, pass in the element with the transform, eg a rotate dragger/handlers
     // Get a new x,y for the cursor, then subtract from the original point accounting also for its matrix
     // Hmm I feel like this could be simplified! Check through globalToLocal and see if some is redundant
-    // Superceded, but leaving in case of use 
+    // Superceded, but leaving in case of use
 //    Element.prototype.getTransformedDx = function( el, ox, oy, x, y ) {
 //        var cursorPoint = this.getCursorPoint( x, y );
 //        var pt = this.paper.node.createSVGPoint();
@@ -137,7 +139,7 @@ Snap.plugin(function(Snap, Element, Paper, global, Fragment) {
                 axisLineClass: 'ftaxisline',
                 bboxClass: 'ftbbox',
                 centerDiscClass: 'ftcenterdisc',
-                centerCircleClass: 'ftcentercircle', 
+                centerCircleClass: 'ftcentercircle',
                 distance: 1.2,
                 discDistance: 45,
                 discClass: 'ftdisc',
