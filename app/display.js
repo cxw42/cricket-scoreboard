@@ -99,7 +99,7 @@ class Display {
             ACTION_MARGIN_W + NAME_BOX_WIDTH,
             BANNER_TOP,
             this.bowler.bbox.ulx - (ACTION_MARGIN_W + NAME_BOX_WIDTH),
-            BANNER_HEIGHT);
+            BANNER_HEIGHT, textStyles);
         /*
         // Innings score
         this.wkts = new Textbox(WIDTH / 2, HEIGHT - GRAPHICS_MARGIN_H,

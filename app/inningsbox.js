@@ -4,6 +4,8 @@
 "use strict";
 
 const Utils = require('utils');
+const HOME = String.fromCodePoint(0x1f3e0); // or U+2302
+const TOSS = String.fromCodePoint(0x1fa99);
 
 require('3rdparty/snap.svg.free_transform');
 
@@ -39,6 +41,23 @@ class InningsBox {
     ; // whether team1 is playing at home, and whether team1 won the toss
     tTeam2HomeToss;
 
+    makeTeam(svg, x, y, abbr, icons, styles) {
+        styles = structuredClone(styles);
+        styles['text-align'] = styles['text-anchor'] = 'middle';
+        styles['baseline'] = styles['alignment-baseline'] = 'top';
+        styles['dominant-baseline'] = 'hanging';
+        styles['weight'] = 1000;
+        let t = svg.text(x, y, [abbr, icons]).attr(styles);
+        t.children()[1].attr({
+            y: y + t.children()[0].getBBox().height,
+            x,
+            'font-style': 'normal',
+            'font-size': '0.75em',
+        })
+
+        return t;
+    }
+
     constructor(svg, ulx, uly, w, h, styles = {}) {
         this.bbox.ulx = ulx;
         this.bbox.uly = uly;
@@ -47,8 +66,9 @@ class InningsBox {
 
         // Grid params: where to put the components as a percentage of width
         // TODO make parameterizable
-        let team1Pct = 0.25;
-        let team2Pct = 0.75;
+        const topPadding = 5; // XXX
+        let team1Pct = 0.1;
+        let team2Pct = 0.9;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);
@@ -61,18 +81,12 @@ class InningsBox {
         //  this.group.freeTransform.apply();
         // to move the box around.
 
-        styles['text-align'] = styles['text-anchor'] = 'middle';
-        styles['baseline'] = styles['alignment-baseline'] = 'top';
-        this.tTeam1 = svg.text(w * team1Pct, 0, ["SLC", "H T"]).attr(
-        styles);
-        this.tTeam1.children()[1].attr({
-            y: this.tTeam1.children()[0].getBBox().height,
-            dx: 0
-        })
-        this.tTeam1.children().map((o) => {
-            o.attr(styles);
-        });
+        this.tTeam1 = this.makeTeam(svg, w * team1Pct, topPadding, 'SLC',
+            HOME, styles);
         this.group.add(this.tTeam1);
+        this.tTeam2 = this.makeTeam(svg, w * team2Pct, topPadding, 'PAK',
+            TOSS, styles);
+        this.group.add(this.tTeam2);
 
         if (false) { // XXX
 
@@ -191,6 +205,7 @@ class InningsBox {
 
         } // XXX
 
+        /*
         // Add the outline now that we have a center
         this.outline = svg.rect(0, 0,
             //0, -dyTopToBaseline,
@@ -199,6 +214,7 @@ class InningsBox {
             stroke: '#0dd'
         });
         this.group.add(this.outline);
+        */
 
     } // ctor
 
