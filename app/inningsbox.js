@@ -97,23 +97,30 @@ class InningsBox {
         // Batting side
         this.scoresGroup = svg.g();
         styles['text-align'] = styles['text-anchor'] = 'end';
-        this.tTeam1Score = svg.text(w * scoreMiddlePct, 0,
+        styles['baseline'] = styles['alignment-baseline'] = 'top';
+        //styles['dominant-baseline'] = 'hanging';
+        this.tTeam1Score = svg.text(0, topPadding,
             ["W", "1-2", "R"]).attr(styles);
         let kids = this.tTeam1Score.children();
         kids[0].attr({
             'font-size': labelTextSize
         });
         kids[1].attr({
-            'class': 'bowlingFigures'
+            'class': 'inningsFigures'
         });
         kids[2].attr({
             'font-size': labelTextSize
         });
         this.scoresGroup.add(this.tTeam1Score);
+        Utils.freeTransformTo(this.scoresGroup, w * 0.5, 10); // XXX
+        /*
         Utils.positionGroupAt(this.scoresGroup, this.tTeam1Score, w * 0.3,
             topPadding, w * (0.5 - 0.3), h, {
                 ralign: true
             });
+        */
+        //this.scoresGroup.add(svg.rect(0, 0, w, h));
+
         this.group.add(this.scoresGroup);
 
         // Bowling side
