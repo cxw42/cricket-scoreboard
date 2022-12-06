@@ -3,17 +3,21 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-let Two = require('two.js');
+const Snap = require('snapsvg');
+const Utils = require('utils');
+require('3rdparty/snap.svg.free_transform');
 
 /**
- * A text box anchored at one corner
+ * A text box anchored at a point
  *
  * @class Textbox
  * @constructor
- * @param {int} x Corner X
- * @param {int} y Corner Y
+ * @param {Snap} svg The SVG
+ * @param {int} x Reference X
+ * @param {int} y Reference Y
  * @param {int} w Width
  * @param {int} h Height
+ * @param {String|Array[String]} text Text per Snap.text()
  * @param {String} corner Which corner `x` and `y` relate to.
  *                        Must be `[TMB][LCR]`.
  * @param {Object} styles Styles per [Two.Text](https://two.js.org/docs/text/),
@@ -29,7 +33,7 @@ class Textbox {
     outline; // visible outline
     text; // Two.Text instance
 
-    constructor(x, y, w, h, corner = 'tl', styles = {}) {
+    constructor(svg, x, y, w, h, text, corner = 'tl', styles = {}) {
         // Clone the styles since we are going to change params
         let bgFill = styles['bgFill'] || 'none';
         styles = structuredClone(styles);
@@ -37,41 +41,55 @@ class Textbox {
 
         corner = corner.toLowerCase();
 
+        let ulx, uly;
         if (corner.includes('t')) {
-            this.twoY = y + h / 2;
+            uly = y;
         } else if (corner.includes('m')) {
-            this.twoY = y;
+            uly = y - h / 2;
         } else if (corner.includes('b')) {
-            this.twoY = y - h / 2;
+            uly = y - h;
         } else {
             throw "corner must specify t, m, or b";
         }
 
+        // TODO handle right-justification
         if (corner.includes('l')) {
-            this.twoX = x + w / 2;
+            ulx = x;
             styles.alignment = 'left';
         } else if (corner.includes('c')) {
-            this.twoX = x;
+            ulx = x - w / 2;
             styles.alignment = 'center';
         } else if (corner.includes('r')) {
-            this.twoX = x - w / 2;
+            ulx = x - w;
             styles.alignment = 'right';
         } else {
             throw "corner must specify l, c, or r";
         }
 
-        this.text = new Two.Text('', this.twoX, this.twoY, styles);
-        this.outline = new Two.Rectangle(this.twoX, this.twoY, w, h);
-        this.outline.fill = bgFill;
-        this.group = new Two.Group(this.outline, this.text);
+        styles.baseline = 'baseline';
+        styles['text-align'] = styles['text-anchor'] = 'start';
+        this.text = svg.text(0, 0, text).attr(styles);
+        this.group = svg.g();
+        this.group.add(this.text);
+
+        // TODO permit updating the styles before calling positionGroupAt()
+        const pos = Utils.positionGroupAt(this.group, this.text, ulx, uly,
+            w, h);
+        this.outline = svg.rect(pos.xInGroup, pos.yInGroup, w, h).attr({
+            fill: bgFill,
+            stroke: '#0ff'
+        });
+        this.group.add(this.outline);
     }
 
-    addTo(two) {
-        this.group.addTo(two)
+    addTo(el) {
+        el.add(this.group);
     }
 
     setValue(value) {
-        this.text.value = value;
+        this.text.attr({
+            text: value
+        });
     }
 
 };
