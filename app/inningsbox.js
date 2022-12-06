@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Textbox = require('textbox');
 const Utils = require('utils');
 const HOME = String.fromCodePoint(0x1f3e0); // or U+2302
 const TOSS = String.fromCodePoint(0x1fa99);
@@ -92,27 +93,37 @@ class InningsBox {
         this.group.add(this.tTeam2);
 
         // --- Scores ---
-        const labelTextSize = '50%'; // from BowlerBox
+        const labelTextSize = '75%'; // from BowlerBox
+        const scoreTextSize = 'x-large';
 
         // Batting side
         this.scoresGroup = svg.g();
+        this.tTeam1Score = new Textbox(svg, w * 0.5, topPadding, w * 0.3, h,
+            ["W", "1-2", "R"], 'tr', styles);
+        this.tTeam1Score.addTo(this.scoresGroup);
+        /*
         styles['text-align'] = styles['text-anchor'] = 'end';
         styles['baseline'] = styles['alignment-baseline'] = 'top';
         //styles['dominant-baseline'] = 'hanging';
         this.tTeam1Score = svg.text(0, topPadding,
             ["W", "1-2", "R"]).attr(styles);
-        let kids = this.tTeam1Score.children();
+        */
+        let kids = this.tTeam1Score.text.children();
+
         kids[0].attr({
-            'font-size': labelTextSize
+            'font-size': labelTextSize,
         });
         kids[1].attr({
-            'class': 'inningsFigures'
+            'class': 'inningsFigures',
+            'font-size': scoreTextSize,
         });
         kids[2].attr({
-            'font-size': labelTextSize
+            'font-size': labelTextSize,
         });
+        /*
         this.scoresGroup.add(this.tTeam1Score);
         Utils.freeTransformTo(this.scoresGroup, w * 0.5, 10); // XXX
+        */
         /*
         Utils.positionGroupAt(this.scoresGroup, this.tTeam1Score, w * 0.3,
             topPadding, w * (0.5 - 0.3), h, {
