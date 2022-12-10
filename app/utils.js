@@ -13,9 +13,21 @@ require('3rdparty/snap.svg.free_transform');
  */
 
 /**
+ * Extend an object with additional properties
+ *
+ * @method extend
+ * @param {object} source An object to clone
+ * @param {object} extras Extra properties to add
+ * @return A new object
+ */
+function extend(source, extras) {
+    return Object.assign(structuredClone(source), extras);
+}
+
+/**
  * Position a snapsvg element and return its freeTransform instance
  *
- * @method positionTextBoxAt
+ * @method freeTransformTo
  * @param {Snap object} el The element
  * @param {int} ulx Upper-left X
  * @param {int} uly Upper-left Y
@@ -34,7 +46,7 @@ function freeTransformTo(el, ulx, uly) {
  * Position a group that contains baseline-aligned text starting at y=0 to
  * start (end) at (x, uly).
  *
- * @method positionTextBoxAt
+ * @method positionGroupAt
  * @param {Snap object} group The group containing the text
  * @param {Snap object} text The text
  * @param {int} x Upper-left X, or upper-right x if opts.ralign
@@ -87,6 +99,7 @@ function positionGroupAt(group, text, x, uly, w, h, opts = {}) {
 }
 
 module.exports = {
+    extend,
     freeTransformTo,
     positionGroupAt,
 };
