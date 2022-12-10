@@ -98,24 +98,23 @@ class Textbox {
         for (let i = 0; i < textAndStyles.length; ++i) {
             kids[i].attr(textAndStyles[i].styles);
         }
+
+
+        // Position the text
+        const where = this.text.getBBox();
         let ftt = svg.freeTransform(this.text);
         ftt.hideHandles();
-        ftt.attrs.translate.x = x - ulx;
-
-        // Position the text vertically
-        const where = this.text.getBBox();
+        ftt.attrs.translate.x = x - ulx - where.width;  // XXX why -where.width?
         ftt.attrs.translate.y = -where.y; // shift baseline down
-        console.log({
-            where
-        });
-
         ftt.apply();
+
         this.group.add(this.text);
 
-        this.outline = svg.rect(0, 0, /*pos.xInGroup, pos.yInGroup,*/ w, h)
+        // Outline
+        this.outline = svg.rect(0, 0, w, h)
             .attr({
                 fill: 'none', // XXX bgFill,
-                stroke: '#0ff'
+                stroke: 'none', //'#0ff'
             });
         this.group.add(this.outline);
 
