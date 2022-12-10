@@ -86,8 +86,10 @@ class InningsBox {
 
         // Team abbrevs and icons
         this.tTeam1 = this.makeTeam(svg, w * team1Pct, topPadding, 'SLC',
-            HOME, Utils.extend(styles, {fill: '#fff'}) // XXX
-            );
+            HOME, Utils.extend(styles, {
+                fill: '#fff'
+            }) // XXX
+        );
         this.group.add(this.tTeam1);
         this.tTeam2 = this.makeTeam(svg, w * team2Pct, topPadding, 'PAK',
             TOSS, styles);
@@ -99,7 +101,7 @@ class InningsBox {
 
         // Batting side
         this.scoresGroup = svg.g();
-        styles.fill = '#fff';   // XXX
+        styles.fill = '#fff'; // XXX
         // TODO text padding
         this.tTeam1Score = new Textbox(svg, w * 0.5 - topPadding // XXX
             , 0, w * 0.3, h, 'tr',
@@ -125,13 +127,15 @@ class InningsBox {
             ]);
         this.tTeam1Score.addTo(this.scoresGroup);
 
-        styles.fill = '#000';   // XXX
-        this.tTeam2Score = new Textbox(svg, w*0.5+45    // XXX
-            , 0, w*0.3, h, 'tl', [{text: '123', styles: Utils.extend(styles, {
-                        'class': 'inningsFigures',
-                        'font-size': scoreTextSize,
-                    })
-                }]);
+        styles.fill = '#000'; // XXX
+        this.tTeam2Score = new Textbox(svg, w * 0.5 + 45 // XXX
+            , 0, w * 0.3, h, 'tl', [{
+                text: '123',
+                styles: Utils.extend(styles, {
+                    'class': 'inningsFigures',
+                    'font-size': scoreTextSize,
+                })
+            }]);
         this.tTeam2Score.addTo(this.scoresGroup);
 
 

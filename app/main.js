@@ -38,6 +38,7 @@ team2.batters = {
     },
 };
 
+/*
 // team2 won the toss and elected to bat
 let display = new Display(document.body, team2, team1);
 let score = new Score([team1, team2], team2);
@@ -59,4 +60,27 @@ module.exports = {
     score,
     team1,
     team2
+};
+*/
+
+const Snap = require('snapsvg');
+const Textbox = require('textbox');
+
+let svg = Snap();
+svg.rect(0, 0, 100, 100).attr({
+    stroke: 'none',
+    fill: '#ffc'
+});
+svg.circle(50, 50, 2);
+
+let texts = {};
+for (const corner of ['tl', 'ml', 'bl', 'tc', 'mc', 'bc', 'tr', 'mr', 'br']) {
+    texts[corner] = new Textbox(svg, 50, 50, 50, 50, corner, [{
+        text: corner
+    }]);
+}
+
+module.exports = {
+    svg,
+    texts,
 };

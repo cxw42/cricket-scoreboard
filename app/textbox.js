@@ -89,14 +89,16 @@ class Textbox {
         ftg.apply();
 
         // Create the text and position it horizontally
-        localStyles['text-align'] = localStyles['text-anchor'] = localStyles
-            .alignment;
+        localStyles['text-align'] = localStyles['text-anchor'] =
+            localStyles.alignment;
         this.text = svg.text(0, 0,
             textAndStyles.map((o) => Utils.extend(o.text, localStyles))
         );
         const kids = this.text.children();
         for (let i = 0; i < textAndStyles.length; ++i) {
-            kids[i].attr(textAndStyles[i].styles);
+            kids[i].attr(
+                Utils.extend(textAndStyles[i].styles || {}, localStyles)
+            );
         }
 
 
@@ -104,8 +106,18 @@ class Textbox {
         const where = this.text.getBBox();
         let ftt = svg.freeTransform(this.text);
         ftt.hideHandles();
-        ftt.attrs.translate.x = x - ulx - where.width;  // XXX why -where.width?
-        ftt.attrs.translate.y = -where.y; // shift baseline down
+        ftt.attrs.translate.x = x - ulx;
+
+        let translateY;
+        if (corner.includes('t')) {
+            translateY = -where.y; // shift baseline down
+        } else if (corner.includes('m')) {
+            translateY = h / 2 - where.cy;
+        } else if (corner.includes('b')) {
+            translateY = h - where.y2;
+        }
+
+        ftt.attrs.translate.y = translateY;
         ftt.apply();
 
         this.group.add(this.text);
@@ -114,7 +126,7 @@ class Textbox {
         this.outline = svg.rect(0, 0, w, h)
             .attr({
                 fill: 'none', // XXX bgFill,
-                stroke: 'none', //'#0ff'
+                stroke: '#0ff'
             });
         this.group.add(this.outline);
 
