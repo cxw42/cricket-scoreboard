@@ -126,7 +126,7 @@ class Textbox {
         this.outline = svg.rect(0, 0, w, h)
             .attr({
                 fill: 'none', // XXX bgFill,
-                stroke: '#0ff'
+                stroke: 'none', // XXX '#0ff'
             });
         this.group.add(this.outline);
 

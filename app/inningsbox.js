@@ -128,14 +128,22 @@ class InningsBox {
         this.tTeam1Score.addTo(this.scoresGroup);
 
         styles.fill = '#000'; // XXX
-        this.tTeam2Score = new Textbox(svg, w * 0.5 + 45 // XXX
-            , 0, w * 0.3, h, 'tl', [{
-                text: '123',
-                styles: Utils.extend(styles, {
-                    'class': 'inningsFigures',
-                    'font-size': scoreTextSize,
-                })
-            }]);
+        this.tTeam2Score = new Textbox(svg, w * 0.5 + topPadding // XXX
+            , 0, w * 0.3, h, 'tl', [
+                {
+                    text: "123",
+                    styles: Utils.extend(styles, {
+                        'class': 'inningsFigures',
+                        'font-size': scoreTextSize,
+                    })
+                },
+                {
+                    text: "R",
+                    styles: Utils.extend(styles, {
+                        'font-size': labelTextSize,
+                    })
+                },
+            ]);
         this.tTeam2Score.addTo(this.scoresGroup);
 
 

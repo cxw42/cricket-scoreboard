@@ -38,7 +38,6 @@ team2.batters = {
     },
 };
 
-/*
 // team2 won the toss and elected to bat
 let display = new Display(document.body, team2, team1);
 let score = new Score([team1, team2], team2);
@@ -61,8 +60,9 @@ module.exports = {
     team1,
     team2
 };
-*/
 
+/*************************************************************************
+ * Test of Textbox corner options
 const Snap = require('snapsvg');
 const Textbox = require('textbox');
 
@@ -84,3 +84,4 @@ module.exports = {
     svg,
     texts,
 };
+*************************************************************************/
