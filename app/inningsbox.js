@@ -98,8 +98,29 @@ class InningsBox {
 
         // Batting side
         this.scoresGroup = svg.g();
-        this.tTeam1Score = new Textbox(svg, w * 0.5, topPadding, w * 0.3, h,
-            ["W", "1-2", "R"], 'tr', styles);
+        // TODO text padding
+        this.tTeam1Score = new Textbox(svg, w * 0.5, 0, w * 0.3, h, 'tr',
+            [
+                {
+                    text: "W",
+                    styles: Utils.extend(styles, {
+                        'font-size': labelTextSize,
+                    })
+                },
+                {
+                    text: "1-2",
+                    styles: Utils.extend(styles, {
+                        'class': 'inningsFigures',
+                        'font-size': scoreTextSize,
+                    })
+                },
+                {
+                    text: "R",
+                    styles: Utils.extend(styles, {
+                        'font-size': labelTextSize,
+                    })
+                },
+            ]);
         this.tTeam1Score.addTo(this.scoresGroup);
         /*
         styles['text-align'] = styles['text-anchor'] = 'end';
@@ -110,16 +131,9 @@ class InningsBox {
         */
         let kids = this.tTeam1Score.text.children();
 
-        kids[0].attr({
-            'font-size': labelTextSize,
-        });
-        kids[1].attr({
-            'class': 'inningsFigures',
-            'font-size': scoreTextSize,
-        });
-        kids[2].attr({
-            'font-size': labelTextSize,
-        });
+        kids[0].attr();
+        kids[1].attr();
+        kids[2].attr();
         /*
         this.scoresGroup.add(this.tTeam1Score);
         Utils.freeTransformTo(this.scoresGroup, w * 0.5, 10); // XXX
