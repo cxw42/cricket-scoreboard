@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
 
@@ -103,12 +104,14 @@ class QuickView {
                 teamRowCounts[1] * rowHeight
             ),
         ];
-        backgrounds[0].attr({
-            fill: this.battingTeams[0].color,
-        });
-        backgrounds[1].attr({
-            fill: this.battingTeams[1].color,
-        });
+        for (const [i, team] of this.battingTeams.entries()) {
+            const lighter = this.battingTeams[i].color;
+            const darker = D3Color.color(lighter).darker(0.5);
+            const gradient = svg.gradient(`l(0,0,0,1)${lighter}-${darker}`);
+            backgrounds[i].attr({
+                fill: gradient,
+            });
+        }
         this.group.add(backgrounds);
 
         this.teamGroups = [];
