@@ -129,8 +129,7 @@ class InningsBox {
 
         styles.fill = '#000'; // XXX
         this.tTeam2Score = new Textbox(svg, w * 0.5 + topPadding // XXX
-            , 0, w * 0.3, h, 'tl', [
-                {
+            , 0, w * 0.3, h, 'tl', [{
                     text: "123",
                     styles: Utils.extend(styles, {
                         'class': 'inningsFigures',

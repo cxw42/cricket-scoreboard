@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+// Which layout we are trying
+const TRY = 2;
+
 const Snap = require('snapsvg');
 
 const BatterBox = require('batterbox');
@@ -10,6 +13,7 @@ const BowlerBox = require('bowlerbox');
 //const Score = require('score');
 //const Textbox = require('textbox');
 const InningsBox = require('inningsbox');
+const QuickView = require('quickview');
 
 // 1080p, but divided by 2 to be more visible on screen.
 const SCALE = 2;
@@ -54,93 +58,76 @@ class Display {
         // Background image
         this._bg = svg.image('/slc-sample.png', 0, 0, '100%', '100%')
 
-        // Color backgrounds
-        this._team1Banner = svg.rect(0, BANNER_TOP, BANNER_FULL_WIDTH,
-            BANNER_HEIGHT);
-        this._team1Banner.attr({
-            fill: team1.color,
-            stroke: 'none',
-        });
+        if (TRY == 1) {
+            // Color backgrounds
+            this._team1Banner = svg.rect(0, BANNER_TOP, BANNER_FULL_WIDTH,
+                BANNER_HEIGHT);
+            this._team1Banner.attr({
+                fill: team1.color,
+                stroke: 'none',
+            });
 
-        this._team2Banner = svg.rect(WIDTH - BANNER_FULL_WIDTH, BANNER_TOP,
-            BANNER_FULL_WIDTH, BANNER_HEIGHT);
-        this._team2Banner.attr({
-            fill: team2.color,
-            stroke: 'none',
-        });
+            this._team2Banner = svg.rect(WIDTH - BANNER_FULL_WIDTH,
+                BANNER_TOP,
+                BANNER_FULL_WIDTH, BANNER_HEIGHT);
+            this._team2Banner.attr({
+                fill: team2.color,
+                stroke: 'none',
+            });
 
-        // Players' names
-        let textStyles = {
-            'font-family': "'Atkinson Hyperlegible', Rubik, sans-serif",
-            'font-style': 'oblique',
-            weight: 700,
-            size: '0.9em',
-            'letter-spacing': '1', // empirical
-            fill: '#fff', // XXX
-        };
+            // Players' names
+            let textStyles = {
+                'font-family': "'Atkinson Hyperlegible', Rubik, sans-serif",
+                'font-style': 'oblique',
+                weight: 700,
+                size: '0.9em',
+                'letter-spacing': '1', // empirical
+                fill: '#fff', // XXX
+            };
 
-        this.batterOnStrike = new BatterBox(svg,
-            ACTION_MARGIN_W, BANNER_TOP, NAME_BOX_WIDTH,
-            (BANNER_HEIGHT / 2), textStyles, true // onStrike
-        );
+            this.batterOnStrike = new BatterBox(svg,
+                ACTION_MARGIN_W, BANNER_TOP, NAME_BOX_WIDTH,
+                (BANNER_HEIGHT / 2), textStyles, true // onStrike
+            );
 
-        this.batterNotOnStrike = new BatterBox(svg,
-            ACTION_MARGIN_W, BANNER_TOP + BANNER_HEIGHT / 2,
-            NAME_BOX_WIDTH,
-            BANNER_HEIGHT / 2, textStyles);
+            this.batterNotOnStrike = new BatterBox(svg,
+                ACTION_MARGIN_W, BANNER_TOP + BANNER_HEIGHT / 2,
+                NAME_BOX_WIDTH,
+                BANNER_HEIGHT / 2, textStyles);
 
-        delete textStyles.fill;
-        this.bowler = new BowlerBox(svg, WIDTH - NAME_BOX_WIDTH -
-            ACTION_MARGIN_W,
-            BANNER_TOP, NAME_BOX_WIDTH, BANNER_HEIGHT, textStyles);
+            delete textStyles.fill;
+            this.bowler = new BowlerBox(svg, WIDTH - NAME_BOX_WIDTH -
+                ACTION_MARGIN_W,
+                BANNER_TOP, NAME_BOX_WIDTH, BANNER_HEIGHT, textStyles);
 
-        textStyles.size = '1.2em';
-        this.inningScore = new InningsBox(svg,
-            ACTION_MARGIN_W + NAME_BOX_WIDTH,
-            BANNER_TOP,
-            this.bowler.bbox.ulx - (ACTION_MARGIN_W + NAME_BOX_WIDTH),
-            BANNER_HEIGHT, textStyles);
-        /*
-        // Innings score
-        this.wkts = new Textbox(WIDTH / 2, HEIGHT - GRAPHICS_MARGIN_H,
-            125, BANNER_HEIGHT * 0.65, 'bc', Object.assign({},
-                textStyles, {
-                    weight: 700,
-                    bgFill: '#fff',
-                    size: '1.5em',
-                }));
-        this.wkts.setValue('0-0');
-        this.wkts.addTo(this._two);
-
-        // EBU margins
-        this.actionSafeArea = this._two.makeRectangle(WIDTH / 2, HEIGHT / 2,
-            WIDTH - (2 * ACTION_MARGIN_W), HEIGHT - (2 *
-                ACTION_MARGIN_H));
-        this.actionSafeArea.fill = 'none';
-        this.actionSafeArea.stroke = '#00958e';
-
-        this.graphicsSafeArea = this._two.makeRectangle(WIDTH / 2, HEIGHT /
-            2, WIDTH - (2 * GRAPHICS_MARGIN_W), HEIGHT - (2 *
-                GRAPHICS_MARGIN_H));
-        this.graphicsSafeArea.fill = 'none';
-        this.graphicsSafeArea.stroke = '#a72b30';
-
-        this._two.update();
-        */
-    }
+            textStyles.size = '1.2em';
+            this.inningScore = new InningsBox(svg,
+                ACTION_MARGIN_W + NAME_BOX_WIDTH,
+                BANNER_TOP,
+                this.bowler.bbox.ulx - (ACTION_MARGIN_W +
+                    NAME_BOX_WIDTH),
+                BANNER_HEIGHT, textStyles);
+        } else if (TRY == 2) {
+            this.qv = new QuickView(svg, ACTION_MARGIN_W, BANNER_TOP -
+                BANNER_HEIGHT / 2,
+                team1, team2, team1, team2);
+        }
+    } //ctor
 
     update(score) {
-        //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
-        this.batterOnStrike.name = score.battingOrder[0]; // XXX
-        this.batterOnStrike.runs = 64;
-        this.batterOnStrike.balls = 118;
-        this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
-        this.batterNotOnStrike.runs = 14;
-        this.batterNotOnStrike.balls = 22;
-        this.bowler.name = score.bowler;
-        this.bowler.wickets = 1;
-        this.bowler.runs = 43;
-        this.bowler.balls = 12 * 6 + 2; // 12.2 ov.
+        if (TRY == 1) {
+            //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
+            this.batterOnStrike.name = score.battingOrder[0]; // XXX
+            this.batterOnStrike.runs = 64;
+            this.batterOnStrike.balls = 118;
+            this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
+            this.batterNotOnStrike.runs = 14;
+            this.batterNotOnStrike.balls = 22;
+            this.bowler.name = score.bowler;
+            this.bowler.wickets = 1;
+            this.bowler.runs = 43;
+            this.bowler.balls = 12 * 6 + 2; // 12.2 ov.
+        }
     }
 
 }
