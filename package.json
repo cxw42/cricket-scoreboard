@@ -21,7 +21,8 @@
   "homepage": "https://github.com/cxw42/cricket-scoreboard#readme",
   "dependencies": {
     "snapsvg": "^0.5.1",
-    "two.js": "^0.8.10"
+    "two.js": "^0.8.10",
+    "wcag-contrast": "^3.0.0"
   },
   "devDependencies": {
     "brunch": "^4.0.1",
