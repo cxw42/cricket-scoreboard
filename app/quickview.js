@@ -11,7 +11,9 @@ const TextBox = require("textbox");
 const Utils = require("utils");
 
 const HOME = String.fromCodePoint(0x1f3e0); // or U+2302
-const TOSS = String.fromCodePoint(0x1fa99);
+const TOSS = String.fromCodePoint(0x1fa99); // coin
+const POWERPLAY = String.fromCodePoint(0x24c5); // circled P
+const EMDASH = String.fromCodePoint(0x2014);
 
 // Basic text style
 const textStyles = {
@@ -96,13 +98,8 @@ class QuickView {
 
         // Backgrounds.  TODO include margin
         let backgrounds = [
-            svg.rect(0, 0, w, teamRowCounts[0] * rowHeight),
-            svg.rect(
-                0,
-                teamRowCounts[0] * rowHeight,
-                w,
-                teamRowCounts[1] * rowHeight
-            ),
+            svg.rect(0, 0, w, rowY[teamRowCounts[0]]),
+            svg.rect(0, rowY[teamRowCounts[0]], w, rowY[teamRowCounts[1]]),
         ];
         for (const [i, team] of this.battingTeams.entries()) {
             const lighter = this.battingTeams[i].color;
@@ -183,6 +180,7 @@ class QuickView {
                         text: team.abbrev,
                         styles: Utils.extend(styles, {
                             fill: textColor,
+                            "font-style": "normal",
                         }),
                     },
                 ]
@@ -191,8 +189,10 @@ class QuickView {
 
             if (i == battingTeam) {
                 this.makeBattingScore(svg, g, textColor);
-            } else if (i == 0) {
-                this.showTotalIfAny(svg, g, textColor);
+            } else {
+                // Bowling team: if it's still the first innings, show "---"
+                // for the number of runs.
+                this.showRuns(svg, g, textColor, i == 1 ? EMDASH : "123");
             }
         }
 
@@ -235,52 +235,72 @@ class QuickView {
     }
 
     makeBattingScore(svg, g, textColor) {
-        let score = new TextBox(svg, scoreX, cy, w - scoreX, rowHeight, "ml", [
-            {
-                text: "W",
-                styles: Utils.extend(textStyles, {
-                    fill: textColor,
-                    "font-size": labelTextSize,
-                }),
-            },
-            {
-                text: "0-0",
-                styles: Utils.extend(textStyles, {
-                    fill: textColor,
-                    class: "inningsFigures",
-                }),
-            },
-            {
-                text: "R",
-                styles: Utils.extend(textStyles, {
-                    fill: textColor,
-                    "font-size": labelTextSize,
-                }),
-            },
-        ]);
+        let score = new TextBox(
+            svg,
+            w - margin,
+            cy,
+            w - scoreX,
+            rowHeight,
+            "mr",
+            [
+                {
+                    text: "W",
+                    styles: Utils.extend(textStyles, {
+                        fill: textColor,
+                        "font-size": labelTextSize,
+                    }),
+                },
+                {
+                    text: "9-456",
+                    styles: Utils.extend(textStyles, {
+                        fill: textColor,
+                        class: "inningsFigures",
+                    }),
+                },
+                {
+                    text: "R",
+                    styles: Utils.extend(textStyles, {
+                        fill: textColor,
+                        "font-size": labelTextSize,
+                    }),
+                },
+            ]
+        );
         score.group.attr({
             class: "battingScore",
         });
         score.addTo(g);
     }
 
-    showTotalIfAny(svg, g, textColor) {
-        let score = new TextBox(svg, scoreX, cy, w - scoreX, rowHeight, "ml", [
-            {
-                text: "123",
-                styles: Utils.extend(textStyles, {
-                    fill: textColor,
-                    class: "inningsFigures",
-                }),
-            },
-            {
-                text: "R",
-                styles: Utils.extend(textStyles, {
-                    fill: textColor,
-                    "font-size": labelTextSize,
-                }),
-            },
-        ]);
+    /**
+     * @method showRuns
+     * @param {string} runsStr The runs, as a string.
+     */
+    showRuns(svg, g, textColor, runsStr) {
+        let score = new TextBox(
+            svg,
+            w - margin,
+            cy,
+            w - scoreX,
+            rowHeight,
+            "mr",
+            [
+                {
+                    text: runsStr,
+                    styles: Utils.extend(textStyles, {
+                        fill: textColor,
+                        class: "inningsFigures",
+                    }),
+                },
+                {
+                    text: "R",
+                    styles: Utils.extend(textStyles, {
+                        fill: textColor,
+                        "font-size": labelTextSize,
+                    }),
+                },
+            ]
+        );
         score.group.attr({
             class: "battingScore",
         });
@@ -298,9 +318,18 @@ class QuickView {
             [
                 {
                     // powerplay
-                    text: "P3   ",
+                    text: POWERPLAY,
                     styles: Utils.extend(styles, {
                         "font-size": labelTextSize,
+                        "font-style": "normal",
+                    }),
+                },
+                {
+                    // powerplay number
+                    text: "3   ",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                        "font-style": "normal",
                     }),
                 },
                 {
@@ -320,14 +349,14 @@ class QuickView {
                     styles: Utils.extend(styles, {}),
                 },
                 {
-                    text: "B",
+                    text: "b",
                     styles: Utils.extend(styles, {
                         "font-size": labelTextSize,
                     }),
                 },
                 {
                     // duration of match, for limited-overs matches.  TODO.
-                    text: "/50o",
+                    text: " / 50o",
                     styles: Utils.extend(styles, {
                         "font-size": labelTextSize,
                     }),
