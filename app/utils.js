@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-const Snap = require('snapsvg');
-require('3rdparty/snap.svg.free_transform');
+const Snap = require("snapsvg");
+require("3rdparty/snap.svg.free_transform");
 
 /**
  * Utilities
@@ -57,7 +57,7 @@ function freeTransformTo(el, ulx, uly) {
  *  - ralign to right-align the text
  */
 function positionGroupAt(group, text, x, uly, w, h, opts = {}) {
-    const ulx = (opts.ralign ? x - w : x);
+    const ulx = opts.ralign ? x - w : x;
     const svg = Snap(group.node.ownerSVGElement);
     let ftg = svg.freeTransform(group);
     let ftt = svg.freeTransform(text);

@@ -9,30 +9,30 @@
  * @module app
  */
 
-let Display = require('display');
-let Team = require('team');
-let Score = require('score');
+let Display = require("display");
+let Team = require("team");
+let Score = require("score");
 
-console.log('Hello, world!')
+console.log("Hello, world!");
 
-let team1 = new Team('Pakistan', 'PAK', '#069d32');
+let team1 = new Team("Pakistan", "PAK", "#069d32");
 team1.batters = {
-    'Nauman': {
+    Nauman: {
         runs: 0,
-        balls: 0
+        balls: 0,
     },
-    'Azam': {
+    Azam: {
         runs: 0,
-        balls: 0
+        balls: 0,
     },
 };
-let team2 = new Team('Sri Lanka', 'SL', '#0c4da1');
+let team2 = new Team("Sri Lanka", "SL", "#0c4da1");
 team2.batters = {
-    'Dhananjaya': {
+    Dhananjaya: {
         runs: 64,
         balls: 118,
     },
-    'Wellalage': {
+    Wellalage: {
         runs: 14,
         balls: 2,
     },
@@ -41,11 +41,11 @@ team2.batters = {
 // team2 won the toss and elected to bat
 let display = new Display(document.body, team2, team1);
 let score = new Score([team1, team2], team2);
-score.battingOrder = ['Dhananjaya', 'Wellalage'];
-score.bowler = 'Nauman';
+score.battingOrder = ["Dhananjaya", "Wellalage"];
+score.bowler = "Nauman";
 
 for (let i = 0; i < 6; ++i) {
-    score.wicket()
+    score.wicket();
 }
 score.addRuns(264);
 
@@ -58,7 +58,7 @@ module.exports = {
     display,
     score,
     team1,
-    team2
+    team2,
 };
 
 /*************************************************************************

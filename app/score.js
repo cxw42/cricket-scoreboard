@@ -27,7 +27,7 @@ class Score {
 
     battingOrder = []; // batting order in the current innings --- array of str
 
-    bowler = ''; // bowler's name
+    bowler = ""; // bowler's name
 
     // TODO DLS
 
@@ -35,10 +35,9 @@ class Score {
         this.maxOvers = maxOvers;
         this.battingTeams = teams;
         this.toss = toss;
-        if ((toss !== teams[0]) && (toss !== teams[1])) {
-            throw "Toss must have been won by one of the two teams"
+        if (toss !== teams[0] && toss !== teams[1]) {
+            throw "Toss must have been won by one of the two teams";
         }
-
     }
 
     addRuns(runs) {
@@ -58,6 +57,6 @@ class Score {
         runs = 0;
         overs = 0;
     }
-};
+}
 
 module.exports = Score;

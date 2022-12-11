@@ -22,7 +22,7 @@ class Team {
      *
      * @property abbrev
      */
-    abbrev = 'UNK';
+    abbrev = "UNK";
 
     /**
      * The team's main color.
@@ -63,6 +63,6 @@ class Team {
             this.color = color;
         }
     }
-};
+}
 
 module.exports = Team;

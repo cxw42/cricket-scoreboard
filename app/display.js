@@ -6,14 +6,14 @@
 // Which layout we are trying
 const TRY = 2;
 
-const Snap = require('snapsvg');
+const Snap = require("snapsvg");
 
-const BatterBox = require('batterbox');
-const BowlerBox = require('bowlerbox');
+const BatterBox = require("batterbox");
+const BowlerBox = require("bowlerbox");
 //const Score = require('score');
 //const Textbox = require('textbox');
-const InningsBox = require('inningsbox');
-const QuickView = require('quickview');
+const InningsBox = require("inningsbox");
+const QuickView = require("quickview");
 
 // 1080p, but divided by 2 to be more visible on screen.
 const SCALE = 2;
@@ -28,7 +28,7 @@ const NAME_BOX_WIDTH = BANNER_WIDTH * 0.7;
 // Dimensions from <https://tech.ebu.ch/docs/techreview/trev_280-baker.pdf>
 const ACTION_MARGIN_W = (WIDTH * 0.035) | 0; // action-safe area, 16:9
 const ACTION_MARGIN_H = (HEIGHT * 0.035) | 0;
-const GRAPHICS_MARGIN_W = (WIDTH * 0.10) | 0; // graphics-safe area, 16:9
+const GRAPHICS_MARGIN_W = (WIDTH * 0.1) | 0; // graphics-safe area, 16:9
 const GRAPHICS_MARGIN_H = (HEIGHT * 0.05) | 0;
 
 const BANNER_BOTTOM = HEIGHT - ACTION_MARGIN_H;
@@ -46,71 +46,100 @@ class Display {
         this._team2 = team2;
 
         // Thanks to https://jsfiddle.net/x5qf7bz4/
-        let svg = this.svg = Snap(WIDTH, HEIGHT);
-        document.getElementById('container').appendChild(this.svg.node);
-        this.svg.node.id = 'disp'; // for convenience in debugging
+        let svg = (this.svg = Snap(WIDTH, HEIGHT));
+        document.getElementById("container").appendChild(this.svg.node);
+        this.svg.node.id = "disp"; // for convenience in debugging
 
         // Background
-        svg.rect(0, 0, '100%', '100%').attr({
-            fill: '#ddd'
+        svg.rect(0, 0, "100%", "100%").attr({
+            fill: "#ddd",
         });
 
         // Background image
-        this._bg = svg.image('/slc-sample.png', 0, 0, '100%', '100%')
+        this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
 
         if (TRY == 1) {
             // Color backgrounds
-            this._team1Banner = svg.rect(0, BANNER_TOP, BANNER_FULL_WIDTH,
-                BANNER_HEIGHT);
+            this._team1Banner = svg.rect(
+                0,
+                BANNER_TOP,
+                BANNER_FULL_WIDTH,
+                BANNER_HEIGHT
+            );
             this._team1Banner.attr({
                 fill: team1.color,
-                stroke: 'none',
+                stroke: "none",
             });
 
-            this._team2Banner = svg.rect(WIDTH - BANNER_FULL_WIDTH,
+            this._team2Banner = svg.rect(
+                WIDTH - BANNER_FULL_WIDTH,
                 BANNER_TOP,
-                BANNER_FULL_WIDTH, BANNER_HEIGHT);
+                BANNER_FULL_WIDTH,
+                BANNER_HEIGHT
+            );
             this._team2Banner.attr({
                 fill: team2.color,
-                stroke: 'none',
+                stroke: "none",
             });
 
             // Players' names
             let textStyles = {
-                'font-family': "'Atkinson Hyperlegible', Rubik, sans-serif",
-                'font-style': 'oblique',
+                "font-family": "'Atkinson Hyperlegible', Rubik, sans-serif",
+                "font-style": "oblique",
                 weight: 700,
-                size: '0.9em',
-                'letter-spacing': '1', // empirical
-                fill: '#fff', // XXX
+                size: "0.9em",
+                "letter-spacing": "1", // empirical
+                fill: "#fff", // XXX
             };
 
-            this.batterOnStrike = new BatterBox(svg,
-                ACTION_MARGIN_W, BANNER_TOP, NAME_BOX_WIDTH,
-                (BANNER_HEIGHT / 2), textStyles, true // onStrike
+            this.batterOnStrike = new BatterBox(
+                svg,
+                ACTION_MARGIN_W,
+                BANNER_TOP,
+                NAME_BOX_WIDTH,
+                BANNER_HEIGHT / 2,
+                textStyles,
+                true // onStrike
             );
 
-            this.batterNotOnStrike = new BatterBox(svg,
-                ACTION_MARGIN_W, BANNER_TOP + BANNER_HEIGHT / 2,
+            this.batterNotOnStrike = new BatterBox(
+                svg,
+                ACTION_MARGIN_W,
+                BANNER_TOP + BANNER_HEIGHT / 2,
                 NAME_BOX_WIDTH,
-                BANNER_HEIGHT / 2, textStyles);
+                BANNER_HEIGHT / 2,
+                textStyles
+            );
 
             delete textStyles.fill;
-            this.bowler = new BowlerBox(svg, WIDTH - NAME_BOX_WIDTH -
-                ACTION_MARGIN_W,
-                BANNER_TOP, NAME_BOX_WIDTH, BANNER_HEIGHT, textStyles);
+            this.bowler = new BowlerBox(
+                svg,
+                WIDTH - NAME_BOX_WIDTH - ACTION_MARGIN_W,
+                BANNER_TOP,
+                NAME_BOX_WIDTH,
+                BANNER_HEIGHT,
+                textStyles
+            );
 
-            textStyles.size = '1.2em';
-            this.inningScore = new InningsBox(svg,
+            textStyles.size = "1.2em";
+            this.inningScore = new InningsBox(
+                svg,
                 ACTION_MARGIN_W + NAME_BOX_WIDTH,
                 BANNER_TOP,
-                this.bowler.bbox.ulx - (ACTION_MARGIN_W +
-                    NAME_BOX_WIDTH),
-                BANNER_HEIGHT, textStyles);
+                this.bowler.bbox.ulx - (ACTION_MARGIN_W + NAME_BOX_WIDTH),
+                BANNER_HEIGHT,
+                textStyles
+            );
         } else if (TRY == 2) {
-            this.qv = new QuickView(svg, ACTION_MARGIN_W, BANNER_TOP -
-                BANNER_HEIGHT / 2,
-                team1, team2, team1, team2);
+            this.qv = new QuickView(
+                svg,
+                ACTION_MARGIN_W,
+                BANNER_TOP - BANNER_HEIGHT / 2,
+                team1,
+                team2,
+                team1,
+                team2
+            );
         }
     } //ctor
 
@@ -129,7 +158,6 @@ class Display {
             this.bowler.balls = 12 * 6 + 2; // 12.2 ov.
         }
     }
-
 }
 
 module.exports = Display;

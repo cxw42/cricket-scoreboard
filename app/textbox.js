@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-const Snap = require('snapsvg');
-const Utils = require('utils');
-require('3rdparty/snap.svg.free_transform');
+const Snap = require("snapsvg");
+const Utils = require("utils");
+require("3rdparty/snap.svg.free_transform");
 
 /**
  * A text box anchored at a point
@@ -34,7 +34,7 @@ class Textbox {
     text; // Two.Text instance
 
     constructor(svg, x, y, w, h, corner, textAndStyles) {
-        if (typeof(textAndStyles) !== typeof([])) {
+        if (typeof textAndStyles !== typeof []) {
             textAndStyles = [textAndStyles];
         }
 
@@ -47,30 +47,30 @@ class Textbox {
 
         // always put the text on the baseline
         let localStyles = {};
-        localStyles.baseline = 'baseline';
+        localStyles.baseline = "baseline";
 
         corner = corner.toLowerCase();
 
         // Get the upper-left corner
         let ulx, uly;
-        if (corner.includes('l')) {
+        if (corner.includes("l")) {
             ulx = x;
-            localStyles.alignment = 'start';
-        } else if (corner.includes('c')) {
+            localStyles.alignment = "start";
+        } else if (corner.includes("c")) {
             ulx = x - w / 2;
-            localStyles.alignment = 'middle';
-        } else if (corner.includes('r')) {
+            localStyles.alignment = "middle";
+        } else if (corner.includes("r")) {
             ulx = x - w;
-            localStyles.alignment = 'end';
+            localStyles.alignment = "end";
         } else {
             throw "corner must specify l, c, or r";
         }
 
-        if (corner.includes('t')) {
+        if (corner.includes("t")) {
             uly = y;
-        } else if (corner.includes('m')) {
+        } else if (corner.includes("m")) {
             uly = y - h / 2;
-        } else if (corner.includes('b')) {
+        } else if (corner.includes("b")) {
             uly = y - h;
         } else {
             throw "corner must specify t, m, or b";
@@ -89,9 +89,11 @@ class Textbox {
         ftg.apply();
 
         // Create the text and position it horizontally
-        localStyles['text-align'] = localStyles['text-anchor'] =
+        localStyles["text-align"] = localStyles["text-anchor"] =
             localStyles.alignment;
-        this.text = svg.text(0, 0,
+        this.text = svg.text(
+            0,
+            0,
             textAndStyles.map((o) => Utils.extend(o.text, localStyles))
         );
         const kids = this.text.children();
@@ -101,7 +103,6 @@ class Textbox {
             );
         }
 
-
         // Position the text
         const where = this.text.getBBox();
         let ftt = svg.freeTransform(this.text);
@@ -109,11 +110,11 @@ class Textbox {
         ftt.attrs.translate.x = x - ulx;
 
         let translateY;
-        if (corner.includes('t')) {
+        if (corner.includes("t")) {
             translateY = -where.y; // shift baseline down
-        } else if (corner.includes('m')) {
+        } else if (corner.includes("m")) {
             translateY = h / 2 - where.cy;
-        } else if (corner.includes('b')) {
+        } else if (corner.includes("b")) {
             translateY = h - where.y2;
         }
 
@@ -123,11 +124,10 @@ class Textbox {
         this.group.add(this.text);
 
         // Outline
-        this.outline = svg.rect(0, 0, w, h)
-            .attr({
-                fill: 'none', // XXX bgFill,
-                stroke: 'none', // XXX '#0ff'
-            });
+        this.outline = svg.rect(0, 0, w, h).attr({
+            fill: "none", // XXX bgFill,
+            stroke: "none", // XXX '#0ff'
+        });
         this.group.add(this.outline);
 
         // Copy the group to `svg`
@@ -141,10 +141,9 @@ class Textbox {
 
     setValue(value) {
         this.text.attr({
-            text: value
+            text: value,
         });
     }
-
-};
+}
 
 module.exports = Textbox;
