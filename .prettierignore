@@ -1,6 +1,11 @@
-#
-# NOTE: if you update this, also update .prettierignore
-#
+# Prettier-specific
+.git
+3rdparty/
+
+# Don't let it format markdown since I like two spaces after a period :)
+*.md
+
+# === Keep everything below here the same as .gitignore =================
 
 # brunch output
 /public/

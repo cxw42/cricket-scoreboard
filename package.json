@@ -7,7 +7,7 @@
     "start": "npx brunch watch -s",
     "doc": "npx yuidoc -o doc -x .git,public .",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "p": "find app -name \\*.js -exec npx js-beautify -r --editorconfig -w 80 {} + ; npx js-beautify -r --editorconfig -w 80 brunch-config.js"
+    "p": "npx prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "brunch": "^4.0.1",
-    "js-beautify": "^1.14.7",
+    "prettier": "^2.8.1",
     "yuidocjs": "^0.10.2"
   }
 }
