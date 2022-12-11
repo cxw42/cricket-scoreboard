@@ -106,8 +106,10 @@ class QuickView {
         ];
         for (const [i, team] of this.battingTeams.entries()) {
             const lighter = this.battingTeams[i].color;
-            const darker = D3Color.color(lighter).darker(0.5);
-            const gradient = svg.gradient(`l(0,0,0,1)${lighter}-${darker}`);
+            const darker = D3Color.color(lighter).darker();
+            const gradient = svg.gradient(
+                `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
+            );
             backgrounds[i].attr({
                 fill: gradient,
             });
@@ -202,6 +204,8 @@ class QuickView {
             Utils.extend(styles, { fill: durationColor })
         );
 
+        /*
+        // Outline around the current team
         this.currentTeamMarker = svg.rect(
             0,
             rowY[activeRowStart],
@@ -213,6 +217,7 @@ class QuickView {
             fill: "none",
         });
         this.group.add(this.currentTeamMarker);
+        */
     } // ctor
 
     /**
