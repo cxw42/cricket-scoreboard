@@ -118,56 +118,21 @@ class QuickView {
             const y = rowY[teamRows[i]];
             const textColor = this.getTextColor(team.color);
 
+            // Group to hold this team's items, except for the background.
             let g = svg.g();
             Utils.freeTransformTo(g, 0, y);
             this.teamGroups.push(g);
             this.group.add(g);
 
-            /*
-            // TODO duration shares a background with the score row
-            let bg = svg.rect(0, 0, w, rowHeight);
-            g.attr({
-                fill: this.battingTeams[i].color,
-            });
-            g.add(bg);
-            */
-
             if (team == home) {
-                let homeIcon = new TextBox(
-                    svg,
-                    homeX,
-                    cy,
-                    rowHeight,
-                    rowHeight,
-                    "ml",
-                    [
-                        {
-                            text: HOME,
-                            styles: iconStyles,
-                        },
-                    ]
-                );
-                homeIcon.addTo(g);
+                this.addIcon(svg, g, homeX, HOME);
             }
 
             if (team == toss) {
-                let tossIcon = new TextBox(
-                    svg,
-                    tossX,
-                    cy,
-                    rowHeight,
-                    rowHeight,
-                    "ml",
-                    [
-                        {
-                            text: TOSS,
-                            styles: iconStyles,
-                        },
-                    ]
-                );
-                tossIcon.addTo(g);
+                this.addIcon(svg, g, tossX, TOSS);
             }
 
+            // Team's name (abbreviated)
             let teamAbbr = new TextBox(
                 svg,
                 nameX,
@@ -180,7 +145,6 @@ class QuickView {
                         text: team.abbrev,
                         styles: Utils.extend(styles, {
                             fill: textColor,
-                            "font-style": "normal",
                         }),
                     },
                 ]
@@ -201,7 +165,10 @@ class QuickView {
             svg,
             this.group,
             durationRow,
-            Utils.extend(styles, { fill: durationColor })
+            Utils.extend(styles, {
+                fill: durationColor,
+                "font-style": "normal",
+            })
         );
 
         /*
@@ -232,6 +199,16 @@ class QuickView {
         } else {
             return "#fff";
         }
+    }
+
+    addIcon(svg, g, x, text) {
+        let icon = new TextBox(svg, x, cy, rowHeight, rowHeight, "ml", [
+            {
+                text,
+                styles: iconStyles,
+            },
+        ]);
+        icon.addTo(g);
     }
 
     makeBattingScore(svg, g, textColor) {
@@ -308,6 +285,32 @@ class QuickView {
     }
 
     makeDuration(svg, g, durationRow, styles) {
+        this.powerplay = new TextBox(
+            svg,
+            margin,
+            rowY[durationRow] + cy,
+            rowHeight,
+            rowHeight,
+            "ml",
+            [
+                {
+                    // powerplay
+                    text: POWERPLAY,
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+                {
+                    // powerplay number
+                    text: "3   ",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+            ]
+        );
+        this.powerplay.addTo(g);
+
         this.duration = new TextBox(
             svg,
             w - margin,
@@ -317,24 +320,8 @@ class QuickView {
             "mr",
             [
                 {
-                    // powerplay
-                    text: POWERPLAY,
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                        "font-style": "normal",
-                    }),
-                },
-                {
-                    // powerplay number
-                    text: "3   ",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                        "font-style": "normal",
-                    }),
-                },
-                {
                     // completed overs
-                    text: "42",
+                    text: "200",
                     styles: Utils.extend(styles, {}),
                 },
                 {
