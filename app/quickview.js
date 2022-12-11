@@ -51,76 +51,69 @@ class QuickView {
     svg = null; // note: brunch doesn't do `#private`
     battingTeams = [];
 
-    constructor(svg, x, y, team1, team2, home, toss) {
+    constructor(svg, x, y, teamBattingFirst, teamBattingSecond, whichTeams) {
+        const { home, toss, battingNow } = whichTeams;
         this.svg = svg;
-        this.battingTeams = [team1, team2];
+        this.battingTeams = [teamBattingFirst, teamBattingSecond];
 
         this.group = svg.g();
         Utils.freeTransformTo(this.group, x, y);
 
+        /*
+        // DEBUG
         this.bg = svg.rect(0, 0, w, rowY[nrows]);
         this.bg.attr({
             stroke: "none",
             fill: "#ddd",
         });
         this.group.add(this.bg);
+        */
 
         let styles = Utils.extend(textStyles, {
             fill: "#000",
         });
 
-        // Current overs
-        this.duration = new TextBox(
-            svg,
-            w - margin,
-            rowY[0] + cy,
-            w,
-            rowHeight,
-            "mr",
-            [
-                {
-                    // powerplay
-                    text: "P3   ",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                    }),
-                },
-                {
-                    // completed overs
-                    text: "42",
-                    styles: Utils.extend(styles, {}),
-                },
-                {
-                    text: "o",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                    }),
-                },
-                {
-                    // balls so far in this over
-                    text: "1",
-                    styles: Utils.extend(styles, {}),
-                },
-                {
-                    text: "B",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                    }),
-                },
-                {
-                    // duration of match, for limited-overs matches.  TODO.
-                    text: "/50o",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                    }),
-                },
-            ]
+        // Where the boxes are
+        let battingTeam, teamRows, durationRow, activeRowStart, teamRowCounts;
+        if (teamBattingFirst === battingNow) {
+            battingTeam = 0;
+            durationRow = 0;
+            activeRowStart = 0;
+            teamRows = [1, 2];
+            teamRowCounts = [2, 1];
+        } else {
+            battingTeam = 1;
+            teamRows = [0, 1];
+            activeRowStart = 1;
+            durationRow = 2;
+            teamRowCounts = [1, 2];
+        }
+
+        const durationColor = this.getTextColor(
+            this.battingTeams[battingTeam].color
         );
-        this.duration.addTo(this.group);
+
+        // Backgrounds.  TODO include margin
+        let backgrounds = [
+            svg.rect(0, 0, w, teamRowCounts[0] * rowHeight),
+            svg.rect(
+                0,
+                teamRowCounts[0] * rowHeight,
+                w,
+                teamRowCounts[1] * rowHeight
+            ),
+        ];
+        backgrounds[0].attr({
+            fill: this.battingTeams[0].color,
+        });
+        backgrounds[1].attr({
+            fill: this.battingTeams[1].color,
+        });
+        this.group.add(backgrounds);
 
         this.teamGroups = [];
         for (const [i, team] of this.battingTeams.entries()) {
-            const y = rowY[i + 1];
+            const y = rowY[teamRows[i]];
             const textColor = this.getTextColor(team.color);
 
             let g = svg.g();
@@ -128,11 +121,14 @@ class QuickView {
             this.teamGroups.push(g);
             this.group.add(g);
 
+            /*
+            // TODO duration shares a background with the score row
             let bg = svg.rect(0, 0, w, rowHeight);
             g.attr({
                 fill: this.battingTeams[i].color,
             });
             g.add(bg);
+            */
 
             if (team == home) {
                 let homeIcon = new TextBox(
@@ -188,12 +184,27 @@ class QuickView {
             );
             teamAbbr.addTo(g);
 
-            if (i == 0) {
+            if (i == battingTeam) {
                 this.makeBattingScore(svg, g, textColor);
+            } else if (i == 0) {
+                this.showTotalIfAny(svg, g, textColor);
             }
         }
 
-        this.currentTeamMarker = svg.rect(0, rowY[1], w, rowHeight);
+        // Current overs
+        this.duration = this.makeDuration(
+            svg,
+            this.group,
+            durationRow,
+            Utils.extend(styles, { fill: durationColor })
+        );
+
+        this.currentTeamMarker = svg.rect(
+            0,
+            rowY[activeRowStart],
+            w,
+            rowHeight * 2
+        );
         this.currentTeamMarker.attr({
             stroke: "#ff0",
             fill: "none",
@@ -245,8 +256,77 @@ class QuickView {
         score.addTo(g);
     }
 
-    nextInnings() {
-        // TODO
+    showTotalIfAny(svg, g, textColor) {
+        let score = new TextBox(svg, scoreX, cy, w - scoreX, rowHeight, "ml", [
+            {
+                text: "123",
+                styles: Utils.extend(textStyles, {
+                    fill: textColor,
+                    class: "inningsFigures",
+                }),
+            },
+            {
+                text: "R",
+                styles: Utils.extend(textStyles, {
+                    fill: textColor,
+                    "font-size": labelTextSize,
+                }),
+            },
+        ]);
+        score.group.attr({
+            class: "battingScore",
+        });
+        score.addTo(g);
+    }
+
+    makeDuration(svg, g, durationRow, styles) {
+        this.duration = new TextBox(
+            svg,
+            w - margin,
+            rowY[durationRow] + cy,
+            w,
+            rowHeight,
+            "mr",
+            [
+                {
+                    // powerplay
+                    text: "P3   ",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+                {
+                    // completed overs
+                    text: "42",
+                    styles: Utils.extend(styles, {}),
+                },
+                {
+                    text: "o",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+                {
+                    // balls so far in this over
+                    text: "1",
+                    styles: Utils.extend(styles, {}),
+                },
+                {
+                    text: "B",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+                {
+                    // duration of match, for limited-overs matches.  TODO.
+                    text: "/50o",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+            ]
+        );
+        this.duration.addTo(g);
     }
 
     update(score) {

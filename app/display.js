@@ -131,14 +131,31 @@ class Display {
                 textStyles
             );
         } else if (TRY == 2) {
-            this.qv = new QuickView(
+            this.qv1 = new QuickView(
                 svg,
                 ACTION_MARGIN_W,
                 BANNER_TOP - BANNER_HEIGHT / 2,
                 team1,
                 team2,
+                {
+                    home: team1,
+                    toss: team2,
+                    battingNow: team1,
+                }
+            );
+
+            // DEBUG: the other team is batting
+            this.qv2 = new QuickView(
+                svg,
+                ACTION_MARGIN_W + 200,
+                BANNER_TOP - BANNER_HEIGHT / 2,
                 team1,
-                team2
+                team2,
+                {
+                    home: team1,
+                    toss: team2,
+                    battingNow: team2,
+                }
             );
         }
     } //ctor
