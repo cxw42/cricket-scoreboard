@@ -6,6 +6,7 @@
 // Which layout we are trying
 const TRY = 2;
 
+const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
 
 const BatterBox = require("batterbox");
@@ -58,6 +59,15 @@ class Display {
         // Background image
         this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
 
+        let textStyles = {
+            "font-family": "'Atkinson Hyperlegible', Rubik, sans-serif",
+            "font-style": "oblique",
+            weight: 700,
+            size: "0.9em",
+            "letter-spacing": "1", // empirical
+            fill: "#fff", // XXX
+        };
+
         if (TRY == 1) {
             // Color backgrounds
             this._team1Banner = svg.rect(
@@ -83,15 +93,6 @@ class Display {
             });
 
             // Players' names
-            let textStyles = {
-                "font-family": "'Atkinson Hyperlegible', Rubik, sans-serif",
-                "font-style": "oblique",
-                weight: 700,
-                size: "0.9em",
-                "letter-spacing": "1", // empirical
-                fill: "#fff", // XXX
-            };
-
             this.batterOnStrike = new BatterBox(
                 svg,
                 ACTION_MARGIN_W,
@@ -131,6 +132,8 @@ class Display {
                 textStyles
             );
         } else if (TRY == 2) {
+            const battingTeams = [team1, team2];
+            // --- Left side ---
             this.qv1 = new QuickView(
                 svg,
                 ACTION_MARGIN_W,
@@ -145,17 +148,74 @@ class Display {
             );
 
             // DEBUG: the other team is batting
-            this.qv2 = new QuickView(
+            if (false) {
+                this.qv2 = new QuickView(
+                    svg,
+                    ACTION_MARGIN_W + 200,
+                    BANNER_TOP - BANNER_HEIGHT / 2,
+                    team1,
+                    team2,
+                    {
+                        home: team1,
+                        toss: team2,
+                        battingNow: team2,
+                    }
+                );
+            }
+
+            // --- Right side ---
+
+            // Backgrounds.  TODO refactor out code in common with QuickView.
+            let x = WIDTH - ACTION_MARGIN_W - NAME_BOX_WIDTH;
+            let rowHeight = BANNER_HEIGHT / 2;
+            let backgrounds = [
+                svg.rect(
+                    x,
+                    BANNER_TOP - rowHeight,
+                    NAME_BOX_WIDTH,
+                    rowHeight * 2
+                ),
+                svg.rect(x, BANNER_TOP + rowHeight, NAME_BOX_WIDTH, rowHeight),
+            ];
+            for (const [i, team] of battingTeams.entries()) {
+                const lighter = battingTeams[i].color;
+                const darker = D3Color.color(lighter).darker();
+                const gradient = svg.gradient(
+                    `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
+                );
+                backgrounds[i].attr({
+                    fill: gradient,
+                });
+            }
+            //this.group.add(backgrounds);
+
+            this.batterOnStrike = new BatterBox(
                 svg,
-                ACTION_MARGIN_W + 200,
-                BANNER_TOP - BANNER_HEIGHT / 2,
-                team1,
-                team2,
-                {
-                    home: team1,
-                    toss: team2,
-                    battingNow: team2,
-                }
+                x,
+                BANNER_TOP - rowHeight,
+                NAME_BOX_WIDTH,
+                rowHeight,
+                textStyles,
+                true // onStrike
+            );
+
+            this.batterNotOnStrike = new BatterBox(
+                svg,
+                x,
+                BANNER_TOP,
+                NAME_BOX_WIDTH,
+                rowHeight,
+                textStyles
+            );
+
+            delete textStyles.fill;
+            this.bowler = new BowlerBox(
+                svg,
+                x,
+                BANNER_TOP + rowHeight,
+                NAME_BOX_WIDTH,
+                BANNER_HEIGHT,
+                textStyles
             );
         }
     } //ctor
