@@ -2,6 +2,10 @@
 .git
 3rdparty/
 
+# `brunch watch` is unhappy when you change its config file under it,
+# so don't do that!
+brunch-config.js
+
 # Don't let it format markdown since I like two spaces after a period :)
 *.md
 
