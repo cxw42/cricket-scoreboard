@@ -11,6 +11,7 @@ const Snap = require("snapsvg");
 
 const BatterBox = require("batterbox");
 const BowlerBox = require("bowlerbox");
+const CurrentOverBox = require("currentoverbox");
 //const Score = require('score');
 //const Textbox = require('textbox');
 const InningsBox = require("inningsbox");
@@ -215,7 +216,19 @@ class Display {
                 BANNER_TOP + rowHeight,
                 NAME_BOX_WIDTH,
                 BANNER_HEIGHT,
-                textStyles
+                textStyles,
+                { oneLineOnly: true }
+            );
+
+            // --- Center ---
+
+            const thisOverWidth = 100;
+            this.thisOver = new CurrentOverBox(
+                svg,
+                WIDTH / 2 - thisOverWidth / 2,
+                BANNER_TOP + rowHeight,
+                thisOverWidth,
+                rowHeight
             );
         }
     } //ctor

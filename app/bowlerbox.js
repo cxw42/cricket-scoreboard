@@ -21,6 +21,7 @@ const Utils = require("utils");
  * @param {int} w Width
  * @param {int} h Height
  * @param {Object} styles Text styles
+ * @param {Object} opts Options
  */
 class BowlerBox {
     // User-specified bounding-box coordinates
@@ -42,7 +43,7 @@ class BowlerBox {
     tOvers; // bowler's ball count (legal deliveries)
     //ballsLabel; // "B" label for balls
 
-    constructor(svg, ulx, uly, w, h, styles = {}) {
+    constructor(svg, ulx, uly, w, h, styles = {}, opts = {}) {
         this.bbox.ulx = ulx;
         this.bbox.uly = uly;
         this.bbox.w = w;
@@ -52,8 +53,8 @@ class BowlerBox {
         // TODO make parameterizable
         let leftPadding = 10; // units???
         let namePct = 0.5;
-        let scorePct = 0.3; // wkt-run
-        let ballsPct = 0.2;
+        let scorePct = 0.27; // wkt-run
+        let ballsPct = 0.17;
 
         // Clone the styles since we are going to change params
         styles = structuredClone(styles);
@@ -136,27 +137,29 @@ class BowlerBox {
             h
         );
 
-        // Second line - XXX placeholder
-        this.thisOverGroup = svg.g();
-        this.group.add(this.thisOverGroup);
+        // Second line
+        if (!opts.oneLineOnly) {
+            this.thisOverGroup = svg.g();
+            this.group.add(this.thisOverGroup);
 
-        const ballIconHeight = this.bbox.h * 0.4;
-        const ballIconTop =
-            pos.yInGroup +
-            this.bbox.h / 2 +
-            0.5 * (this.bbox.h / 2 - ballIconHeight);
-        for (let i = 0; i < 6; ++i) {
-            let rect = svg.circle(
-                i * (ballIconHeight * 1.1) + ballIconHeight / 2,
-                ballIconTop + ballIconHeight / 2,
-                ballIconHeight / 2,
-                ballIconHeight / 2
-            );
-            rect.attr({
-                fill: "#fff",
-                "fill-opacity": "35%",
-            });
-            this.thisOverGroup.add(rect);
+            const ballIconHeight = this.bbox.h * 0.4;
+            const ballIconTop =
+                pos.yInGroup +
+                this.bbox.h / 2 +
+                0.5 * (this.bbox.h / 2 - ballIconHeight);
+            for (let i = 0; i < 6; ++i) {
+                let rect = svg.circle(
+                    i * (ballIconHeight * 1.1) + ballIconHeight / 2,
+                    ballIconTop + ballIconHeight / 2,
+                    ballIconHeight / 2,
+                    ballIconHeight / 2
+                );
+                rect.attr({
+                    fill: "#fff",
+                    "fill-opacity": "35%",
+                });
+                this.thisOverGroup.add(rect);
+            }
         }
 
         /*

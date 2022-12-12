@@ -28,7 +28,8 @@ const iconStyles = Utils.extend(textStyles, {
     "font-style": "normal",
     "font-size": "0.75em",
 });
-const labelTextSize = "75%"; // from BowlerBox
+const labelTextSize = "50%";
+const powerplayTextSize = "75%";
 const scoreTextSize = "x-large";
 
 // Grid: vertical
@@ -297,14 +298,14 @@ class QuickView {
                     // powerplay
                     text: POWERPLAY,
                     styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
+                        "font-size": powerplayTextSize,
                     }),
                 },
                 {
                     // powerplay number
-                    text: "3   ",
+                    text: "3",
                     styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
+                        "font-size": powerplayTextSize,
                     }),
                 },
             ]
@@ -320,33 +321,26 @@ class QuickView {
             "mr",
             [
                 {
+                    text: "OVERS ",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+                {
                     // completed overs
-                    text: "200",
+                    text: "37",
                     styles: Utils.extend(styles, {}),
                 },
                 {
-                    text: "o",
+                    text: " OF ",
                     styles: Utils.extend(styles, {
                         "font-size": labelTextSize,
                     }),
                 },
                 {
-                    // balls so far in this over
-                    text: "1",
+                    // total overs
+                    text: "50",
                     styles: Utils.extend(styles, {}),
-                },
-                {
-                    text: "b",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                    }),
-                },
-                {
-                    // duration of match, for limited-overs matches.  TODO.
-                    text: " / 50o",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                    }),
                 },
             ]
         );
