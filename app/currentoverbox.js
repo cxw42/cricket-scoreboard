@@ -7,6 +7,7 @@ const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
 
+const Styles = require("styles");
 const TextBox = require("textbox");
 const Utils = require("utils");
 
@@ -52,27 +53,37 @@ class CurrentOverBox {
         this.svg = svg;
         this.group = svg.g();
 
-        /*
-        this.label = new TextBox(
-            svg,
-            0,
-            0,
-            100,
-            rowHeight,
-            "tl",
-            [
-                {
-                    text: "OVERS ",
-                    styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
-                    }),
-                },
-                */
+        const labelStyles = Utils.extend(Styles.textStyles, {
+            "font-style": "normal",
+            "font-size": Styles.labelTextSize,
+            fill: "#fff",
+            "fill-opacity": "35%",
+        });
+        this.label = new TextBox(svg, 0, 0, 100, rowHeight, "tl", [
+            {
+                text: "THIS",
+                styles: labelStyles,
+            },
+            {
+                text: "OVER",
+                styles: labelStyles,
+            },
+        ]);
+
+        // TODO clean this up --- it's currently empirical
+        this.label.text.children()[0].attr({ x: 1, y: 3 });
+        this.label.text.children()[1].attr({ x: 0, y: 11 });
+
+        this.label.addTo(this.group);
+
+        // TODO set w to the width of this.label plus padding
+        w = 25;
+
         const ballRadius = h * 0.45;
         const ballSpacing = ballRadius * 0.25;
         for (let i = 0; i < 6; ++i) {
             let ball = svg.circle(
-                i * (ballRadius * 2 + ballSpacing) + ballRadius,
+                w + i * (ballRadius * 2 + ballSpacing) + ballRadius,
                 h / 2,
                 ballRadius
             );
@@ -84,7 +95,7 @@ class CurrentOverBox {
         }
 
         // The natural width of the group
-        w = 6 * (ballRadius * 2 + ballSpacing) - ballSpacing;
+        w += 6 * (ballRadius * 2 + ballSpacing) - ballSpacing;
 
         this.bbox = Utils.getBBox(x, y, w, h, corner);
         Utils.freeTransformTo(this.group, this.bbox.ulx, this.bbox.uly);
