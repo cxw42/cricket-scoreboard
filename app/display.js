@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const SHOW_EBU_MARGINS = false;
+
 // Which layout we are trying
 const TRY = 2;
 
@@ -233,7 +235,7 @@ class Display {
         }
 
         // EBU margins
-        if (true) {
+        if (SHOW_EBU_MARGINS) {
             this.actionSafeArea = svg.rect(
                 ACTION_MARGIN_W,
                 ACTION_MARGIN_H,
