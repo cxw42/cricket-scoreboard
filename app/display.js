@@ -225,10 +225,10 @@ class Display {
             const thisOverWidth = 100;
             this.thisOver = new CurrentOverBox(
                 svg,
-                WIDTH / 2 - thisOverWidth / 2,
-                BANNER_TOP + rowHeight,
-                thisOverWidth,
-                rowHeight
+                WIDTH / 2,
+                BANNER_TOP + BANNER_HEIGHT,
+                rowHeight,
+                "bc"
             );
         }
 

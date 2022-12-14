@@ -47,32 +47,47 @@ class CurrentOverBox {
     bbox = {};
     battingTeams = [];
 
-    constructor(svg, ulx, uly, w, h) {
+    constructor(svg, x, y, h, corner) {
+        let w;
         this.svg = svg;
-        this.bbox.ulx = ulx;
-        this.bbox.uly = uly;
-        this.bbox.w = w;
-        this.bbox.h = h;
-
         this.group = svg.g();
-        Utils.freeTransformTo(this.group, ulx, uly);
 
-        const ballIconHeight = this.bbox.h * 0.9;
-        const ballIconTop =
-            this.bbox.h / 2 + 0.5 * (this.bbox.h / 2 - ballIconHeight);
+        /*
+        this.label = new TextBox(
+            svg,
+            0,
+            0,
+            100,
+            rowHeight,
+            "tl",
+            [
+                {
+                    text: "OVERS ",
+                    styles: Utils.extend(styles, {
+                        "font-size": labelTextSize,
+                    }),
+                },
+                */
+        const ballRadius = h * 0.45;
+        const ballSpacing = ballRadius * 0.25;
         for (let i = 0; i < 6; ++i) {
-            let rect = svg.circle(
-                i * (ballIconHeight * 1.1) + ballIconHeight / 2,
-                ballIconTop + ballIconHeight / 2,
-                ballIconHeight / 2,
-                ballIconHeight / 2
+            let ball = svg.circle(
+                i * (ballRadius * 2 + ballSpacing) + ballRadius,
+                h / 2,
+                ballRadius
             );
-            rect.attr({
+            ball.attr({
                 fill: "#fff",
                 "fill-opacity": "35%",
             });
-            this.group.add(rect);
+            this.group.add(ball);
         }
+
+        // The natural width of the group
+        w = 6 * (ballRadius * 2 + ballSpacing) - ballSpacing;
+
+        this.bbox = Utils.getBBox(x, y, w, h, corner);
+        Utils.freeTransformTo(this.group, this.bbox.ulx, this.bbox.uly);
     } // ctor
 
     /**
