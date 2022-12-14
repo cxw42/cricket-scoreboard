@@ -19,7 +19,6 @@ const EMDASH = String.fromCodePoint(0x2014);
 const textStyles = {
     "font-family": "Rubik, 'Atkinson Hyperlegible', sans-serif",
     "font-style": "oblique",
-    weight: 700,
     size: "0.9em",
     "letter-spacing": "1", // empirical
     fill: "#fff", // XXX
@@ -233,6 +232,7 @@ class QuickView {
                     styles: Utils.extend(textStyles, {
                         fill: textColor,
                         class: "inningsFigures",
+                        "font-weight": "bold",
                     }),
                 },
                 {
