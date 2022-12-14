@@ -7,6 +7,7 @@ const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
 
+const Styles = require("styles");
 const TextBox = require("textbox");
 const Utils = require("utils");
 
@@ -14,22 +15,6 @@ const HOME = String.fromCodePoint(0x1f3e0); // or U+2302
 const TOSS = String.fromCodePoint(0x1fa99); // coin
 const POWERPLAY = String.fromCodePoint(0x24c5); // circled P
 const EMDASH = String.fromCodePoint(0x2014);
-
-// Basic text style
-const textStyles = {
-    "font-family": "Rubik, 'Atkinson Hyperlegible', sans-serif",
-    "font-style": "oblique",
-    size: "0.9em",
-    "letter-spacing": "1", // empirical
-    fill: "#fff", // XXX
-};
-const iconStyles = Utils.extend(textStyles, {
-    "font-style": "normal",
-    "font-size": "0.75em",
-});
-const labelTextSize = "50%";
-const powerplayTextSize = "75%";
-const scoreTextSize = "x-large";
 
 // Grid: vertical
 const rowHeight = 20;
@@ -72,7 +57,7 @@ class QuickView {
         this.group.add(this.bg);
         */
 
-        let styles = Utils.extend(textStyles, {
+        let styles = Utils.extend(Styles.textStyles, {
             fill: "#000",
         });
 
@@ -205,7 +190,7 @@ class QuickView {
         let icon = new TextBox(svg, x, cy, rowHeight, rowHeight, "ml", [
             {
                 text,
-                styles: iconStyles,
+                styles: Styles.iconStyles,
             },
         ]);
         icon.addTo(g);
@@ -222,14 +207,14 @@ class QuickView {
             [
                 {
                     text: "W",
-                    styles: Utils.extend(textStyles, {
+                    styles: Utils.extend(Styles.textStyles, {
                         fill: textColor,
-                        "font-size": labelTextSize,
+                        "font-size": Styles.labelTextSize,
                     }),
                 },
                 {
                     text: "9-456",
-                    styles: Utils.extend(textStyles, {
+                    styles: Utils.extend(Styles.textStyles, {
                         fill: textColor,
                         class: "inningsFigures",
                         "font-weight": "bold",
@@ -237,9 +222,9 @@ class QuickView {
                 },
                 {
                     text: "R",
-                    styles: Utils.extend(textStyles, {
+                    styles: Utils.extend(Styles.textStyles, {
                         fill: textColor,
-                        "font-size": labelTextSize,
+                        "font-size": Styles.labelTextSize,
                     }),
                 },
             ]
@@ -265,16 +250,16 @@ class QuickView {
             [
                 {
                     text: runsStr,
-                    styles: Utils.extend(textStyles, {
+                    styles: Utils.extend(Styles.textStyles, {
                         fill: textColor,
                         class: "inningsFigures",
                     }),
                 },
                 {
                     text: "R",
-                    styles: Utils.extend(textStyles, {
+                    styles: Utils.extend(Styles.textStyles, {
                         fill: textColor,
-                        "font-size": labelTextSize,
+                        "font-size": Styles.labelTextSize,
                     }),
                 },
             ]
@@ -298,14 +283,14 @@ class QuickView {
                     // powerplay
                     text: POWERPLAY,
                     styles: Utils.extend(styles, {
-                        "font-size": powerplayTextSize,
+                        "font-size": Styles.powerplayTextSize,
                     }),
                 },
                 {
                     // powerplay number
                     text: "3",
                     styles: Utils.extend(styles, {
-                        "font-size": powerplayTextSize,
+                        "font-size": Styles.powerplayTextSize,
                     }),
                 },
             ]
@@ -323,7 +308,7 @@ class QuickView {
                 {
                     text: "OVERS ",
                     styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
+                        "font-size": Styles.labelTextSize,
                     }),
                 },
                 {
@@ -334,7 +319,7 @@ class QuickView {
                 {
                     text: " OF ",
                     styles: Utils.extend(styles, {
-                        "font-size": labelTextSize,
+                        "font-size": Styles.labelTextSize,
                     }),
                 },
                 {
