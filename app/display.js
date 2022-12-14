@@ -231,10 +231,36 @@ class Display {
                 rowHeight
             );
         }
+
+        // EBU margins
+        if (true) {
+            this.actionSafeArea = svg.rect(
+                ACTION_MARGIN_W,
+                ACTION_MARGIN_H,
+                WIDTH - 2 * ACTION_MARGIN_W,
+                HEIGHT - 2 * ACTION_MARGIN_H
+            );
+            this.actionSafeArea.attr({
+                fill: "none",
+                stroke: "#00958e",
+            });
+
+            this.graphicsSafeArea = svg.rect(
+                GRAPHICS_MARGIN_W,
+                GRAPHICS_MARGIN_H,
+                WIDTH - 2 * GRAPHICS_MARGIN_W,
+                HEIGHT - 2 * GRAPHICS_MARGIN_H
+            );
+            this.graphicsSafeArea.attr({
+                fill: "none",
+                stroke: "#a72b30",
+            });
+        }
     } //ctor
 
     update(score) {
-        if (TRY == 1) {
+        if (true) {
+            // TRY==1
             //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
             this.batterOnStrike.name = score.battingOrder[0]; // XXX
             this.batterOnStrike.runs = 64;
