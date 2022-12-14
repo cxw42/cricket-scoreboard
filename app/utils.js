@@ -43,6 +43,45 @@ function freeTransformTo(el, ulx, uly) {
 }
 
 /**
+ * Get the bounding box of a rectangle anchored at a particular corner.
+ *
+ * @method getBBox
+ * @param {int} x Reference X
+ * @param {int} y Reference Y
+ * @param {int} w Width
+ * @param {int} h Height
+ * @param {String} corner Which corner `x` and `y` relate to.
+ *                        Must be `[TMB][LCR]`.
+ */
+function getBBox(x, y, w, h, corner) {
+    // Get the upper-left corner
+    let ulx, uly;
+    if (corner.includes("l")) {
+        ulx = x;
+    } else if (corner.includes("c")) {
+        ulx = x - w / 2;
+    } else if (corner.includes("r")) {
+        ulx = x - w;
+    } else {
+        throw "corner must specify l, c, or r";
+    }
+
+    if (corner.includes("t")) {
+        uly = y;
+    } else if (corner.includes("m")) {
+        uly = y - h / 2;
+    } else if (corner.includes("b")) {
+        uly = y - h;
+    } else {
+        throw "corner must specify t, m, or b";
+    }
+
+    let cx = ulx + w / 2;
+    let cy = uly + h / 2;
+    return { ulx, uly, w, h, corner, cx, cy };
+}
+
+/**
  * Position a group that contains baseline-aligned text starting at y=0 to
  * start (end) at (x, uly).
  *
@@ -101,5 +140,6 @@ function positionGroupAt(group, text, x, uly, w, h, opts = {}) {
 module.exports = {
     extend,
     freeTransformTo,
+    getBBox,
     positionGroupAt,
 };
