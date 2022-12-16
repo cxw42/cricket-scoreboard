@@ -9,7 +9,6 @@ const Utils = require("utils");
 const textStyles = {
     "font-family": "'Atkinson Hyperlegible', Rubik, sans-serif",
     size: "0.9em",
-    "letter-spacing": "1", // empirical
     fill: "#fff", // XXX
 };
 const iconStyles = Utils.extend(textStyles, {
@@ -22,6 +21,7 @@ const numberStyles = {
 const scoreStyles = {
     "font-family": "Rubik, 'Atkinson Hyperlegible', sans-serif",
     "font-style": "oblique",
+    "letter-spacing": "1", // empirical
 };
 const labelTextSize = "50%";
 const powerplayTextSize = "75%";
