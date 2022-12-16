@@ -28,7 +28,9 @@ const w = 150;
 const homeX = margin;
 const tossX = margin + rowHeight;
 const nameX = margin + rowHeight * 2;
-const scoreX = margin + rowHeight * 4.5;
+
+// TODO replace this with the native width of the score, plus padding
+const scoreX = margin + rowHeight * 4.1;
 
 /**
  * Innings situation
@@ -196,7 +198,24 @@ class QuickView {
         icon.addTo(g);
     }
 
-    makeBattingScore(svg, g, textColor) {
+    makeBattingScore(svg, g, scoreColor) {
+        //const boxColorLight = '#fff8b4';
+        //const boxColorDark = '#00f602';
+
+        // Thanks for code values to
+        // <https://www.greatphotography.com/blog/2016/6/14/18-gray-the-middle-value>
+        const gray9 = "#5c5c5c";
+        const gray18 = "#737373";
+        const gray36 = "#c9c9c9";
+
+        // TODO figure out a better way to make the scores pop out.  Maybe
+        // always dark text on yellow BG?
+        const boxColor =
+            WcagContrast.hex(scoreColor, gray9) >
+            WcagContrast.hex(scoreColor, gray36)
+                ? gray9
+                : gray36;
+
         let score = new TextBox(
             svg,
             w - margin,
@@ -208,14 +227,14 @@ class QuickView {
                 {
                     text: "W",
                     styles: Utils.extend(Styles.textStyles, {
-                        fill: textColor,
+                        fill: scoreColor,
                         "font-size": Styles.labelTextSize,
                     }),
                 },
                 {
                     text: "9-456",
                     styles: Utils.extend(Styles.textStyles, {
-                        fill: textColor,
+                        fill: scoreColor,
                         class: "inningsFigures",
                         "font-weight": "bold",
                     }),
@@ -223,11 +242,18 @@ class QuickView {
                 {
                     text: "R",
                     styles: Utils.extend(Styles.textStyles, {
-                        fill: textColor,
+                        fill: scoreColor,
                         "font-size": Styles.labelTextSize,
                     }),
                 },
-            ]
+            ],
+            {
+                background: {
+                    stroke: boxColor, // scoreColor
+                    fill: boxColor,
+                    rx: margin,
+                },
+            }
         );
         score.group.attr({
             class: "battingScore",

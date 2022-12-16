@@ -151,7 +151,7 @@ class Display {
             );
 
             // DEBUG: the other team is batting
-            if (false) {
+            if (true) {
                 this.qv2 = new QuickView(
                     svg,
                     ACTION_MARGIN_W + 200,
