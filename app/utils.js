@@ -17,11 +17,15 @@ require("3rdparty/snap.svg.free_transform");
  *
  * @method extend
  * @param {object} source An object to clone
- * @param {object} extras Extra properties to add
+ * @param {object} ...extras Extra properties to add (one or more objects)
  * @return A new object
  */
-function extend(source, extras) {
-    return Object.assign(structuredClone(source), extras);
+function extend(source, ...extras) {
+    let result = structuredClone(source);
+    for (const extra of extras) {
+        result = Object.assign(result, extra);
+    }
+    return result;
 }
 
 /**

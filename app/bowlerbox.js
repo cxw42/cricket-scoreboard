@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Styles = require("styles");
 const Utils = require("utils");
 
 /**
@@ -70,25 +71,24 @@ class BowlerBox {
 
         // Use "My Name" as the initial value so it will have both
         // ascenders and descenders.
-        this.tName = svg.text(0, 0, "My Name").attr(styles);
+        this.tName = svg.text(2, 0, "My Name").attr(styles);
         this.textGroup.add(this.tName);
 
         // Figures
-        const labelTextSize = "50%"; // empirical
-
         styles["text-align"] = styles["text-anchor"] = "end";
+        let scoreStyles = Utils.extend(styles, Styles.scoreStyles);
         this.tFigures = svg
             .text(w * (namePct + scorePct), 0, ["W", "1-2", "R"])
-            .attr(styles);
+            .attr(scoreStyles);
         let kids = this.tFigures.children();
         kids[0].attr({
-            "font-size": labelTextSize,
+            "font-size": Styles.labelTextSize,
         });
         kids[1].attr({
             class: "bowlingFigures",
         });
         kids[2].attr({
-            "font-size": labelTextSize,
+            "font-size": Styles.labelTextSize,
         });
         this.textGroup.add(this.tFigures);
 
@@ -99,17 +99,19 @@ class BowlerBox {
             .attr(styles);
         kids = this.tOvers.children();
         kids[0].attr({
+            "font-size": Styles.powerplayTextSize,
             class: "bowlingCompletedOvers",
         });
         kids[1].attr({
-            "font-size": labelTextSize,
+            "font-size": "35%", // XXX  Styles.labelTextSize
             "font-weight": 1000,
         });
         kids[2].attr({
+            "font-size": Styles.powerplayTextSize,
             class: "bowlingBalls",
         });
         kids[3].attr({
-            "font-size": labelTextSize,
+            "font-size": Styles.labelTextSize,
         });
         this.textGroup.add(this.tOvers);
 

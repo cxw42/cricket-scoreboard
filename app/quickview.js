@@ -199,7 +199,6 @@ class QuickView {
     }
 
     makeBattingScore(svg, g, scoreColor) {
-
         // Thanks for code values to
         // <https://www.greatphotography.com/blog/2016/6/14/18-gray-the-middle-value>
         const gray9 = "#5c5c5c";
@@ -216,11 +215,13 @@ class QuickView {
                 : gray36;
         */
 
-        const boxColorLight = '#fff8b4';
+        const boxColorLight = "#fff8b4";
         //const boxColorDark = '#fff602';
 
-        scoreColor = 'black';   //gray9;
+        scoreColor = "black"; //gray9;
         const boxColor = boxColorLight;
+
+        const baseStyles = Utils.extend(Styles.textStyles, Styles.scoreStyles);
 
         let score = new TextBox(
             svg,
@@ -232,14 +233,14 @@ class QuickView {
             [
                 {
                     text: "W",
-                    styles: Utils.extend(Styles.textStyles, {
+                    styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
                         "font-size": Styles.labelTextSize,
                     }),
                 },
                 {
                     text: "9-456",
-                    styles: Utils.extend(Styles.textStyles, {
+                    styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
                         class: "inningsFigures",
                         "font-weight": "bold",
@@ -247,7 +248,7 @@ class QuickView {
                 },
                 {
                     text: "R",
-                    styles: Utils.extend(Styles.textStyles, {
+                    styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
                         "font-size": Styles.labelTextSize,
                     }),
@@ -272,6 +273,7 @@ class QuickView {
      * @param {string} runsStr The runs, as a string.
      */
     showRuns(svg, g, textColor, runsStr) {
+        const baseStyles = Utils.extend(Styles.textStyles, Styles.scoreStyles);
         let score = new TextBox(
             svg,
             w - margin,
@@ -282,14 +284,14 @@ class QuickView {
             [
                 {
                     text: runsStr,
-                    styles: Utils.extend(Styles.textStyles, {
+                    styles: Utils.extend(baseStyles, {
                         fill: textColor,
                         class: "inningsFigures",
                     }),
                 },
                 {
                     text: "R",
-                    styles: Utils.extend(Styles.textStyles, {
+                    styles: Utils.extend(baseStyles, {
                         fill: textColor,
                         "font-size": Styles.labelTextSize,
                     }),
@@ -346,9 +348,13 @@ class QuickView {
                 {
                     // completed overs
                     text: "37",
-                    styles: Utils.extend(styles, {
-                        "font-size": Styles.powerplayTextSize,
-                    }),
+                    styles: Utils.extend(
+                        styles,
+                        {
+                            "font-size": Styles.powerplayTextSize,
+                        },
+                        Styles.numberStyles
+                    ),
                 },
                 {
                     text: " OF ",
@@ -359,9 +365,13 @@ class QuickView {
                 {
                     // total overs
                     text: "50",
-                    styles: Utils.extend(styles, {
-                        "font-size": Styles.powerplayTextSize,
-                    }),
+                    styles: Utils.extend(
+                        styles,
+                        {
+                            "font-size": Styles.powerplayTextSize,
+                        },
+                        Styles.numberStyles
+                    ),
                 },
             ]
         );

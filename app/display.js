@@ -18,6 +18,8 @@ const CurrentOverBox = require("currentoverbox");
 //const Textbox = require('textbox');
 const InningsBox = require("inningsbox");
 const QuickView = require("quickview");
+const Styles = require("styles");
+const Utils = require("utils");
 
 // 1080p, but divided by 2 to be more visible on screen.
 const SCALE = 2;
@@ -62,14 +64,9 @@ class Display {
         // Background image
         this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
 
-        let textStyles = {
-            "font-family": "'Atkinson Hyperlegible', Rubik, sans-serif",
-            "font-style": "oblique",
-            weight: 700,
-            size: "0.9em",
+        let textStyles = Utils.extend(Styles.textStyles, {
             "letter-spacing": "1", // empirical
-            fill: "#fff", // XXX
-        };
+        });
 
         if (TRY == 1) {
             // Color backgrounds

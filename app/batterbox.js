@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Styles = require("styles");
 const Utils = require("utils");
 
 /**
@@ -66,24 +67,31 @@ class BatterBox {
 
         // Use "My Name" as the initial value so it will have both
         // ascenders and descenders.
-        this.tName = svg.text(0, 0, "My Name").attr(styles);
+        this.tName = svg.text(2, 0, "My Name").attr(styles);
         this.textGroup.add(this.tName);
 
         // Runs and balls
-        styles["text-align"] = styles["text-anchor"] = "end";
-        this.tRuns = svg.text(w * (namePct + runsPct), 0, "42").attr(styles);
+        let runStyles = Utils.extend(styles, Styles.scoreStyles);
+        runStyles["text-align"] = runStyles["text-anchor"] = "end";
+        this.tRuns = svg.text(w * (namePct + runsPct), 0, "42").attr(runStyles);
         this.textGroup.add(this.tRuns);
 
-        styles["font-size"] = "small"; // TODO make parameterizable
+        styles["text-align"] = styles["text-anchor"] = "end";
+        styles["font-size"] = Styles.powerplayTextSize;
         this.tBalls = svg
             .text(w * (namePct + runsPct + ballsPct), 0, "84")
             .attr(styles);
         this.textGroup.add(this.tBalls);
 
         // Labels
+        runStyles["font-size"] = Styles.labelTextSize;
+        styles["font-size"] = Styles.labelTextSize;
+        runStyles["text-align"] = runStyles["text-anchor"] = "start";
         styles["text-align"] = styles["text-anchor"] = "start";
 
-        this.runsLabel = svg.text(w * (namePct + runsPct), 0, "R").attr(styles);
+        this.runsLabel = svg
+            .text(w * (namePct + runsPct), 0, "R")
+            .attr(runStyles);
         this.textGroup.add(this.runsLabel);
 
         styles["font-size"] = "x-small";
