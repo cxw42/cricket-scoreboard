@@ -2,11 +2,18 @@
 
 A cricket scoreboard OSD for a US audience.  Work in progress!
 
-![screenshot](screenshot.jpg)
+## Screenshots
 
-(Background sample image by Sri Lanka Cricket from
-<https://www.youtube.com/watch?v=eUtAviVhjZg>)
+Background sample image by Sri Lanka Cricket from
+<https://www.youtube.com/watch?v=eUtAviVhjZg>.
 
+### Try 1
+
+![screenshot](screenshot-try1.jpg)
+
+### Try 2
+
+![screenshot](screenshot-try2.jpg)
 
 ## Running
 
