@@ -6,6 +6,8 @@
 const Styles = require("styles");
 const Utils = require("utils");
 
+const CIRCLE = String.fromCodePoint(0x2b58);
+
 /**
  * The box showing a bowler's information.
  *
@@ -95,7 +97,12 @@ class BowlerBox {
         // Overs
         //styles['font-size'] = 'small'; // TODO make parameterizable
         this.tOvers = svg
-            .text(w * (namePct + scorePct + ballsPct), 0, ["1", "O", "2", "B"])
+            .text(w * (namePct + scorePct + ballsPct), 0, [
+                "1",
+                CIRCLE, //"O",
+                "2",
+                "B",
+            ])
             .attr(styles);
         kids = this.tOvers.children();
         kids[0].attr({
@@ -104,7 +111,7 @@ class BowlerBox {
         });
         kids[1].attr({
             "font-size": "35%", // XXX  Styles.labelTextSize
-            "font-weight": 1000,
+            "font-weight": "bold",
         });
         kids[2].attr({
             "font-size": Styles.powerplayTextSize,

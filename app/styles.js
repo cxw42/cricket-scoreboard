@@ -9,6 +9,7 @@ const Utils = require("utils");
 const textStyles = {
     "font-family": "'Atkinson Hyperlegible', Rubik, sans-serif",
     size: "0.9em",
+    "letter-spacing": "0.5", // empirical
     fill: "#fff", // XXX
 };
 const iconStyles = Utils.extend(textStyles, {

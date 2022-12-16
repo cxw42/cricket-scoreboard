@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+// For debugging
 const SHOW_EBU_MARGINS = false;
+const SHOW_SECOND_INNINGS_QUICKVIEW = true;
 
 // Which layout we are trying
 const TRY = 2;
@@ -148,7 +150,7 @@ class Display {
             );
 
             // DEBUG: the other team is batting
-            if (true) {
+            if (SHOW_SECOND_INNINGS_QUICKVIEW) {
                 this.qv2 = new QuickView(
                     svg,
                     ACTION_MARGIN_W + 200,
