@@ -199,8 +199,6 @@ class QuickView {
     }
 
     makeBattingScore(svg, g, scoreColor) {
-        //const boxColorLight = '#fff8b4';
-        //const boxColorDark = '#00f602';
 
         // Thanks for code values to
         // <https://www.greatphotography.com/blog/2016/6/14/18-gray-the-middle-value>
@@ -208,6 +206,7 @@ class QuickView {
         const gray18 = "#737373";
         const gray36 = "#c9c9c9";
 
+        /*
         // TODO figure out a better way to make the scores pop out.  Maybe
         // always dark text on yellow BG?
         const boxColor =
@@ -215,6 +214,13 @@ class QuickView {
             WcagContrast.hex(scoreColor, gray36)
                 ? gray9
                 : gray36;
+        */
+
+        const boxColorLight = '#fff8b4';
+        //const boxColorDark = '#fff602';
+
+        scoreColor = 'black';   //gray9;
+        const boxColor = boxColorLight;
 
         let score = new TextBox(
             svg,
