@@ -19,10 +19,11 @@ require("3rdparty/snap.svg.free_transform");
  * @param {int} h Height
  * @param {String} corner Which corner `x` and `y` relate to.
  *                        Must be `[TMB][LCR]`.
- * @param {Object|Array[Object]} textAndStyles
- * @param {Object} styles Styles per [Two.Text](https://two.js.org/docs/text/),
- *                        plus 'bgFill' which, if set, is used as a background
- *                        fill.
+ * @param {Object|Array[Object]} textAndStyles: array of {text, styles}, where
+ *                               styles are per
+ *                               [Two.Text](https://two.js.org/docs/text/).
+ * @param {Object} opts Options.  Keys include:
+ *      - `background`: styles for the background
  */
 class Textbox {
     // two.js coordinates
@@ -33,17 +34,11 @@ class Textbox {
     outline; // visible outline
     text; // Two.Text instance
 
-    constructor(svg, x, y, w, h, corner, textAndStyles) {
+    constructor(svg, x, y, w, h, corner, textAndStyles, opts = {}) {
+        opts.background = opts.background || {};
         if (typeof textAndStyles !== typeof []) {
             textAndStyles = [textAndStyles];
         }
-
-        /*  // TODO
-        // Clone the styles since we are going to change params
-        let bgFill = styles['bgFill'] || 'none';
-        styles = structuredClone(styles);
-        delete styles['bgfill'];
-        */
 
         // always put the text on the baseline
         let localStyles = {};
@@ -88,6 +83,18 @@ class Textbox {
         ftg.attrs.translate.y = uly;
         ftg.apply();
 
+        // Outline
+        this.outline = svg.rect(0, 0, w, h).attr(
+            Utils.extend(
+                {
+                    fill: "none",
+                    stroke: "none",
+                },
+                opts.background
+            )
+        );
+        this.group.add(this.outline);
+
         // Create the text and position it horizontally
         localStyles["text-align"] = localStyles["text-anchor"] =
             localStyles.alignment;
@@ -122,13 +129,6 @@ class Textbox {
         ftt.apply();
 
         this.group.add(this.text);
-
-        // Outline
-        this.outline = svg.rect(0, 0, w, h).attr({
-            fill: "none", // XXX bgFill,
-            stroke: "none", // XXX '#0ff'
-        });
-        this.group.add(this.outline);
 
         // Copy the group to `svg`
         svg.add(this.group);
