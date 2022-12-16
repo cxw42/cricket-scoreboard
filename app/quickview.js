@@ -346,7 +346,9 @@ class QuickView {
                 {
                     // completed overs
                     text: "37",
-                    styles: Utils.extend(styles, {}),
+                    styles: Utils.extend(styles, {
+                        "font-size": Styles.powerplayTextSize,
+                    }),
                 },
                 {
                     text: " OF ",
@@ -357,7 +359,9 @@ class QuickView {
                 {
                     // total overs
                     text: "50",
-                    styles: Utils.extend(styles, {}),
+                    styles: Utils.extend(styles, {
+                        "font-size": Styles.powerplayTextSize,
+                    }),
                 },
             ]
         );
