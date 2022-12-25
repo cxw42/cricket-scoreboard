@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-const D3Color = require("3rdparty/d3-color.v2.min");
-const Snap = require("snapsvg");
+//const D3Color = require("3rdparty/d3-color.v2.min");
+//const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
 
 const Styles = require("styles");
@@ -48,6 +48,10 @@ class CurrentOverBox {
     bbox = {};
     battingTeams = [];
 
+    balls;          // shapes
+    runs;           // total runs scored, one item per ball
+    markers;        // one per ball, e.g., W, B, NB, ...
+
     constructor(svg, x, y, h, corner) {
         let w;
         this.svg = svg;
@@ -81,6 +85,7 @@ class CurrentOverBox {
 
         const ballRadius = h * 0.45;
         const ballSpacing = ballRadius * 0.25;
+        this.balls = [];
         for (let i = 0; i < 6; ++i) {
             let ball = svg.circle(
                 w + i * (ballRadius * 2 + ballSpacing) + ballRadius,
@@ -92,6 +97,7 @@ class CurrentOverBox {
                 "fill-opacity": "35%",
             });
             this.group.add(ball);
+            this.balls.push(ball);
         }
 
         // The natural width of the group
@@ -99,6 +105,8 @@ class CurrentOverBox {
 
         this.bbox = Utils.getBBox(x, y, w, h, corner);
         Utils.freeTransformTo(this.group, this.bbox.ulx, this.bbox.uly);
+
+        this.newOver();
     } // ctor
 
     /**
@@ -115,18 +123,20 @@ class CurrentOverBox {
         }
     }
 
-    update(score) {
-        this.batterOnStrike.name = score.battingOrder[0]; // XXX
-        this.batterOnStrike.runs = 64;
-        this.batterOnStrike.balls = 118;
-        this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
-        this.batterNotOnStrike.runs = 14;
-        this.batterNotOnStrike.balls = 22;
-        this.bowler.name = score.bowler;
-        this.bowler.wickets = 1;
-        this.bowler.runs = 43;
-        this.bowler.balls = 12 * 6 + 2; // 12.2 ov.
+    /*!
+     * Start a new over
+     *
+     * @method newOver
+     */
+    newOver() {
+        if(this.balls.length>6) {
+            this.balls.slice(6).forEach((shape)=>{/*TODO remove shape*/});
+            this.balls = this.balls.slice(0, 6);
+        }
+        this.markers = Array(6).fill('');
+        this.runs = Array(6).fill(0);
     }
+
 }
 
 module.exports = CurrentOverBox;
