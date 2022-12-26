@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Marker = require("rules").Marker;
+
 //const D3Color = require("3rdparty/d3-color.v2.min");
 //const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
@@ -10,19 +12,6 @@ const WcagContrast = require("wcag-contrast");
 const Styles = require("styles");
 const TextBox = require("textbox");
 const Utils = require("utils");
-
-// Basic text style
-const textStyles = {
-    "font-family": "Rubik, 'Atkinson Hyperlegible', sans-serif",
-    "font-style": "oblique",
-    weight: 700,
-    size: "0.9em",
-    "letter-spacing": "1", // empirical
-    fill: "#fff", // XXX
-};
-const labelTextSize = "50%";
-const powerplayTextSize = "75%";
-const scoreTextSize = "x-large";
 
 // Grid: vertical
 const rowHeight = 20;
@@ -39,6 +28,62 @@ const nameX = margin + rowHeight * 2;
 const scoreX = margin + rowHeight * 4.5;
 
 /**
+ * The graphical representation of a delivery.
+ *
+ * Invariant once created.
+ *
+ * @protected
+ * @class DeliveryMarker
+ * @constructor
+ * @param {Snap} svg The SVG
+ * @param {int} cx Center X
+ * @param {int} cy Center Y
+ * @param {int} r Radius
+ * @param {int} totalRuns Total runs scored on this delivery
+ * @param {String} marker Any markers (from enum Marker)
+ */
+class DeliveryMarker {
+    svg = null;
+    bbox = {};
+
+    group; // the group of shapes
+
+    constructor(svg, cx, cy, r, corner, totalRuns, marker = "") {
+        const hasMarker = (marker || "").length > 0;
+        this.group = svg.g();
+
+        this.bbox = Utils.getBBox(cx, cy, r * 2, r * 2, "mc");
+
+        let ball = svg.circle(cx, cy, r);
+        ball.attr({
+            fill: "#fff",
+            "fill-opacity": "35%",
+        });
+
+        this.group.add(ball);
+    }
+
+    /**
+     * Add this instance to an SVG element
+     *
+     * @method addTo
+     * @param {Object} parent The element
+     */
+    addTo(parent) {
+        parent.add(this.group);
+    }
+
+    /**
+     * Remove this instance from the SVG
+     *
+     * @method remove
+     */
+    remove() {
+        this.group.remove();
+    }
+}
+
+/**
  * This over
  *
  * @class CurrentOverBox
@@ -46,11 +91,14 @@ const scoreX = margin + rowHeight * 4.5;
 class CurrentOverBox {
     svg = null; // note: brunch doesn't do `#private`
     bbox = {};
-    battingTeams = [];
 
-    balls;          // shapes
-    runs;           // total runs scored, one item per ball
-    markers;        // one per ball, e.g., W, B, NB, ...
+    // Ball-size parameters
+    ballRadius = 0;
+    ballSpacing = 0;
+
+    // Individual deliveries
+    balls; // shapes
+    currDelivery; // which delivery we are on, starting from 0
 
     constructor(svg, x, y, h, corner) {
         let w;
@@ -62,6 +110,7 @@ class CurrentOverBox {
             "font-size": Styles.labelTextSize,
             fill: "#fff",
             "fill-opacity": "35%",
+            weight: 700,
         });
         this.label = new TextBox(svg, 0, 0, 100, rowHeight, "tl", [
             {
@@ -83,25 +132,27 @@ class CurrentOverBox {
         // TODO set w to the width of this.label plus padding
         w = 25;
 
-        const ballRadius = h * 0.45;
-        const ballSpacing = ballRadius * 0.25;
+        this.ballRadius = h * 0.45;
+        this.ballSpacing = this.ballRadius * 0.25;
         this.balls = [];
+
         for (let i = 0; i < 6; ++i) {
-            let ball = svg.circle(
-                w + i * (ballRadius * 2 + ballSpacing) + ballRadius,
+            let ball = new DeliveryMarker(
+                svg,
+                w +
+                    i * (this.ballRadius * 2 + this.ballSpacing) +
+                    this.ballRadius,
                 h / 2,
-                ballRadius
+                this.ballRadius,
+                0,
+                ""
             );
-            ball.attr({
-                fill: "#fff",
-                "fill-opacity": "35%",
-            });
-            this.group.add(ball);
+            ball.addTo(this.group);
             this.balls.push(ball);
         }
 
         // The natural width of the group
-        w += 6 * (ballRadius * 2 + ballSpacing) - ballSpacing;
+        w += 6 * (this.ballRadius * 2 + this.ballSpacing) - this.ballSpacing;
 
         this.bbox = Utils.getBBox(x, y, w, h, corner);
         Utils.freeTransformTo(this.group, this.bbox.ulx, this.bbox.uly);
@@ -123,20 +174,41 @@ class CurrentOverBox {
         }
     }
 
-    /*!
+    /**
      * Start a new over
      *
      * @method newOver
      */
     newOver() {
-        if(this.balls.length>6) {
-            this.balls.slice(6).forEach((shape)=>{/*TODO remove shape*/});
-            this.balls = this.balls.slice(0, 6);
-        }
-        this.markers = Array(6).fill('');
-        this.runs = Array(6).fill(0);
+        // Back down to 6 balls if the previous over had more
+        this.balls.splice(6).forEach((shape) => {
+            shape.remove();
+        });
     }
 
+    /**
+     * Record a delivery, whether legal or not
+     *
+     * @method recordDelivery
+     */
+    recordDelivery(totalRuns, marker = "") {
+        if (currDelivery >= 6) {
+            // TODO add a new ball
+        }
+
+        this.marker[currDelivery] = marker;
+
+        renderScoreInBall(this.balls[currDelivery], totalRuns, marker);
+
+        ++currDelivery;
+    }
+
+    /**
+     * Render the score inside a ball
+     *
+     * @method renderScoreInBall
+     */
+    renderScoreInBall(ball, totalRuns, marker) {}
 }
 
 module.exports = CurrentOverBox;
