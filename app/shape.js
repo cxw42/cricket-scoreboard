@@ -90,6 +90,18 @@ class Shape {
     remove() {
         this.group.remove();
     }
+
+    /**
+     * Move or resize this shape
+     *
+     * @method
+     */
+    setBBox(x, y, w, h, corner) {
+        this.bbox = Utils.getBBox(x, y, w, h, corner);
+        this.ft.attrs.translate.x = this.bbox.ulx;
+        this.ft.attrs.translate.y = this.bbox.uly;
+        this.ft.apply();
+    }
 }
 
 module.exports = Shape;

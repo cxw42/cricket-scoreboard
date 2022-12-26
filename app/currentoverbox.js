@@ -33,6 +33,8 @@ const scoreX = margin + rowHeight * 4.5;
  *
  * @protected
  * @class DeliveryMarker
+ * @extends Shape
+ *
  * @constructor
  * @param {Snap} svg The SVG
  * @param {int} cx Center X
@@ -113,10 +115,16 @@ class DeliveryMarker extends Shape {
  * This over
  *
  * @class CurrentOverBox
+ * @extends Shape
  */
-class CurrentOverBox {
-    svg = null; // note: brunch doesn't do `#private`
-    bbox = {};
+class CurrentOverBox extends Shape {
+    static labelStyles = Utils.extend(Styles.textStyles, {
+        "font-style": "normal",
+        "font-size": Styles.labelTextSize,
+        fill: "#fff",
+        "fill-opacity": "35%",
+        weight: 700,
+    });
 
     // Ball-size parameters
     ballRadius = 0;
@@ -127,25 +135,20 @@ class CurrentOverBox {
     currDelivery; // which delivery we are on, starting from 0
 
     constructor(svg, x, y, h, corner) {
-        let w;
-        this.svg = svg;
-        this.group = svg.g();
+        let currWidth;
 
-        const labelStyles = Utils.extend(Styles.textStyles, {
-            "font-style": "normal",
-            "font-size": Styles.labelTextSize,
-            fill: "#fff",
-            "fill-opacity": "35%",
-            weight: 700,
-        });
+        // Initialize with a placeholder width.  We will update it later
+        // based on currWidth.
+        super(svg, x, y, 1, h, corner);
+
         this.label = new TextBox(svg, 0, 0, 100, rowHeight, "tl", [
             {
                 text: "THIS",
-                styles: labelStyles,
+                styles: CurrentOverBox.labelStyles,
             },
             {
                 text: "OVER",
-                styles: labelStyles,
+                styles: CurrentOverBox.labelStyles,
             },
         ]);
 
@@ -155,9 +158,10 @@ class CurrentOverBox {
 
         this.label.addTo(this.group);
 
-        // TODO set w to the width of this.label plus padding
-        w = 25;
+        // TODO set currWidth to the width of this.label plus padding
+        currWidth = 25;
 
+        // Add the DeliveryMarker instances for the first six balls of the over
         this.ballRadius = h * 0.45;
         this.ballSpacing = this.ballRadius * 0.25;
         this.balls = [];
@@ -165,7 +169,7 @@ class CurrentOverBox {
         for (let i = 0; i < 6; ++i) {
             let ball = new DeliveryMarker(
                 svg,
-                w +
+                currWidth +
                     i * (this.ballRadius * 2 + this.ballSpacing) +
                     this.ballRadius,
                 h / 2,
@@ -175,13 +179,14 @@ class CurrentOverBox {
             this.balls.push(ball);
         }
 
-        // The natural width of the group
-        w += 6 * (this.ballRadius * 2 + this.ballSpacing) - this.ballSpacing;
-
-        this.bbox = Utils.getBBox(x, y, w, h, corner);
-        Utils.freeTransformTo(this.group, this.bbox.ulx, this.bbox.uly);
-
         this.newOver();
+
+        // Finish computing the natural width of the group
+        currWidth +=
+            6 * (this.ballRadius * 2 + this.ballSpacing) - this.ballSpacing;
+
+        // Update the bbox now that we have the width
+        this.setBBox(x, y, currWidth, h, corner);
     } // ctor
 
     /**
