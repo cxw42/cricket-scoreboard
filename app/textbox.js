@@ -26,10 +26,6 @@ require("3rdparty/snap.svg.free_transform");
  *      - `background`: styles for the background
  */
 class Textbox {
-    // two.js coordinates
-    twoX;
-    twoY;
-
     group; // the group of shapes
     outline; // visible outline
     text; // Two.Text instance
@@ -135,8 +131,23 @@ class Textbox {
         canvas = null;
     }
 
-    addTo(el) {
-        el.add(this.group);
+    /**
+     * Add this instance to an SVG element
+     *
+     * @method addTo
+     * @param {Object} parent The element
+     */
+    addTo(parent) {
+        parent.add(this.group);
+    }
+
+    /**
+     * Remove this instance from the SVG
+     *
+     * @method remove
+     */
+    remove() {
+        this.group.remove();
     }
 
     setValue(value) {

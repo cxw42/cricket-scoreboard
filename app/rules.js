@@ -15,13 +15,18 @@
  *
  * @class Marker
  */
-const Marker = Object.freeze({
-    BYE: "B",
-    LEG_BYE: "L",
-    NO_BALL: "N",
-    WICKET: "W",
-    WIDE: "D",
-});
+class Marker {
+    static BYE = new Marker("B", "b");
+    static LEG_BYE = new Marker("L", "lb");
+    static NO_BALL = new Marker("N", "nb");
+    static WICKET = new Marker("W", "W");
+    static WIDE = new Marker("D", "wd");
+
+    constructor(key, label) {
+        this.key = key;
+        this.label = label;
+    }
+}
 
 module.exports = {
     Marker,

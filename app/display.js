@@ -13,6 +13,8 @@ const TRY = 2;
 const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
 
+const Marker = require("rules").Marker;
+
 const BatterBox = require("batterbox");
 const BowlerBox = require("bowlerbox");
 const CurrentOverBox = require("currentoverbox");
@@ -231,6 +233,10 @@ class Display {
                 rowHeight,
                 "bc"
             );
+
+            // XXX DEBUG
+            this.thisOver.recordDelivery(1);
+            this.thisOver.recordDelivery(2, [Marker.WIDE]);
         }
 
         // EBU margins

@@ -30,8 +30,6 @@ const scoreX = margin + rowHeight * 4.5;
 /**
  * The graphical representation of a delivery.
  *
- * Invariant once created.
- *
  * @protected
  * @class DeliveryMarker
  * @constructor
@@ -39,28 +37,31 @@ const scoreX = margin + rowHeight * 4.5;
  * @param {int} cx Center X
  * @param {int} cy Center Y
  * @param {int} r Radius
- * @param {int} totalRuns Total runs scored on this delivery
- * @param {String} marker Any markers (from enum Marker)
  */
 class DeliveryMarker {
     svg = null;
     bbox = {};
 
     group; // the group of shapes
+    label; // the label
 
-    constructor(svg, cx, cy, r, corner, totalRuns, marker = "") {
-        const hasMarker = (marker || "").length > 0;
+    constructor(svg, cx, cy, r, corner, totalRuns = null, markers = []) {
+        this.svg = svg;
         this.group = svg.g();
-
         this.bbox = Utils.getBBox(cx, cy, r * 2, r * 2, "mc");
+        Utils.freeTransformTo(this.group, this.bbox.ulx, this.bbox.uly);
 
-        let ball = svg.circle(cx, cy, r);
+        let ball = svg.circle(r, r, r);
         ball.attr({
             fill: "#fff",
             "fill-opacity": "35%",
         });
 
         this.group.add(ball);
+
+        if (totalRuns !== null) {
+            this.setScore(totalRuns, markers);
+        }
     }
 
     /**
@@ -80,6 +81,56 @@ class DeliveryMarker {
      */
     remove() {
         this.group.remove();
+    }
+
+    /**
+     * Render a score in this element
+     *
+     * @method setScore
+     * @param {int} totalRuns Total runs scored on this delivery
+     * @param {Array} markers Any markers (from enum Marker)
+     */
+    setScore(totalRuns, markers) {
+        const hasMarker = (markers || []).length > 0;
+
+        if (this.label) {
+            this.label.remove();
+        }
+
+        // TODO fixme --- this is very hackish
+        let textAndStyles = [
+            {
+                text: totalRuns.toString() + "R",
+                styles: Styles.scoreStyles,
+            },
+        ];
+
+        if (hasMarker) {
+            textAndStyles.push({
+                text: markers.map((o) => o.label).join(" "),
+                styles: Utils.extend(Styles.textStyles, {
+                    "font-size": Styles.labelTextSize,
+                }),
+            });
+        }
+
+        this.label = new TextBox(
+            this.svg,
+            0,
+            0,
+            this.bbox.w,
+            this.bbox.h,
+            "tl",
+            textAndStyles
+        );
+
+        // TODO clean this up --- it's currently empirical
+        this.label.text.children()[0].attr({ x: 1, y: 3 });
+        if (hasMarker) {
+            this.label.text.children()[1].attr({ x: 3, y: 11 });
+        }
+
+        this.label.addTo(this.group);
     }
 }
 
@@ -143,9 +194,7 @@ class CurrentOverBox {
                     i * (this.ballRadius * 2 + this.ballSpacing) +
                     this.ballRadius,
                 h / 2,
-                this.ballRadius,
-                0,
-                ""
+                this.ballRadius
             );
             ball.addTo(this.group);
             this.balls.push(ball);
@@ -184,6 +233,7 @@ class CurrentOverBox {
         this.balls.splice(6).forEach((shape) => {
             shape.remove();
         });
+        this.currDelivery = 0;
     }
 
     /**
@@ -191,24 +241,13 @@ class CurrentOverBox {
      *
      * @method recordDelivery
      */
-    recordDelivery(totalRuns, marker = "") {
-        if (currDelivery >= 6) {
+    recordDelivery(totalRuns, markers = []) {
+        if (this.currDelivery >= 6) {
             // TODO add a new ball
         }
 
-        this.marker[currDelivery] = marker;
-
-        renderScoreInBall(this.balls[currDelivery], totalRuns, marker);
-
-        ++currDelivery;
+        this.balls[this.currDelivery++].setScore(totalRuns, markers);
     }
-
-    /**
-     * Render the score inside a ball
-     *
-     * @method renderScoreInBall
-     */
-    renderScoreInBall(ball, totalRuns, marker) {}
 }
 
 module.exports = CurrentOverBox;
