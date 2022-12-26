@@ -5,7 +5,7 @@
 
 // For debugging
 const SHOW_EBU_MARGINS = false;
-const SHOW_SECOND_INNINGS_QUICKVIEW = true;
+const SHOW_SECOND_INNINGS_QUICKVIEW = false;
 
 // Which layout we are trying
 const TRY = 2;
