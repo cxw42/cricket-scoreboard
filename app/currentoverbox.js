@@ -9,6 +9,7 @@ const Marker = require("rules").Marker;
 //const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
 
+const Shape = require("shape");
 const Styles = require("styles");
 const TextBox = require("textbox");
 const Utils = require("utils");
@@ -38,18 +39,11 @@ const scoreX = margin + rowHeight * 4.5;
  * @param {int} cy Center Y
  * @param {int} r Radius
  */
-class DeliveryMarker {
-    svg = null;
-    bbox = {};
-
-    group; // the group of shapes
+class DeliveryMarker extends Shape {
     label; // the label
 
-    constructor(svg, cx, cy, r, corner, totalRuns = null, markers = []) {
-        this.svg = svg;
-        this.group = svg.g();
-        this.bbox = Utils.getBBox(cx, cy, r * 2, r * 2, "mc");
-        Utils.freeTransformTo(this.group, this.bbox.ulx, this.bbox.uly);
+    constructor(svg, cx, cy, r, totalRuns = null, markers = []) {
+        super(svg, cx, cy, r * 2, r * 2, "mc");
 
         let ball = svg.circle(r, r, r);
         ball.attr({
@@ -62,25 +56,6 @@ class DeliveryMarker {
         if (totalRuns !== null) {
             this.setScore(totalRuns, markers);
         }
-    }
-
-    /**
-     * Add this instance to an SVG element
-     *
-     * @method addTo
-     * @param {Object} parent The element
-     */
-    addTo(parent) {
-        parent.add(this.group);
-    }
-
-    /**
-     * Remove this instance from the SVG
-     *
-     * @method remove
-     */
-    remove() {
-        this.group.remove();
     }
 
     /**
