@@ -126,6 +126,9 @@ class CurrentOverBox extends Shape {
         weight: 700,
     });
 
+    background;
+    content;    // the content in front of the background
+
     // Ball-size parameters
     ballRadius = 0;
     ballSpacing = 0;
@@ -140,6 +143,8 @@ class CurrentOverBox extends Shape {
         // Initialize with a placeholder width.  We will update it later
         // based on currWidth.
         super(svg, x, y, 1, h, corner);
+        this.group.addClass('CurrentOverBox');
+        this.content = svg.g().addClass('CurrentOverBox-Content');
 
         this.label = new TextBox(svg, 0, 0, 100, rowHeight, "tl", [
             {
@@ -156,7 +161,7 @@ class CurrentOverBox extends Shape {
         this.label.text.children()[0].attr({ x: 1, y: 3 });
         this.label.text.children()[1].attr({ x: 0, y: 11 });
 
-        this.label.addTo(this.group);
+        this.label.addTo(this.content);
 
         // TODO set currWidth to the width of this.label plus padding
         currWidth = 25;
@@ -175,7 +180,7 @@ class CurrentOverBox extends Shape {
                 h / 2,
                 this.ballRadius
             );
-            ball.addTo(this.group);
+            ball.addTo(this.content);
             this.balls.push(ball);
         }
 
@@ -187,6 +192,14 @@ class CurrentOverBox extends Shape {
 
         // Update the bbox now that we have the width
         this.setBBox(x, y, currWidth, h, corner);
+
+        // Make the background
+        this.background = svg.rect(0, 0, this.bbox.w, this.bbox.h);
+        this.background.attr({fill: '#dfd'});
+
+        // Assemble
+        this.group.add(this.background);
+        this.group.add(this.content);
     } // ctor
 
     /**

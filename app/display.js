@@ -56,9 +56,9 @@ class Display {
         this._team2 = team2;
 
         // Thanks to https://jsfiddle.net/x5qf7bz4/
-        let svg = (this.svg = Snap(WIDTH, HEIGHT));
-        document.getElementById("container").appendChild(this.svg.node);
-        this.svg.node.id = "disp"; // for convenience in debugging
+        let svg = Snap(WIDTH, HEIGHT);
+        document.getElementById("container").appendChild(svg.node);
+        svg.node.id = "disp"; // for convenience in debugging
 
         // Background
         svg.rect(0, 0, "100%", "100%").attr({
@@ -191,7 +191,6 @@ class Display {
                     fill: gradient,
                 });
             }
-            //this.group.add(backgrounds);
 
             this.batterOnStrike = new BatterBox(
                 svg,
