@@ -27,7 +27,7 @@ class Shape {
      * @protected
      * @property svg
      */
-    svg = null;
+    //svg = null;
 
     /**
      * Our bounding box
@@ -35,17 +35,7 @@ class Shape {
      * @protected
      * @property bbox
      */
-    bbox = {};
-
-    /**
-     * Our top-level SVG element.
-     *
-     * Anything added by a subclass should be added to this group.
-     *
-     * @protected
-     * @property group
-     */
-    group = null;
+    //bbox = {};
 
     /**
      * The free transform for `group`.
@@ -55,13 +45,24 @@ class Shape {
      * @protected
      * @property ft
      */
-    ft = null;
+    //ft = null;
 
     //outline; // visible outline --- TODO addme?
 
     constructor(svg, x, y, w, h, corner) {
         this.svg = svg;
+
+        /**
+         * Our top-level SVG element.
+         *
+         * Anything added by a subclass should be added to this group.
+         *
+         * @protected
+         * @property group
+         */
         this.group = svg.g();
+
+        this.group.addClass(this.constructor.name);
         this.bbox = Utils.getBBox(x, y, w, h, corner);
         this.ft = Utils.freeTransformTo(
             this.group,

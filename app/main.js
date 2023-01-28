@@ -53,12 +53,32 @@ setTimeout(() => {
     display.update(score);
 }, 100);
 
+/////////////////////////////////////////////////////////////////// XXX tests
+
+class Foo {
+    member;
+    constructor(val) {
+        this.member = 'From foo ' + val;
+        this.ctorMember = 'From foo ctor';
+    }
+}
+class Bar extends Foo {
+    childMember;
+    constructor() {
+        super(42);
+        this.childMember = 'From Bar.  Foo said: ' + this.member;
+        this.childCtorMember = 'from bar ctor.  Foo said:' + this.ctorMember;
+    }
+}
+
 // XXX for debugging, export our internals.
 module.exports = {
     display,
     score,
     team1,
     team2,
+    Foo,
+    Bar,
 };
 
 /*************************************************************************

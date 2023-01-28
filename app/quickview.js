@@ -38,13 +38,11 @@ const scoreX = margin + rowHeight * 4.1;
  * @class QuickView
  */
 class QuickView {
-    svg = null; // note: brunch doesn't do `#private`
     group; // top-level group
     battingTeams = [];
 
     constructor(svg, x, y, teamBattingFirst, teamBattingSecond, whichTeams) {
         const { home, toss, battingNow } = whichTeams;
-        this.svg = svg;
         this.battingTeams = [teamBattingFirst, teamBattingSecond];
 
         this.group = svg.g().addClass("QuickView");
