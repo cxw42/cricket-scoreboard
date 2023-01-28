@@ -122,7 +122,7 @@ class BowlerBox {
         });
         this.textGroup.add(this.tOvers);
 
-        this.group = svg.g();
+        this.group = svg.g().addClass("BowlerBox");
         this.group.add(this.textGroup);
 
         /*

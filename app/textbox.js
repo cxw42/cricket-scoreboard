@@ -72,7 +72,7 @@ class Textbox {
         canvas.hide();
 
         // Create the group and position it at the given place
-        this.group = svg.g();
+        this.group = svg.g().addClass("Textbox");
         let ftg = svg.freeTransform(this.group);
         ftg.hideHandles();
         ftg.attrs.translate.x = ulx;

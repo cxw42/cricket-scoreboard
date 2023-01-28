@@ -100,7 +100,7 @@ class BatterBox {
             .attr(styles);
         this.textGroup.add(this.ballsLabel);
 
-        this.group = svg.g();
+        this.group = svg.g().addClass("BatterBox");
         this.group.add(this.textGroup);
 
         /*

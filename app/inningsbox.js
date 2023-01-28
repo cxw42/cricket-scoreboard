@@ -49,7 +49,10 @@ class InningsBox {
         styles["baseline"] = styles["alignment-baseline"] = "top";
         styles["dominant-baseline"] = "hanging";
         styles["weight"] = 1000;
-        let t = svg.text(x, y, [abbr, icons]).attr(styles);
+        let t = svg
+            .text(x, y, [abbr, icons])
+            .attr(styles)
+            .addClass("InningsBox-makeTeam");
         t.children()[1].attr({
             y: y + t.children()[0].getBBox().height,
             x,
@@ -77,7 +80,7 @@ class InningsBox {
         styles = structuredClone(styles);
         styles.baseline = "baseline";
 
-        this.group = svg.g();
+        this.group = svg.g().addClass("InningsBox");
         Utils.freeTransformTo(this.group, ulx, uly);
         // Now you can say things like
         //  this.group.freeTransform.attrs.translate.y -= 20;
@@ -143,6 +146,7 @@ class InningsBox {
                 },
             ]
         );
+        this.tTeam1Score.group.addClass("InningsBox-Team1Score");
         this.tTeam1Score.addTo(this.scoresGroup);
 
         styles.fill = "#000"; // XXX
@@ -169,6 +173,7 @@ class InningsBox {
                 },
             ]
         );
+        this.tTeam1Score.group.addClass("InningsBox-Team2Score");
         this.tTeam2Score.addTo(this.scoresGroup);
 
         this.group.add(this.scoresGroup);
