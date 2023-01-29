@@ -93,9 +93,10 @@ class Shape {
     }
 
     /**
-     * Move or resize this shape
+     * Move this shape, or update our record of its size.
+     * Note that this doesn't actually change the size.
      *
-     * @method
+     * @method setBBox
      */
     setBBox(x, y, w, h, corner) {
         this.bbox = Utils.getBBox(x, y, w, h, corner);
