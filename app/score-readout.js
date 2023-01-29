@@ -5,7 +5,7 @@
 
 const Shape = require("shape");
 const Styles = require("styles");
-const TextBox = require("textbox");
+const Textbox = require("textbox");
 const Utils = require("utils");
 
 // Grid: vertical
@@ -19,62 +19,58 @@ const rowY = [...Array(nrows + 1).keys()].map((i) => (rowHeight + margin) * i);
  * Score readout --- [wickets dash] runs
  *
  * @class ScoreReadout
+ * @constructor
+ * @param {Snap} svg See Shape
+ * @param {int} x See Shape
+ * @param {int} y See Shape
+ * @param {int} w See Shape
+ * @param {int} h See Shape
+ * @param {String} corner See Shape
+ * @param {Object} opts Object of options:
+ *  - showWickets to show the wickets (default false)
+ *  - bold to boldface the score (default false)
+ *  - background for the background to use
+ *  - teamColor for the team's color (default #fff)
  */
-class ScoreReadout extends Shape {
+class ScoreReadout extends Textbox {
     showWickets; // whether to show the wickets
-    fontWeight; // font-weight for the numbers
-    bgColor;
 
     text; // The textbox
     background; // the background
 
-    constructor(svg, x, y, w_IGNORED, h, corner, opts = {}) {
-        // Initialize with a placeholder width.  We will update it later
-        // based on the text's width.
-        super(svg, x, y, 1, h, corner);
-
-        this.showWickets = !!opts.showWickets;
-        this.fontWeight = opts.bold ? "bold" : "normal";
-        this.bgColor = opts.bgColor || "#fff8b4";
+    constructor(svg, x, y, w, h, corner, opts = {}) {
+        let showWickets = !!opts.showWickets;
+        let fontWeight = opts.bold ? "bold" : "normal";
+        let bgStyle = opts.background || { stroke: "none", fill: "#fff8b4" };
 
         const textColor = Utils.getContrastingTextColor(
             opts.teamColor || "#ffffff"
         );
 
-        // Fill in this.text
-        this.makeBattingScore(svg, textColor);
+        let items = ScoreReadout.makeScoreItems(
+            showWickets,
+            fontWeight,
+            textColor
+        );
 
-        // Update the shape's width
-        this.setBBox(x, y, this.text.svgText.getBBox().width, h, corner);
-
-        // Put the text where it belongs
-        // TODO this.text.setBBox
-        // debugger;
-
-        // Background
-        if (opts.bgColor !== "none") {
-            //debugger;
-            this.outline = svg.rect(0, 0, this.bbox.w, this.bbox.h).attr({
-                stroke: this.bgColor,
-                fill: this.bgColor,
-                rx: margin,
-            });
-            this.group.add(this.outline);
-            this.text.addTo(this.group); // text in front
-            /*
-            {
-            }
-            */
-        }
+        super(svg, x, y, w, h, corner, items, {
+            background: bgStyle,
+        });
+        this.showWickets = showWickets;
     } // ctor
 
-    makeBattingScore(svg, scoreColor) {
+    /**
+     * Make the items we will include in the score
+     *
+     * @method makeScoreItems
+     */
+    static makeScoreItems(showWickets, fontWeight, scoreColor) {
         const baseStyles = Utils.extend(Styles.textStyles, Styles.scoreStyles);
 
         let items = [];
 
         // Wickets, if desired by the client
-        if (this.showWickets) {
+        if (showWickets) {
             items.push(
                 {
                     text: "W",
@@ -88,14 +84,14 @@ class ScoreReadout extends Shape {
                     styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
                         class: "wicketsLost",
-                        "font-weight": this.fontWeight,
+                        "font-weight": fontWeight,
                     }),
                 },
                 {
                     text: "-",
                     styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
-                        "font-weight": this.fontWeight,
+                        "font-weight": fontWeight,
                     }),
                 }
             );
@@ -108,7 +104,7 @@ class ScoreReadout extends Shape {
                 styles: Utils.extend(baseStyles, {
                     fill: scoreColor,
                     class: "runsScored",
-                    "font-weight": this.fontWeight,
+                    "font-weight": fontWeight,
                 }),
             },
             {
@@ -120,28 +116,7 @@ class ScoreReadout extends Shape {
             }
         );
 
-        this.text = new TextBox(
-            svg,
-            this.bbox.cornerX,
-            this.bbox.cornerY,
-            1, // placeholder width
-            rowHeight,
-            this.bbox.corner,
-            items
-            /*
-            {
-                background: {
-                    stroke: this.bgColor,
-                    fill: this.bgColor,
-                    rx: margin,
-                },
-            }
-            */
-        );
-        this.text.group.attr({
-            class: "battingScore",
-        });
-        this.text.addTo(this.group);
+        return items;
     }
 
     update(runs, wkts = null) {

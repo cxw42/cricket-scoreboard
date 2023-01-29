@@ -72,32 +72,11 @@ class Display {
         // Background image
         this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
 
-        // DEBUG
-        svg.rect(10, 10, 100, 100).attr({ fill: "none", stroke: "#dfd" });
-        svg.rect(200, 10, 100, 100).attr({ fill: "none", stroke: "#dfd" });
-
-        svg.circle(60, 60, 1);
-        for (let v of ["t", "m", "b"]) {
-            for (let h of ["l", "c", "r"]) {
-                new TextBox(svg, 60, 60, -1, -1, v + h, [{ text: v + h }], {
-                    background: { stroke: "#fff" },
-                });
-            }
-        }
-        svg.circle(250, 60, 1);
-        for (let v of ["t", "m", "b"]) {
-            for (let h of ["l", "c", "r"]) {
-                new TextBox(svg, 250, 60, 30, 30, v + h, [{ text: v + h }], {
-                    background: { stroke: "#fff" },
-                });
-            }
-        }
-        /*
-        this.readout1 = new ScoreReadout(svg, 10, 10, 100, 100, "tl", {
+        this.readout1 = new ScoreReadout(svg, 10, 10, -1, -1, "tl", {
             showWickets: true,
             teamColor: "#88f",
             bold: true,
-            bgColor: "none",
+            background: "none",
         });
         this.readout2 = new ScoreReadout(svg, 200, 10, 100, 100, "tl", {
             showWickets: false,
@@ -106,7 +85,6 @@ class Display {
         });
         this.readout1.update(123, 4);
         this.readout2.update(456, 7);
-        */
 
         let textStyles = Utils.extend(Styles.textStyles, {
             "letter-spacing": "1", // empirical

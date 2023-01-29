@@ -24,7 +24,7 @@ require("3rdparty/snap.svg.free_transform");
  *                               styles are per
  *                               [Two.Text](https://two.js.org/docs/text/).
  * @param {Object} opts Options.  Keys include:
- *      - `background`: styles for the background
+ *      - `background`: styles for the background (Object or 'none')
  */
 class Textbox extends Shape {
     svgOutline; // visible outline or background - svg <rect>
@@ -35,7 +35,11 @@ class Textbox extends Shape {
         // interim size(s).
         super(svg, x, y, w < 0 ? 1 : w, h < 0 ? 1 : h, corner);
 
-        opts.background = opts.background || {};
+        let background = opts.background || "none";
+        if (background === "none") {
+            background = {};
+        }
+
         if (typeof textAndStyles !== typeof []) {
             textAndStyles = [textAndStyles];
         }
@@ -109,7 +113,7 @@ class Textbox extends Shape {
                     fill: "none",
                     stroke: "none",
                 },
-                opts.background
+                background
             )
         );
 
