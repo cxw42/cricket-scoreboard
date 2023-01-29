@@ -97,6 +97,11 @@ class Textbox extends Shape {
         // Add the shapes to the group
         this.group.add(this.svgOutline);
         this.group.add(this.svgText);
+
+        // XXX HACK --- it starts out a bit too small.  Doing this seems to help.
+        setTimeout(() => {
+            this.lineUp();
+        }, 0);
     }
 
     /**
@@ -106,7 +111,9 @@ class Textbox extends Shape {
      * @method lineUp
      */
     lineUp() {
+        //debugger;
         const textBBox = this.svgText.getBBox();
+        console.log(textBBox);
 
         // If we have a fixed size, and we've already done alignment, we're done.
         if (this._linedUp && this.origBBox.w >= 0 && this.origBBox.h >= 0) {
