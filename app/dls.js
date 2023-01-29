@@ -142,7 +142,31 @@ function resourcesRemaining20(oversLeft, wicketsLost) {
     return resourcesRemaining(BGS20, 20, oversLeft, wicketsLost);
 }
 
+// Virtual runs?  An experiment.  This is something like what team 1 would have had to score
+// to beat team2 if team2 had batted out its full 20 overs.
+// A hack based on my reading of
+// <https://icc-static-files.s3.amazonaws.com/ICC/document/2017/01/09/ca50a5e9-0241-494a-8773-d0cec059b31f/DuckworthLewis-Methodology.pdf>.
+//
+// E.g., <https://www.espncricinfo.com/series/bangladesh-premier-league-2022-23-1346160/sylhet-strikers-vs-chattogram-challengers-28th-match-1351079/full-scorecard>:
+// Challengers batted first and made 174/6 in 20 overs.  Sylhet reached 177/3 in 18 overs,
+// winning by seven wickets.  Sylhet had 10.2% of its resources left when it won,
+// so had used 89.8%.  Therefore, batting a full 20 overs, Sylhet could have made
+// 177 * (100/89.8) = 197 runs.  Accordingly, its virtual run victory over the
+// Challengers was 197-174 = 23 runs.
+function wonByVirtualRuns20(
+    team1Score,
+    team2Score,
+    team2OversLeft,
+    team2WicketsLost
+) {
+    // let team1ResourcesUsed = 100;   // assumption
+    let team2ResourcesUsed =
+        1 - resourcesRemaining20(team2OversLeft, team2WicketsLost);
+    return team2Score / team2ResourcesUsed - team1Score; // TODO floor?
+}
+
 module.exports = {
     resourcesRemaining50,
     resourcesRemaining20,
+    wonByVirtualRuns20,
 };
