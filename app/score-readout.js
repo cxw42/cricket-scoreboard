@@ -3,16 +3,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-const D3Color = require("3rdparty/d3-color.v2.min");
-const Snap = require("snapsvg");
-const WcagContrast = require("wcag-contrast");
-
 const Shape = require("shape");
 const Styles = require("styles");
 const TextBox = require("textbox");
 const Utils = require("utils");
-
-const EMDASH = String.fromCodePoint(0x2014);
 
 // Grid: vertical
 const rowHeight = 20;
@@ -40,8 +34,12 @@ class ScoreReadout extends Shape {
     fontWeight; // font-weight for the numbers
     bgColor;
 
+
     constructor(svg, x, y, w, h, corner, opts = {}) {
-        super(svg, x, y, w, h, corner);
+        // Initialize with a placeholder width.  We will update it later
+        // based on the text's width.
+        super(svg, x, y, 1, h, corner);
+
         this.showWickets = !!opts.showWickets;
         this.fontWeight = opts.bold ? "bold" : "normal";
         this.bgColor = opts.bgColor || "#fff8b4";
@@ -50,16 +48,19 @@ class ScoreReadout extends Shape {
             opts.teamColor || "#ffffff"
         );
 
-        // Group to hold this team's items, except for the background.
+        // Fill in this.text
         this.makeBattingScore(svg, textColor);
 
-        // TODO resize to natural width
+        // Update the shape's width
+        this.setBBox(x, y, this.text.text.getBBox().width, h, corner);
     } // ctor
 
     makeBattingScore(svg, scoreColor) {
         const baseStyles = Utils.extend(Styles.textStyles, Styles.scoreStyles);
 
         let items = [];
+
+        // Wickets, if desired by the client
         if (this.showWickets) {
             items.push(
                 {
@@ -87,6 +88,7 @@ class ScoreReadout extends Shape {
             );
         }
 
+        // Runs (always)
         items.push(
             {
                 text: "456",
@@ -105,14 +107,16 @@ class ScoreReadout extends Shape {
             }
         );
 
-        let score = new TextBox(
+        debugger;
+        this.text = new TextBox(
             svg,
-            w - margin,
-            cy,
-            w - scoreX,
+            this.bbox.ulx,
+            this.bbox.cy,
+            1,  // placeholder width
             rowHeight,
-            "mr",
+            "ml",
             items,
+            /*
             {
                 background: {
                     stroke: this.bgColor,
@@ -120,11 +124,12 @@ class ScoreReadout extends Shape {
                     rx: margin,
                 },
             }
+            */
         );
-        score.group.attr({
+        this.text.group.attr({
             class: "battingScore",
         });
-        score.addTo(this.group);
+        this.text.addTo(this.group);
     }
 
     update(runs, wkts = null) {
