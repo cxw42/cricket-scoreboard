@@ -5,7 +5,11 @@
 
 //const Utils = require("utils");
 
-// DLS table for 50 overs, indexed by (50-oversRemaining) and then by wicketsLost
+// 50-over DLS table
+//
+// From https://icc-static-files.s3.amazonaws.com/ICC/document/2017/01/09/57272b5a-775e-4034-bb49-437052b5bee6/DuckworthLewis-Standard-Edition-Table.pdf
+//
+// Indexed by (50-oversRemaining) and then by wicketsLost
 const DLS50 = [
     [100, 93.4, 85.1, 74.9, 62.7, 49, 34.9, 22, 11.9, 4.7],
     [99.1, 92.6, 84.5, 74.4, 62.5, 48.9, 34.9, 22, 11.9, 4.7],
@@ -59,21 +63,86 @@ const DLS50 = [
     [3.6, 3.6, 3.6, 3.6, 3.6, 3.5, 3.5, 3.4, 3.2, 2.5],
 ];
 
+// 20-over BGS table
+//
+// From https://www.sfu.ca/~tswartz/papers/perera.pdf
+// Perera, H. and Swartz, T.B. (2013). Resource estimation in Twenty20 cricket.
+// IMA Journal of Management Mathematics, 24(3), 337-347.
+//
+// Indexed by (20-oversRemaining) and then by wicketsLost
+const BGS20 = [
+    [100, 97.6, 97.3, 86.7, 78.8, 68.2, 54.5, 38.4, 22, 9.5],
+    [98.5, 97.3, 97.1, 85.2, 76.6, 66.6, 53.5, 37.4, 21.6, 9.4],
+    [97.5, 95.9, 94, 84.8, 75.3, 65, 52.6, 37, 21.3, 9.3],
+    [95.3, 93, 91.4, 84.4, 75.1, 63.4, 51.5, 36.5, 21.1, 9.2],
+    [91.5, 87.8, 84.2, 80.3, 75, 62.9, 50.4, 36.1, 21, 9.1],
+    [86.8, 82.8, 80.9, 75.6, 73.7, 61.9, 49.1, 35.7, 20.8, 9],
+    [77.2, 73.6, 70.7, 68.7, 63.9, 58.8, 47.7, 35.2, 20.7, 8.9],
+    [74.6, 69, 64.6, 60.5, 56.5, 53, 46.1, 34.8, 20.6, 8.8],
+    [64.7, 63, 58.9, 56.8, 53.9, 52.7, 44.3, 34.5, 20.4, 8.7],
+    [61.4, 58.5, 52, 50, 47.6, 43.3, 43.1, 33.5, 20.2, 8.6],
+    [55.1, 53.4, 48.8, 46.5, 43.8, 40.2, 38.1, 32.4, 20, 8.5],
+    [52.6, 47, 41.7, 40.5, 38.2, 36.3, 34.3, 29.1, 19.7, 8.4],
+    [47.3, 41.9, 37.8, 35.6, 33.9, 31.3, 29.2, 28.2, 19.2, 8.3],
+    [42.4, 40.2, 33.4, 31.7, 29.2, 27.7, 26.4, 24.6, 18.5, 8.2],
+    [37.2, 34.9, 29.8, 27.2, 26, 24.5, 21.7, 19.9, 17.8, 8.1],
+    [32.4, 32.1, 24.6, 24.1, 22.3, 21.6, 19, 17.4, 17.2, 8],
+    [27.9, 27.5, 21.1, 19.4, 18.3, 16.8, 16.3, 14.2, 10.8, 7.7],
+    [20.2, 19.9, 16.8, 16.2, 15.2, 13.9, 12.8, 10.7, 9.8, 5.8],
+    [14.8, 14.6, 10.5, 10.2, 9.5, 9.1, 8.9, 8.3, 6.9, 4.8],
+    [8.8, 8.7, 7.8, 6.4, 6.2, 5.5, 5.2, 4.7, 4.5, 2.9],
+];
+
 /**
  * Resources remaining, 50-over match
  *
  * @method resourcesRemaining50
- * @param {int} oversLeft Overs remaining
+ * @param {int} oversLeft Overs remaining, which may include a decimal fraction (4.5 = 4 ov, 3 balls)
  * @param {int} wicketsLost Wickets lost
+ * @return {float} The decimal fraction
  */
-function resourcesRemaining50(oversLeft, wicketsLost) {
-    if (wicketsLost > 9 || oversLeft < 1) {
+function resourcesRemaining(table, maxOvers, oversLeft, wicketsLost) {
+    if (wicketsLost > 9 || oversLeft <= 0) {
         return 0;
     }
 
-    return DLS50[50 - oversLeft][wicketsLost];
+    if (Math.floor(oversLeft) == oversLeft) {
+        return table[maxOvers - oversLeft][wicketsLost] / 100.0;
+    } else {
+        // Linear interpolation across an over rather than using the full 300-entry
+        // ICC table for a 50-over match.
+        let wholeOversLeft = Math.floor(oversLeft);
+        let percentOfOverLeft = oversLeft - wholeOversLeft;
+        let above = table[maxOvers - (wholeOversLeft + 1)][wicketsLost];
+        let below = table[maxOvers - wholeOversLeft][wicketsLost];
+
+        return (below + percentOfOverLeft * (above - below)) / 100.0;
+    }
+}
+
+/**
+ * Resources remaining, 50-over match
+ *
+ * @method resourcesRemaining50
+ * @param {int} oversLeft Overs remaining, which may include a decimal fraction (4.5 = 4 ov, 3 balls)
+ * @param {int} wicketsLost Wickets lost
+ */
+function resourcesRemaining50(oversLeft, wicketsLost) {
+    return resourcesRemaining(DLS50, 50, oversLeft, wicketsLost);
+}
+
+/**
+ * Resources remaining, 20-over match
+ *
+ * @method resourcesRemaining20
+ * @param {int} oversLeft Overs remaining, which may include a decimal fraction (4.5 = 4 ov, 3 balls)
+ * @param {int} wicketsLost Wickets lost
+ */
+function resourcesRemaining20(oversLeft, wicketsLost) {
+    return resourcesRemaining(BGS20, 20, oversLeft, wicketsLost);
 }
 
 module.exports = {
     resourcesRemaining50,
+    resourcesRemaining20,
 };
