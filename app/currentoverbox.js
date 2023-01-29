@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const BGCOLOR = "#cdae6f"; // a tan color
+
 const Marker = require("rules").Marker;
 
 //const D3Color = require("3rdparty/d3-color.v2.min");
@@ -49,8 +51,8 @@ class DeliveryMarker extends Shape {
 
         let ball = svg.circle(r, r, r);
         ball.attr({
-            fill: "#fff",
-            "fill-opacity": "35%",
+            fill: "none",
+            stroke: "#ddd",
         });
 
         this.group.add(ball);
@@ -195,7 +197,7 @@ class CurrentOverBox extends Shape {
 
         // Make the background
         this.background = svg.rect(0, 0, this.bbox.w, this.bbox.h);
-        this.background.attr({ fill: "#dfd" });
+        this.background.attr({ fill: BGCOLOR });
 
         // Assemble
         this.group.add(this.background);

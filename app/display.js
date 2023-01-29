@@ -25,6 +25,9 @@ const QuickView = require("quickview");
 const Styles = require("styles");
 const Utils = require("utils");
 
+// DEBUG
+const ScoreReadout = require("score-readout");
+
 // 1080p, but divided by 2 to be more visible on screen.
 const SCALE = 2;
 const WIDTH = 1920 / SCALE;
@@ -67,6 +70,20 @@ class Display {
 
         // Background image
         this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
+
+        // DEBUG
+        this.readout1 = new ScoreReadout(svg, 10, 10, 100, 100, "tl", {
+            showWickets: true,
+            teamColor: "#88f",
+            bold: true,
+        });
+        this.readout2 = new ScoreReadout(svg, 200, 10, 100, 100, "tl", {
+            showWickets: false,
+            teamColor: "#000",
+            bgColor: "#444",
+        });
+        this.readout1.update(123, 4);
+        this.readout2.update(456, 7);
 
         let textStyles = Utils.extend(Styles.textStyles, {
             "letter-spacing": "1", // empirical

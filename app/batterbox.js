@@ -51,8 +51,7 @@ class BatterBox {
         let ballsPct = 0.2;
 
         // Clone the styles since we are going to change params
-        styles = structuredClone(styles);
-        styles.baseline = "baseline";
+        styles = Utils.extend(styles, { baseline: "baseline" });
 
         this.twoX = ulx + w / 2;
         this.twoY = uly + h / 2;
