@@ -62,6 +62,7 @@ class Shape {
     constructor(svg, x, y, w, h, corner) {
         this.svg = svg;
         this.group = svg.g();
+        this.group.addClass(this.constructor.name);
         this.bbox = Utils.getBBox(x, y, w, h, corner);
         this.ft = Utils.freeTransformTo(
             this.group,
