@@ -82,7 +82,9 @@ class Display {
             teamColor: "#000",
             background: { fill: "#444" },
         });
-        this.readout1.update(123, 4);
+        setTimeout(()=>{this.readout1.update(1, 4);}, 1000);
+        setTimeout(()=>{this.readout1.update(12, 4);}, 2000);
+        setTimeout(()=>{this.readout1.update(1, 4);}, 3000);
         this.readout2.update(456, 7);
 
         let textStyles = Utils.extend(Styles.textStyles, {

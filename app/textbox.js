@@ -31,10 +31,14 @@ class Textbox extends Shape {
     svgText; // svg <text> node
     fttText; // freetransform for svgText
 
+    _linedUp = false;   // whether lineUp() has been called
+
     constructor(svg, x, y, w, h, corner, textAndStyles, opts = {}) {
         // If we are going to use the native size(s) of the text, create the shape with
         // interim size(s).
         super(svg, x, y, w < 0 ? 1 : w, h < 0 ? 1 : h, corner);
+        this.origBBox.w = w;
+        this.origBBox.h = h;
 
         let background = opts.background || "none";
         if (background === "none") {
@@ -49,17 +53,13 @@ class Textbox extends Shape {
         let localStyles = {};
         localStyles.baseline = "baseline";
 
-        corner = corner.toLowerCase();
-
         // Get the text alignment based on the reference corner
-        if (corner.includes("l")) {
+        if (this.bbox.corner.includes("l")) {
             localStyles.alignment = "start";
-        } else if (corner.includes("c")) {
+        } else if (this.bbox.corner.includes("c")) {
             localStyles.alignment = "middle";
-        } else if (corner.includes("r")) {
+        } else if (this.bbox.corner.includes("r")) {
             localStyles.alignment = "end";
-        } else {
-            throw "corner must specify l, c, or r";
         }
 
         // Create the text and position it horizontally
@@ -81,10 +81,8 @@ class Textbox extends Shape {
         this.fttText = svg.freeTransform(this.svgText);
         this.fttText.hideHandles();
 
-        this.lineUp();
-
-        // Outline
-        this.svgOutline = svg.rect(0, 0, this.bbox.w, this.bbox.h).attr(
+        // Outline --- lineUp() will size it.
+        this.svgOutline = svg.rect(0, 0, 1, 1).attr(
             Utils.extend(
                 {
                     fill: "none",
@@ -93,6 +91,8 @@ class Textbox extends Shape {
                 background
             )
         );
+
+        this.lineUp();
 
         // Add the shapes to the group
         this.group.add(this.svgOutline);
@@ -108,29 +108,43 @@ class Textbox extends Shape {
     lineUp() {
         const textBBox = this.svgText.getBBox();
 
+        // If we have a fixed size, and we've already done alignment, we're done.
+        if(this._linedUp && (this.origBBox.w >= 0 ) && (this.origBBox.h >= 0)) {
+            return;
+        }
+
         // Apply the native size of the text if we were asked to
         if (this.origBBox.w < 0 || this.origBBox.h < 0) {
             let actualW = this.origBBox.w < 0 ? textBBox.width : this.origBBox.w;
             let actualH = this.origBBox.h < 0 ? textBBox.height : this.origBBox.h;
-            this.setBBox(this.origBBox.cornerX, this.origBBox.cornerY, actualW, actualH, corner);
+            this.setBBox(this.origBBox.cornerX, this.origBBox.cornerY, actualW, actualH, this.origBBox.corner);
         }
 
         // Text X: the bbox already takes the corner and width into account, so
         // we don't need to here.
-        this.fttText.attrs.translate.x = this.origBBox.x - this.bbox.ulx;
+        if(!this._linedUp || (this.origBBox.w < 0)) {
+            this.fttText.attrs.translate.x = this.origBBox.cornerX - this.bbox.ulx;
+        }
 
         // Text Y: we are shifting the baseline from y=0 so need to consider the corner.
-        let translateY;
-        if (this.origBBox.corner.includes("t")) {
-            translateY = -textBBox.y; // shift baseline down
-        } else if (this.origBBox.corner.includes("m")) {
-            translateY = this.bbox.h / 2 - textBBox.cy;
-        } else if (this.origBBox.corner.includes("b")) {
-            translateY = this.bbox.h - textBBox.y2;
+        if(!this._linedUp || (this.origBBox.h < 0)) {
+            let translateY;
+            if (this.origBBox.corner.includes("t")) {
+                translateY = -textBBox.y; // shift baseline down
+            } else if (this.origBBox.corner.includes("m")) {
+                translateY = this.bbox.h / 2 - textBBox.cy;
+            } else if (this.origBBox.corner.includes("b")) {
+                translateY = this.bbox.h - textBBox.y2;
+            }
+            this.fttText.attrs.translate.y = translateY;
         }
-        this.fttText.attrs.translate.y = translateY;
 
         this.fttText.apply();
+
+        // Resize the outline
+        this.svgOutline.attr({width: this.bbox.w, height: this.bbox.h});
+
+        this._linedUp = true;
     }
 
     /**
