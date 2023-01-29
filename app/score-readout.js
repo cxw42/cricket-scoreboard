@@ -15,15 +15,6 @@ const margin = 2;
 const nrows = 3;
 const rowY = [...Array(nrows + 1).keys()].map((i) => (rowHeight + margin) * i);
 
-// Grid: horizontal
-const w = 150;
-const homeX = margin;
-const tossX = margin + rowHeight;
-const nameX = margin + rowHeight * 2;
-
-// TODO replace this with the native width of the score, plus padding
-const scoreX = margin + rowHeight * 4.1;
-
 /**
  * Score readout --- [wickets dash] runs
  *
@@ -34,8 +25,10 @@ class ScoreReadout extends Shape {
     fontWeight; // font-weight for the numbers
     bgColor;
 
+    text; // The textbox
+    background; // the background
 
-    constructor(svg, x, y, w, h, corner, opts = {}) {
+    constructor(svg, x, y, w_IGNORED, h, corner, opts = {}) {
         // Initialize with a placeholder width.  We will update it later
         // based on the text's width.
         super(svg, x, y, 1, h, corner);
@@ -53,6 +46,27 @@ class ScoreReadout extends Shape {
 
         // Update the shape's width
         this.setBBox(x, y, this.text.text.getBBox().width, h, corner);
+
+        // Put the text where it belongs
+        // TODO this.text.setBBox
+
+        // Background
+        if(opts.bgColor !== 'none') {
+            //debugger;
+            this.outline = svg.rect(0, 0, this.bbox.w, this.bbox.h).attr(
+                {
+                    stroke: this.bgColor,
+                    fill: this.bgColor,
+                    rx: margin,
+                }
+            );
+            this.group.add(this.outline);
+            this.text.addTo(this.group);    // text in front
+            /*
+            {
+            }
+            */
+        }
     } // ctor
 
     makeBattingScore(svg, scoreColor) {
@@ -107,15 +121,14 @@ class ScoreReadout extends Shape {
             }
         );
 
-        debugger;
         this.text = new TextBox(
             svg,
-            this.bbox.ulx,
-            this.bbox.cy,
-            1,  // placeholder width
+            this.bbox.cornerX,
+            this.bbox.cornerY,
+            1, // placeholder width
             rowHeight,
-            "ml",
-            items,
+            this.bbox.corner,
+            items
             /*
             {
                 background: {

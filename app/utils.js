@@ -58,6 +58,7 @@ function freeTransformTo(el, ulx, uly) {
  * @param {int} h Height
  * @param {String} corner Which corner `x` and `y` relate to.
  *                        Must be `[TMB][LCR]`.
+ * @return {Object} {ulx, uly, w, h, corner, cx, cy, cornerX, cornerY}.
  */
 function getBBox(x, y, w, h, corner) {
     // Get the upper-left corner
@@ -84,7 +85,7 @@ function getBBox(x, y, w, h, corner) {
 
     let cx = ulx + w / 2;
     let cy = uly + h / 2;
-    return { ulx, uly, w, h, corner, cx, cy };
+    return { ulx, uly, w, h, corner, cx, cy, cornerX: x, cornerY: y };
 }
 
 /**
