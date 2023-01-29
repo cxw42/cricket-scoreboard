@@ -6,6 +6,8 @@
 const Snap = require("snapsvg");
 require("3rdparty/snap.svg.free_transform");
 
+const WcagContrast = require("wcag-contrast");
+
 /**
  * Utilities
  *
@@ -141,9 +143,24 @@ function positionGroupAt(group, text, x, uly, w, h, opts = {}) {
     };
 }
 
+/**
+ * Return a text color contrasting with the given color
+ *
+ * @method getContrastingTextColor
+ * @param {string} color The color, as a hex string, e.g., `#123456`.
+ */
+function getContrastingTextColor(color) {
+    if (WcagContrast.hex(color, "#000") > WcagContrast.hex(color, "#fff")) {
+        return "#000";
+    } else {
+        return "#fff";
+    }
+}
+
 module.exports = {
     extend,
     freeTransformTo,
     getBBox,
     positionGroupAt,
+    getContrastingTextColor,
 };

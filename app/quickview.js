@@ -78,7 +78,7 @@ class QuickView {
             teamRowCounts = [1, 2];
         }
 
-        const durationColor = this.getTextColor(
+        const durationColor = Utils.getContrastingTextColor(
             this.battingTeams[battingTeam].color
         );
 
@@ -102,7 +102,7 @@ class QuickView {
         this.teamGroups = [];
         for (const [i, team] of this.battingTeams.entries()) {
             const y = rowY[teamRows[i]];
-            const textColor = this.getTextColor(team.color);
+            const textColor = Utils.getContrastingTextColor(team.color);
 
             // Group to hold this team's items, except for the background.
             let g = svg.g();
@@ -172,20 +172,6 @@ class QuickView {
         this.group.add(this.currentTeamMarker);
         */
     } // ctor
-
-    /**
-     * Return a text color contrasting with the given color
-     *
-     * @method getTextColor
-     * @param {string} color The color, as a hex string, e.g., `#123456`.
-     */
-    getTextColor(color) {
-        if (WcagContrast.hex(color, "#000") > WcagContrast.hex(color, "#fff")) {
-            return "#000";
-        } else {
-            return "#fff";
-        }
-    }
 
     addIcon(svg, g, x, text) {
         let icon = new TextBox(svg, x, cy, rowHeight, rowHeight, "ml", [
