@@ -38,6 +38,14 @@ class Shape {
     bbox = {};
 
     /**
+     * Original values requested by the user
+     *
+     * @protected
+     * @property origBBox
+     */
+    origBBox = {};
+
+    /**
      * Our top-level SVG element.
      *
      * Anything added by a subclass should be added to this group.
@@ -64,6 +72,7 @@ class Shape {
         this.group = svg.g();
         this.group.addClass(this.constructor.name);
         this.bbox = Utils.getBBox(x, y, w, h, corner);
+        this.origBBox = structuredClone(this.bbox);
         this.ft = Utils.freeTransformTo(
             this.group,
             this.bbox.ulx,

@@ -29,6 +29,7 @@ require("3rdparty/snap.svg.free_transform");
 class Textbox extends Shape {
     svgOutline; // visible outline or background - svg <rect>
     svgText; // svg <text> node
+    fttText; // freetransform for svgText
 
     constructor(svg, x, y, w, h, corner, textAndStyles, opts = {}) {
         // If we are going to use the native size(s) of the text, create the shape with
@@ -75,36 +76,12 @@ class Textbox extends Shape {
                 Utils.extend(textAndStyles[i].styles || {}, localStyles)
             );
         }
-        const textBBox = this.svgText.getBBox();
-
-        // Apply the native size of the text if we were asked to
-        if (w < 0 || h < 0) {
-            let actualW = w < 0 ? textBBox.width : w;
-            let actualH = h < 0 ? textBBox.height : h;
-            this.setBBox(x, y, actualW, actualH, corner);
-            console.log(this.bbox);
-        }
 
         // Position the text within the group
-        let ftt = svg.freeTransform(this.svgText);
-        ftt.hideHandles();
+        this.fttText = svg.freeTransform(this.svgText);
+        this.fttText.hideHandles();
 
-        // Text X: the bbox already takes the corner and width into account, so
-        // we don't need to here.
-        ftt.attrs.translate.x = x - this.bbox.ulx;
-
-        // Text Y: we are shifting the baseline from y=0 so need to consider the corner.
-        let translateY;
-        if (corner.includes("t")) {
-            translateY = -textBBox.y; // shift baseline down
-        } else if (corner.includes("m")) {
-            translateY = this.bbox.h / 2 - textBBox.cy;
-        } else if (corner.includes("b")) {
-            translateY = this.bbox.h - textBBox.y2;
-        }
-        ftt.attrs.translate.y = translateY;
-
-        ftt.apply();
+        this.lineUp();
 
         // Outline
         this.svgOutline = svg.rect(0, 0, this.bbox.w, this.bbox.h).attr(
@@ -120,6 +97,40 @@ class Textbox extends Shape {
         // Add the shapes to the group
         this.group.add(this.svgOutline);
         this.group.add(this.svgText);
+    }
+
+    /**
+     * Line everything up
+     *
+     * @protected
+     * @method lineUp
+     */
+    lineUp() {
+        const textBBox = this.svgText.getBBox();
+
+        // Apply the native size of the text if we were asked to
+        if (this.origBBox.w < 0 || this.origBBox.h < 0) {
+            let actualW = this.origBBox.w < 0 ? textBBox.width : this.origBBox.w;
+            let actualH = this.origBBox.h < 0 ? textBBox.height : this.origBBox.h;
+            this.setBBox(this.origBBox.cornerX, this.origBBox.cornerY, actualW, actualH, corner);
+        }
+
+        // Text X: the bbox already takes the corner and width into account, so
+        // we don't need to here.
+        this.fttText.attrs.translate.x = this.origBBox.x - this.bbox.ulx;
+
+        // Text Y: we are shifting the baseline from y=0 so need to consider the corner.
+        let translateY;
+        if (this.origBBox.corner.includes("t")) {
+            translateY = -textBBox.y; // shift baseline down
+        } else if (this.origBBox.corner.includes("m")) {
+            translateY = this.bbox.h / 2 - textBBox.cy;
+        } else if (this.origBBox.corner.includes("b")) {
+            translateY = this.bbox.h - textBBox.y2;
+        }
+        this.fttText.attrs.translate.y = translateY;
+
+        this.fttText.apply();
     }
 
     /**

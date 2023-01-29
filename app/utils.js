@@ -61,6 +61,8 @@ function freeTransformTo(el, ulx, uly) {
  * @return {Object} {ulx, uly, w, h, corner, cx, cy, cornerX, cornerY}.
  */
 function getBBox(x, y, w, h, corner) {
+    corner = corner.toLowerCase();
+
     // Get the upper-left corner
     let ulx, uly;
     if (corner.includes("l")) {

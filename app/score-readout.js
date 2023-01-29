@@ -126,6 +126,9 @@ class ScoreReadout extends Textbox {
                 wkts.toString();
         }
         this.group.select(".runsScored").node.textContent = runs.toString();
+
+        // If we are autosizing, resize based on the new text width
+        this.lineUp();
     }
 }
 
