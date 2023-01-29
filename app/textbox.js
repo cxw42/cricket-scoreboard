@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Shape = require("shape");
 const Snap = require("snapsvg");
 const Utils = require("utils");
 require("3rdparty/snap.svg.free_transform");
@@ -25,12 +26,14 @@ require("3rdparty/snap.svg.free_transform");
  * @param {Object} opts Options.  Keys include:
  *      - `background`: styles for the background
  */
-class Textbox {
-    group; // the group of shapes
-    outline; // visible outline
-    text; // Two.Text instance
+class Textbox extends Shape {
+    svgGroup; // the group of shapes - svg <g>
+    svgOutline; // visible outline or background - svg <rect>
+    svgText; // svg <text> node
 
     constructor(svg, x, y, w, h, corner, textAndStyles, opts = {}) {
+        super(svg, x, y, w, h, corner);
+
         opts.background = opts.background || {};
         if (typeof textAndStyles !== typeof []) {
             textAndStyles = [textAndStyles];
@@ -42,29 +45,15 @@ class Textbox {
 
         corner = corner.toLowerCase();
 
-        // Get the upper-left corner
-        let ulx, uly;
+        // Get the text alignment based on the reference corner
         if (corner.includes("l")) {
-            ulx = x;
             localStyles.alignment = "start";
         } else if (corner.includes("c")) {
-            ulx = x - w / 2;
             localStyles.alignment = "middle";
         } else if (corner.includes("r")) {
-            ulx = x - w;
             localStyles.alignment = "end";
         } else {
             throw "corner must specify l, c, or r";
-        }
-
-        if (corner.includes("t")) {
-            uly = y;
-        } else if (corner.includes("m")) {
-            uly = y - h / 2;
-        } else if (corner.includes("b")) {
-            uly = y - h;
-        } else {
-            throw "corner must specify t, m, or b";
         }
 
         // Create a temporary canvas we will use
@@ -72,15 +61,15 @@ class Textbox {
         canvas.hide();
 
         // Create the group and position it at the given place
-        this.group = svg.g().addClass("Textbox");
-        let ftg = svg.freeTransform(this.group);
+        this.svgGroup = svg.g().addClass("Textbox");
+        let ftg = svg.freeTransform(this.svgGroup);
         ftg.hideHandles();
-        ftg.attrs.translate.x = ulx;
-        ftg.attrs.translate.y = uly;
+        ftg.attrs.translate.x = this.bbox.ulx;
+        ftg.attrs.translate.y = this.bbox.uly;
         ftg.apply();
 
         // Outline
-        this.outline = svg.rect(0, 0, w, h).attr(
+        this.svgOutline = svg.rect(0, 0, w, h).attr(
             Utils.extend(
                 {
                     fill: "none",
@@ -89,17 +78,17 @@ class Textbox {
                 opts.background
             )
         );
-        this.group.add(this.outline);
+        this.svgGroup.add(this.svgOutline);
 
         // Create the text and position it horizontally
         localStyles["text-align"] = localStyles["text-anchor"] =
             localStyles.alignment;
-        this.text = svg.text(
+        this.svgText = svg.text(
             0,
             0,
             textAndStyles.map((o) => Utils.extend(o.text, localStyles))
         );
-        const kids = this.text.children();
+        const kids = this.svgText.children();
         for (let i = 0; i < textAndStyles.length; ++i) {
             kids[i].attr(
                 Utils.extend(textAndStyles[i].styles || {}, localStyles)
@@ -107,27 +96,27 @@ class Textbox {
         }
 
         // Position the text
-        const where = this.text.getBBox();
-        let ftt = svg.freeTransform(this.text);
+        const textBBox = this.svgText.getBBox();
+        let ftt = svg.freeTransform(this.svgText);
         ftt.hideHandles();
-        ftt.attrs.translate.x = x - ulx;
+        ftt.attrs.translate.x = x - this.bbox.ulx;
 
         let translateY;
         if (corner.includes("t")) {
-            translateY = -where.y; // shift baseline down
+            translateY = -textBBox.y; // shift baseline down
         } else if (corner.includes("m")) {
-            translateY = h / 2 - where.cy;
+            translateY = h / 2 - textBBox.cy;
         } else if (corner.includes("b")) {
-            translateY = h - where.y2;
+            translateY = h - textBBox.y2;
         }
 
         ftt.attrs.translate.y = translateY;
         ftt.apply();
 
-        this.group.add(this.text);
+        this.svgGroup.add(this.svgText);
 
         // Copy the group to `svg`
-        svg.add(this.group);
+        svg.add(this.svgGroup);
         canvas = null;
     }
 
@@ -138,7 +127,7 @@ class Textbox {
      * @param {Object} parent The element
      */
     addTo(parent) {
-        parent.add(this.group);
+        parent.add(this.svgGroup);
     }
 
     /**
@@ -147,11 +136,11 @@ class Textbox {
      * @method remove
      */
     remove() {
-        this.group.remove();
+        this.svgGroup.remove();
     }
 
     setValue(value) {
-        this.text.attr({
+        this.svgText.attr({
             text: value,
         });
     }

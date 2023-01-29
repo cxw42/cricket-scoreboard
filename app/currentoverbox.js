@@ -104,9 +104,9 @@ class DeliveryMarker extends Shape {
         );
 
         // TODO clean this up --- it's currently empirical
-        this.label.text.children()[0].attr({ x: 1, y: 3 });
+        this.label.svgText.children()[0].attr({ x: 1, y: 3 });
         if (hasMarker) {
-            this.label.text.children()[1].attr({ x: 3, y: 11 });
+            this.label.svgText.children()[1].attr({ x: 3, y: 11 });
         }
 
         this.label.addTo(this.group);
@@ -160,8 +160,8 @@ class CurrentOverBox extends Shape {
         ]);
 
         // TODO clean this up --- it's currently empirical
-        this.label.text.children()[0].attr({ x: 1, y: 3 });
-        this.label.text.children()[1].attr({ x: 0, y: 11 });
+        this.label.svgText.children()[0].attr({ x: 1, y: 3 });
+        this.label.svgText.children()[1].attr({ x: 0, y: 11 });
 
         this.label.addTo(this.content);
 

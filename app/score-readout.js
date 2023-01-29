@@ -45,23 +45,22 @@ class ScoreReadout extends Shape {
         this.makeBattingScore(svg, textColor);
 
         // Update the shape's width
-        this.setBBox(x, y, this.text.text.getBBox().width, h, corner);
+        this.setBBox(x, y, this.text.svgText.getBBox().width, h, corner);
 
         // Put the text where it belongs
         // TODO this.text.setBBox
+        // debugger;
 
         // Background
-        if(opts.bgColor !== 'none') {
+        if (opts.bgColor !== "none") {
             //debugger;
-            this.outline = svg.rect(0, 0, this.bbox.w, this.bbox.h).attr(
-                {
-                    stroke: this.bgColor,
-                    fill: this.bgColor,
-                    rx: margin,
-                }
-            );
+            this.outline = svg.rect(0, 0, this.bbox.w, this.bbox.h).attr({
+                stroke: this.bgColor,
+                fill: this.bgColor,
+                rx: margin,
+            });
             this.group.add(this.outline);
-            this.text.addTo(this.group);    // text in front
+            this.text.addTo(this.group); // text in front
             /*
             {
             }

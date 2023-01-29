@@ -76,7 +76,7 @@ class Display {
             showWickets: true,
             teamColor: "#88f",
             bold: true,
-            bgColor: 'none',
+            bgColor: "none",
         });
         this.readout2 = new ScoreReadout(svg, 200, 10, 100, 100, "tl", {
             showWickets: false,
