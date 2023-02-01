@@ -26,6 +26,19 @@ class Marker {
         this.key = key;
         this.label = label;
     }
+
+    foundIn(arr) {
+        if (typeof arr !== typeof []) {
+            return false;
+        }
+
+        for (const m of arr) {
+            if (m.key == this.key) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 module.exports = {

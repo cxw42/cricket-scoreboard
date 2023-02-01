@@ -275,6 +275,7 @@ class Display {
             // XXX DEBUG
             this.thisOver.recordDelivery(1);
             this.thisOver.recordDelivery(2, [Marker.WIDE]);
+            this.thisOver.recordDelivery(0, [Marker.WICKET]);
         }
 
         // EBU margins

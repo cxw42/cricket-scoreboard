@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Styles = require("styles");
+
 const BGCOLOR = "#cdae6f"; // a tan color
+const FGCOLOR = Styles.gray9;
 const PADDING = 3; // padding inside the background
 
 const Marker = require("rules").Marker;
@@ -14,7 +17,6 @@ const WcagContrast = require("wcag-contrast");
 
 const ScoreReadout = require("score-readout");
 const Shape = require("shape");
-const Styles = require("styles");
 const TextBox = require("textbox");
 const Utils = require("utils");
 
@@ -58,7 +60,7 @@ class DeliveryMarker extends Shape {
         let ball = svg.circle(r, r, r);
         ball.attr({
             fill: "none",
-            stroke: "#fff", // "#ddd",
+            stroke: FGCOLOR,
         });
 
         this.group.add(ball);
@@ -82,6 +84,14 @@ class DeliveryMarker extends Shape {
             this.labelRuns.remove();
         }
 
+        // Figure out what to show and the styles.  Special-case wickets.
+        let text = totalRuns.toString();
+        let styles = { fill: FGCOLOR };
+        if (totalRuns == 0 && Marker.WICKET.foundIn(markers)) {
+            text = Marker.WICKET.label;
+            styles = Utils.extend(styles, { "font-style": "normal" });
+        }
+
         this.labelRuns = new ScoreReadout(
             this.svg,
             this.radius,
@@ -91,12 +101,11 @@ class DeliveryMarker extends Shape {
             "mc",
             {
                 background: "none",
-                font: { fill: "#fff" },
-                fontLabel: { fill: "#fff" },
+                font: styles,
                 labels: { r: false }, // no "R" label
             }
         );
-        this.labelRuns.update(totalRuns);
+        this.labelRuns.update(text);
 
         /*
         // TODO fixme --- this is very hackish
@@ -147,7 +156,7 @@ class CurrentOverBox extends Shape {
     static labelStyles = Utils.extend(Styles.textStyles, {
         "font-style": "normal",
         "font-size": Styles.labelTextSize,
-        fill: "#fff",
+        fill: FGCOLOR,
         "fill-opacity": "1", //"35%",
         weight: 700,
     });
@@ -226,9 +235,21 @@ class CurrentOverBox extends Shape {
             [
                 {
                     text: "R",
-                    styles: Utils.extend(Styles.scoreStyles, { fill: "#fff" }),
+                    styles: Utils.extend(Styles.scoreStyles, { fill: FGCOLOR }),
                 },
             ]
+        );
+        // Shrink the R label down
+        let bbox = this.labelRight.bbox;
+        this.labelRight.svgText.children()[0].attr({
+            "font-size": Styles.labelTextSize,
+        });
+        this.labelRight.setBBox(
+            bbox.ulx + PADDING,
+            bbox.uly + bbox.h,
+            bbox.w,
+            bbox.h,
+            "bl"
         );
         this.labelRight.addTo(this.content);
 
@@ -242,7 +263,7 @@ class CurrentOverBox extends Shape {
             this.bbox.w + 2 * PADDING,
             this.bbox.h + 2 * PADDING
         );
-        this.background.attr({ fill: BGCOLOR });
+        this.background.attr({ fill: BGCOLOR, "fill-opacity": "50%" });
 
         // Assemble
         this.group.add(this.background);

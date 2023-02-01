@@ -28,6 +28,14 @@ const labelTextSize = "50%";
 const powerplayTextSize = "75%";
 const scoreTextSize = "x-large";
 
+// Useful constants
+
+// Thanks for code values to
+// <https://www.greatphotography.com/blog/2016/6/14/18-gray-the-middle-value>
+const gray9 = "#5c5c5c";
+const gray18 = "#737373";
+const gray36 = "#c9c9c9";
+
 module.exports = {
     textStyles,
     iconStyles,
@@ -36,4 +44,8 @@ module.exports = {
     labelTextSize,
     powerplayTextSize,
     scoreTextSize,
+
+    gray9,
+    gray18,
+    gray36,
 };
