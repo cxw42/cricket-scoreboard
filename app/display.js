@@ -73,7 +73,7 @@ class Display {
         this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
 
         console.log("readout1");
-        this.readout1 = new ScoreReadout(svg, 10, 10, -1, -1, "tl", {
+        this.readout1 = new ScoreReadout(svg, 150, 10, -1, -1, "tr", {
             showWickets: true,
             teamColor: "#88f",
             bold: true,
