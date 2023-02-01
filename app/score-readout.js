@@ -28,9 +28,11 @@ const rowY = [...Array(nrows + 1).keys()].map((i) => (rowHeight + margin) * i);
  * @param {String} corner See Shape
  * @param {Object} opts Object of options:
  *  - showWickets to show the wickets (default false)
- *  - bold to boldface the score (default false)
+ *  - font for additional font properties on the numbers
+ *  - fontLabel for additional font properties on the "W" and "R" labels
  *  - background for the background to use
  *  - teamColor for the team's color (default #fff)
+ *  - labels: object with "w" and "r" bools for whether to show the "W" and "R" labels, respectively
  */
 class ScoreReadout extends Textbox {
     showWickets; // whether to show the wickets
@@ -40,8 +42,10 @@ class ScoreReadout extends Textbox {
 
     constructor(svg, x, y, w, h, corner, opts = {}) {
         let showWickets = !!opts.showWickets;
-        let fontWeight = opts.bold ? "bold" : "normal";
+        let font = structuredClone(opts.font || {});
+        let fontLabel = structuredClone(opts.fontLabel || {});
         let bgStyle = opts.background || { stroke: "none", fill: "#fff8b4" };
+        let labels = Utils.extend({ r: true, w: true }, opts.labels || {});
 
         const textColor = Utils.getContrastingTextColor(
             opts.teamColor || "#ffffff"
@@ -49,8 +53,10 @@ class ScoreReadout extends Textbox {
 
         let items = ScoreReadout.makeScoreItems(
             showWickets,
-            fontWeight,
-            textColor
+            font,
+            fontLabel,
+            textColor,
+            labels
         );
 
         super(svg, x, y, w, h, corner, items, {
@@ -64,57 +70,76 @@ class ScoreReadout extends Textbox {
      *
      * @method makeScoreItems
      */
-    static makeScoreItems(showWickets, fontWeight, scoreColor) {
+    static makeScoreItems(showWickets, font, fontLabel, scoreColor, labels) {
         const baseStyles = Utils.extend(Styles.textStyles, Styles.scoreStyles);
 
         let items = [];
 
         // Wickets, if desired by the client
         if (showWickets) {
+            if (labels.w) {
+                items.push({
+                    text: "W",
+                    styles: Utils.extend(
+                        baseStyles,
+                        {
+                            fill: scoreColor,
+                            "font-size": Styles.labelTextSize,
+                        },
+                        fontLabel
+                    ),
+                });
+            }
             items.push(
                 {
-                    text: "W",
-                    styles: Utils.extend(baseStyles, {
-                        fill: scoreColor,
-                        "font-size": Styles.labelTextSize,
-                    }),
-                },
-                {
                     text: "9",
-                    styles: Utils.extend(baseStyles, {
-                        fill: scoreColor,
-                        class: "wicketsLost",
-                        "font-weight": fontWeight,
-                    }),
+                    styles: Utils.extend(
+                        baseStyles,
+                        {
+                            fill: scoreColor,
+                            class: "wicketsLost",
+                        },
+                        font
+                    ),
                 },
                 {
                     text: "-",
-                    styles: Utils.extend(baseStyles, {
-                        fill: scoreColor,
-                        "font-weight": fontWeight,
-                    }),
+                    styles: Utils.extend(
+                        baseStyles,
+                        {
+                            fill: scoreColor,
+                        },
+                        font
+                    ),
                 }
             );
         }
 
         // Runs (always)
-        items.push(
-            {
-                text: "456",
-                styles: Utils.extend(baseStyles, {
+        items.push({
+            text: "456",
+            styles: Utils.extend(
+                baseStyles,
+                {
                     fill: scoreColor,
                     class: "runsScored",
-                    "font-weight": fontWeight,
-                }),
-            },
-            {
+                },
+                font
+            ),
+        });
+        if (labels.r) {
+            items.push({
                 text: "R",
-                styles: Utils.extend(baseStyles, {
-                    fill: scoreColor,
-                    "font-size": Styles.labelTextSize,
-                }),
-            }
-        );
+                styles: Utils.extend(
+                    baseStyles,
+                    {
+                        fill: scoreColor,
+                        "font-size": Styles.labelTextSize,
+                    },
+                    fontLabel
+                ),
+            });
+        }
 
         return items;
     }

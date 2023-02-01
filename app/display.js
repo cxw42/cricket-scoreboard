@@ -72,17 +72,21 @@ class Display {
         // Background image
         this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
 
+        /*
         console.log("readout1");
-        this.readout1 = new ScoreReadout(svg, 150, 10, -1, -1, "tr", {
+        this.readout1 = new ScoreReadout(svg, 150, 10, -1, -1, "tc", {
             showWickets: true,
             teamColor: "#88f",
-            bold: true,
+            font: { "font-weight": "bold" },
+            fontLabel: { "font-weight": "bold" },
         });
         console.log("readout1 end");
         this.readout2 = new ScoreReadout(svg, 200, 10, 100, 100, "tl", {
             showWickets: false,
             teamColor: "#000",
             background: { fill: "#444" },
+            font: { fill: "#33f" },
+            fontLabel: { fill: "#3f3" },
         });
         window.setTimeout(() => {
             //debugger;
@@ -101,6 +105,7 @@ class Display {
             this.readout1.update(9999, 9999);
         }, 4000);
         this.readout2.update(456, 7);
+        */
 
         let textStyles = Utils.extend(Styles.textStyles, {
             "letter-spacing": "1", // empirical

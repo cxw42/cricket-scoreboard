@@ -4,6 +4,7 @@
 "use strict";
 
 const BGCOLOR = "#cdae6f"; // a tan color
+const PADDING = 3; // padding inside the background
 
 const Marker = require("rules").Marker;
 
@@ -11,6 +12,7 @@ const Marker = require("rules").Marker;
 //const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
 
+const ScoreReadout = require("score-readout");
 const Shape = require("shape");
 const Styles = require("styles");
 const TextBox = require("textbox");
@@ -42,17 +44,21 @@ const scoreX = margin + rowHeight * 4.5;
  * @param {int} cx Center X
  * @param {int} cy Center Y
  * @param {int} r Radius
+ * @param {int} totalRuns How many runs were scored, including extras
+ * @param {Array} markers Any markers, e.g., w, wd, b, lb, nb.
  */
 class DeliveryMarker extends Shape {
-    label; // the label
+    radius; // ball radius
+    labelRuns; // the number
 
     constructor(svg, cx, cy, r, totalRuns = null, markers = []) {
         super(svg, cx, cy, r * 2, r * 2, "mc");
+        this.radius = r;
 
         let ball = svg.circle(r, r, r);
         ball.attr({
             fill: "none",
-            stroke: "#ddd",
+            stroke: "#fff", // "#ddd",
         });
 
         this.group.add(ball);
@@ -72,10 +78,27 @@ class DeliveryMarker extends Shape {
     setScore(totalRuns, markers) {
         const hasMarker = (markers || []).length > 0;
 
-        if (this.label) {
-            this.label.remove();
+        if (this.labelRuns) {
+            this.labelRuns.remove();
         }
 
+        this.labelRuns = new ScoreReadout(
+            this.svg,
+            this.radius,
+            this.radius,
+            -1,
+            -1,
+            "mc",
+            {
+                background: "none",
+                font: { fill: "#fff" },
+                fontLabel: { fill: "#fff" },
+                labels: { r: false }, // no "R" label
+            }
+        );
+        this.labelRuns.update(totalRuns);
+
+        /*
         // TODO fixme --- this is very hackish
         let textAndStyles = [
             {
@@ -108,8 +131,9 @@ class DeliveryMarker extends Shape {
         if (hasMarker) {
             this.label.svgText.children()[1].attr({ x: 3, y: 11 });
         }
+        */
 
-        this.label.addTo(this.group);
+        this.labelRuns.addTo(this.group);
     }
 }
 
@@ -124,7 +148,7 @@ class CurrentOverBox extends Shape {
         "font-style": "normal",
         "font-size": Styles.labelTextSize,
         fill: "#fff",
-        "fill-opacity": "35%",
+        "fill-opacity": "1", //"35%",
         weight: 700,
     });
 
@@ -145,7 +169,6 @@ class CurrentOverBox extends Shape {
         // Initialize with a placeholder width.  We will update it later
         // based on currWidth.
         super(svg, x, y, 1, h, corner);
-        this.group.addClass("CurrentOverBox");
         this.content = svg.g().addClass("CurrentOverBox-Content");
 
         this.label = new TextBox(svg, 0, 0, 100, rowHeight, "tl", [
@@ -192,11 +215,33 @@ class CurrentOverBox extends Shape {
         currWidth +=
             6 * (this.ballRadius * 2 + this.ballSpacing) - this.ballSpacing;
 
+        // A single "R" label at the right rather than one per marker
+        this.labelRight = new TextBox(
+            svg,
+            currWidth,
+            h / 2,
+            -1,
+            rowHeight,
+            "ml",
+            [
+                {
+                    text: "R",
+                    styles: Utils.extend(Styles.scoreStyles, { fill: "#fff" }),
+                },
+            ]
+        );
+        this.labelRight.addTo(this.content);
+
         // Update the bbox now that we have the width
-        this.setBBox(x, y, currWidth, h, corner);
+        this.setBBox(x, y, currWidth + this.labelRight.bbox.w, h, corner);
 
         // Make the background
-        this.background = svg.rect(0, 0, this.bbox.w, this.bbox.h);
+        this.background = svg.rect(
+            -PADDING,
+            -PADDING,
+            this.bbox.w + 2 * PADDING,
+            this.bbox.h + 2 * PADDING
+        );
         this.background.attr({ fill: BGCOLOR });
 
         // Assemble

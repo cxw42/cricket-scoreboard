@@ -15,7 +15,7 @@ const WcagContrast = require("wcag-contrast");
  */
 
 /**
- * Extend an object with additional properties
+ * Copy an object and extend the copy with additional properties
  *
  * @method extend
  * @param {object} source An object to clone
