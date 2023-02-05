@@ -276,6 +276,10 @@ class Display {
             this.thisOver.recordDelivery(1);
             this.thisOver.recordDelivery(2, [Marker.WIDE]);
             this.thisOver.recordDelivery(0, [Marker.WICKET]);
+            this.thisOver.recordDelivery(4);
+            this.thisOver.recordDelivery(5);
+            this.thisOver.recordDelivery(6);
+            this.thisOver.recordDelivery(7);
         }
 
         // EBU margins

@@ -6,7 +6,7 @@
 const Styles = require("styles");
 
 const BGCOLOR = "#cdae6f"; // a tan color
-const FGCOLOR = Styles.gray9;
+const FGCOLOR = "#000";
 const PADDING = 3; // padding inside the background
 
 const Marker = require("rules").Marker;
@@ -164,13 +164,27 @@ class CurrentOverBox extends Shape {
     background;
     content; // the content in front of the background
 
-    // Ball-size parameters
+    // Ball-size and -position parameters
     ballRadius = 0;
     ballSpacing = 0;
+    ball0Left = 0; // left side of ball 0
 
     // Individual deliveries
-    balls; // shapes
+    balls; // DeliveryMarker instances
     currDelivery; // which delivery we are on, starting from 0
+
+    addBall(i) {
+        let ball = new DeliveryMarker(
+            this.svg,
+            this.ball0Left +
+                i * (this.ballRadius * 2 + this.ballSpacing) +
+                this.ballRadius,
+            this.bbox.h / 2,
+            this.ballRadius
+        );
+        ball.addTo(this.content);
+        this.balls.push(ball);
+    }
 
     constructor(svg, x, y, h, corner) {
         let currWidth;
@@ -180,7 +194,7 @@ class CurrentOverBox extends Shape {
         super(svg, x, y, 1, h, corner);
         this.content = svg.g().addClass("CurrentOverBox-Content");
 
-        this.label = new TextBox(svg, 0, 0, 100, rowHeight, "tl", [
+        this.label = new TextBox(svg, 0, 0, -1, h, "tl", [
             {
                 text: "THIS",
                 styles: CurrentOverBox.labelStyles,
@@ -194,11 +208,11 @@ class CurrentOverBox extends Shape {
         // TODO clean this up --- it's currently empirical
         this.label.svgText.children()[0].attr({ x: 1, y: 3 });
         this.label.svgText.children()[1].attr({ x: 0, y: 11 });
+        this.label.lineUp();
 
         this.label.addTo(this.content);
 
-        // TODO set currWidth to the width of this.label plus padding
-        currWidth = 25;
+        this.ball0Left = currWidth = this.label.bbox.w + PADDING;
 
         // Add the DeliveryMarker instances for the first six balls of the over
         this.ballRadius = h * 0.45;
@@ -206,16 +220,7 @@ class CurrentOverBox extends Shape {
         this.balls = [];
 
         for (let i = 0; i < 6; ++i) {
-            let ball = new DeliveryMarker(
-                svg,
-                currWidth +
-                    i * (this.ballRadius * 2 + this.ballSpacing) +
-                    this.ballRadius,
-                h / 2,
-                this.ballRadius
-            );
-            ball.addTo(this.content);
-            this.balls.push(ball);
+            this.addBall(i);
         }
 
         this.newOver();
@@ -224,37 +229,8 @@ class CurrentOverBox extends Shape {
         currWidth +=
             6 * (this.ballRadius * 2 + this.ballSpacing) - this.ballSpacing;
 
-        // A single "R" label at the right rather than one per marker
-        this.labelRight = new TextBox(
-            svg,
-            currWidth,
-            h / 2,
-            -1,
-            rowHeight,
-            "ml",
-            [
-                {
-                    text: "R",
-                    styles: Utils.extend(Styles.scoreStyles, { fill: FGCOLOR }),
-                },
-            ]
-        );
-        // Shrink the R label down
-        let bbox = this.labelRight.bbox;
-        this.labelRight.svgText.children()[0].attr({
-            "font-size": Styles.labelTextSize,
-        });
-        this.labelRight.setBBox(
-            bbox.ulx + PADDING,
-            bbox.uly + bbox.h,
-            bbox.w,
-            bbox.h,
-            "bl"
-        );
-        this.labelRight.addTo(this.content);
-
         // Update the bbox now that we have the width
-        this.setBBox(x, y, currWidth + this.labelRight.bbox.w, h, corner);
+        this.setBBox(x, y, currWidth, h, corner);
 
         // Make the background
         this.background = svg.rect(
@@ -263,7 +239,10 @@ class CurrentOverBox extends Shape {
             this.bbox.w + 2 * PADDING,
             this.bbox.h + 2 * PADDING
         );
-        this.background.attr({ fill: BGCOLOR, "fill-opacity": "50%" });
+        this.background.attr({
+            //fill: BGCOLOR, "fill-opacity": "50%"
+            fill: svg.gradient("l(0,0,0,1)#c0c0c0-#c0c0c0:50-#838996"),
+        });
 
         // Assemble
         this.group.add(this.background);
@@ -304,7 +283,8 @@ class CurrentOverBox extends Shape {
      */
     recordDelivery(totalRuns, markers = []) {
         if (this.currDelivery >= 6) {
-            // TODO add a new ball
+            this.addBall(this.currDelivery);
+            // TODO resize the background, shape to hold the new ball
         }
 
         this.balls[this.currDelivery++].setScore(totalRuns, markers);
