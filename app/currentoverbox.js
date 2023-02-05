@@ -91,6 +91,7 @@ class DeliveryMarker extends Shape {
             text = Marker.WICKET.label;
             styles = Utils.extend(styles, { "font-style": "normal" });
         }
+        // TODO highlight 4s and 6s
 
         this.labelRuns = new ScoreReadout(
             this.svg,
@@ -285,6 +286,21 @@ class CurrentOverBox extends Shape {
         if (this.currDelivery >= 6) {
             this.addBall(this.currDelivery);
             // TODO resize the background, shape to hold the new ball
+            let currWidth =
+                this.ball0Left +
+                (this.currDelivery + 1) *
+                    (this.ballRadius * 2 + this.ballSpacing) -
+                this.ballSpacing;
+
+            // Update the bbox now that we have the width
+            this.setBBox(
+                this.origBBox.cornerX,
+                this.origBBox.cornerY,
+                currWidth,
+                this.origBBox.h,
+                this.origBBox.corner
+            );
+            this.background.attr({ width: this.bbox.w + 2 * PADDING });
         }
 
         this.balls[this.currDelivery++].setScore(totalRuns, markers);
