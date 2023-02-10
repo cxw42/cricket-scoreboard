@@ -8,13 +8,6 @@ const Styles = require("styles");
 const Textbox = require("textbox");
 const Utils = require("utils");
 
-// Grid: vertical
-const rowHeight = 20;
-const cy = rowHeight / 2;
-const margin = 2;
-const nrows = 3;
-const rowY = [...Array(nrows + 1).keys()].map((i) => (rowHeight + margin) * i);
-
 /**
  * Score readout --- [wickets dash] runs
  *

@@ -20,20 +20,6 @@ const Shape = require("shape");
 const TextBox = require("textbox");
 const Utils = require("utils");
 
-// Grid: vertical
-const rowHeight = 20;
-const cy = rowHeight / 2;
-const margin = 2;
-const nrows = 3;
-const rowY = [...Array(nrows + 1).keys()].map((i) => (rowHeight + margin) * i);
-
-// Grid: horizontal
-const w = 150;
-const homeX = margin;
-const tossX = margin + rowHeight;
-const nameX = margin + rowHeight * 2;
-const scoreX = margin + rowHeight * 4.5;
-
 /**
  * The graphical representation of a delivery.
  *
@@ -93,6 +79,9 @@ class DeliveryMarker extends Shape {
         }
         // TODO highlight 4s and 6s
 
+        // TODO make the font size follow the box size
+        styles = Utils.extend(styles, { "font-size": "12px" });
+
         this.labelRuns = new ScoreReadout(
             this.svg,
             this.radius,
@@ -126,10 +115,12 @@ class CurrentOverBox extends Shape {
         weight: 700,
     });
 
+    // Shapes inside self.group
     background;
     content; // the content in front of the background
 
-    // Ball-size and -position parameters
+    // Layout parameters
+    newOverWidth = 0; // width at the start of an over
     ballRadius = 0;
     ballSpacing = 0;
     ball0Left = 0; // left side of ball 0
@@ -171,9 +162,9 @@ class CurrentOverBox extends Shape {
             },
         ]);
 
-        // TODO clean this up --- it's currently empirical
-        this.label.svgText.children()[0].attr({ x: 1, y: 1 });
-        this.label.svgText.children()[1].attr({ x: 0, y: 9 });
+        // TODO clean this up and center it vertically --- it's currently empirical
+        this.label.svgText.children()[0].attr({ x: 1, y: 0 });
+        this.label.svgText.children()[1].attr({ x: 0, y: 8 });
         this.label.lineUp();
 
         this.label.addTo(this.content);
@@ -189,15 +180,15 @@ class CurrentOverBox extends Shape {
         for (let i = 0; i < 6; ++i) {
             this.addBall(i);
         }
-
-        this.newOver();
+        this.currDelivery = 0;
 
         // Finish computing the natural width of the group
         currWidth +=
             6 * (this.ballRadius * 2 + this.ballSpacing) - this.ballSpacing;
+        this.newOverWidth = currWidth + 2 * PADDING;
 
         // Update the bbox now that we have the width
-        this.setBBox(x, y, currWidth + 2 * PADDING, h, corner);
+        this.setBBox(x, y, this.newOverWidth, h, corner);
 
         // Make the background
         this.background = svg.rect(0, 0, this.bbox.w, this.bbox.h);
@@ -240,6 +231,19 @@ class CurrentOverBox extends Shape {
             shape.remove();
         });
         this.currDelivery = 0;
+        this.setBBox(
+            this.origBBox.cornerX,
+            this.origBBox.cornerY,
+            this.newOverWidth,
+            this.origBBox.h,
+            this.origBBox.corner
+        );
+        this.background.attr({ width: this.newOverWidth });
+
+        // Clear the scores
+        this.balls.forEach((ball) => {
+            ball.setScore("");
+        });
     }
 
     /**
@@ -250,7 +254,8 @@ class CurrentOverBox extends Shape {
     recordDelivery(totalRuns, markers = []) {
         if (this.currDelivery >= 6) {
             this.addBall(this.currDelivery);
-            // TODO resize the background, shape to hold the new ball
+
+            // resize the background, shape to hold the new ball
             let currWidth =
                 this.ball0Left +
                 (this.currDelivery + 1) *

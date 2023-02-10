@@ -113,7 +113,7 @@ class Textbox extends Shape {
     lineUp() {
         //debugger;
         const textBBox = this.svgText.getBBox();
-        console.log(textBBox);
+        // console.log(textBBox);
 
         // If we have a fixed size, and we've already done alignment, we're done.
         if (this._linedUp && this.origBBox.w >= 0 && this.origBBox.h >= 0) {

@@ -4,7 +4,7 @@
 "use strict";
 
 // For debugging
-const SHOW_EBU_MARGINS = true;
+const SHOW_EBU_MARGINS = false;
 const SHOW_SECOND_INNINGS_QUICKVIEW = false;
 
 // Which layout we are trying
@@ -176,6 +176,8 @@ class Display {
         } else if (TRY == 2) {
             const battingTeams = [team1, team2];
             // --- Left side ---
+            // TODO: the quickview's rows are rowHeight+margin, but the rows of the
+            // CurrentOverBox, BatterBox, and BowlerBox are only rowHeight.
             this.qv1 = new QuickView(
                 svg,
                 ACTION_MARGIN_W,
@@ -267,7 +269,7 @@ class Display {
                 svg,
                 WIDTH / 2,
                 BANNER_TOP + BANNER_HEIGHT,
-                rowHeight * 1.15,
+                rowHeight,
                 "bc"
             );
 
@@ -277,8 +279,14 @@ class Display {
             this.thisOver.recordDelivery(0, [Marker.WICKET]);
             this.thisOver.recordDelivery(4);
             this.thisOver.recordDelivery(5);
-            //this.thisOver.recordDelivery(6);
-            //this.thisOver.recordDelivery(7);
+            this.thisOver.recordDelivery(6);
+            this.thisOver.recordDelivery(7);
+            window.setTimeout(() => {
+                this.thisOver.newOver();
+            }, 2000);
+            window.setTimeout(() => {
+                this.thisOver.recordDelivery(3);
+            }, 3000);
         }
 
         // EBU margins
