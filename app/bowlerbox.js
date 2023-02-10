@@ -76,7 +76,7 @@ class BowlerBox {
         this.tName = svg.text(2, 0, "My Name").attr(styles);
         this.textGroup.add(this.tName);
 
-        // Figures
+        // Figures --- TODO use ScoreReadout
         styles["text-align"] = styles["text-anchor"] = "end";
         let scoreStyles = Utils.extend(styles, Styles.scoreStyles);
         this.tFigures = svg
@@ -99,9 +99,7 @@ class BowlerBox {
         this.tOvers = svg
             .text(w * (namePct + scorePct + ballsPct), 0, [
                 "1",
-                CIRCLE, //"O",
-                "2",
-                "B",
+                " OV.",
             ])
             .attr(styles);
         kids = this.tOvers.children();
@@ -110,14 +108,6 @@ class BowlerBox {
             class: "bowlingCompletedOvers",
         });
         kids[1].attr({
-            "font-size": "35%", // XXX  Styles.labelTextSize
-            "font-weight": "bold",
-        });
-        kids[2].attr({
-            "font-size": Styles.powerplayTextSize,
-            class: "bowlingBalls",
-        });
-        kids[3].attr({
             "font-size": Styles.labelTextSize,
         });
         this.textGroup.add(this.tOvers);
@@ -171,14 +161,6 @@ class BowlerBox {
             }
         }
 
-        /*
-        // Add the outline now that we have a center
-        this.outline = svg.rect(pos.xInGroup, pos.yInGroup, w, h).attr({
-            fill: 'none',
-            stroke: '#0ff'
-        });
-        this.group.add(this.outline);
-        */
     } // ctor
 
     _updateFigures() {
@@ -203,14 +185,17 @@ class BowlerBox {
         this._updateFigures();
     }
 
+    /**
+     * Update the number of overs.
+     *
+     * Only show whole overs.
+     * @property balls
+     * @type Integer
+     */
     set balls(value) {
         const completedOvers = Math.floor(value / 6);
-        const ballsThisOver = value % 6;
         this.tOvers.select(".bowlingCompletedOvers").attr({
             text: completedOvers,
-        });
-        this.tOvers.select(".bowlingBalls").attr({
-            text: ballsThisOver,
         });
     }
 }

@@ -1,3 +1,4 @@
+// TODO Add over X/Y to Try 1
 // cricket-scoreboard
 // Copyright (c) 2022 Christopher White
 // SPDX-License-Identifier: BSD-3-Clause
@@ -8,7 +9,7 @@ const SHOW_EBU_MARGINS = false;
 const SHOW_SECOND_INNINGS_QUICKVIEW = false;
 
 // Which layout we are trying
-const TRY = 2;
+const TRY = 1;
 
 const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
