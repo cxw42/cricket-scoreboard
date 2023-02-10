@@ -4,7 +4,7 @@
 "use strict";
 
 // For debugging
-const SHOW_EBU_MARGINS = false;
+const SHOW_EBU_MARGINS = true;
 const SHOW_SECOND_INNINGS_QUICKVIEW = false;
 
 // Which layout we are trying
@@ -51,7 +51,6 @@ const BANNER_TOP = BANNER_BOTTOM - BANNER_HEIGHT;
 const BANNER_FULL_WIDTH = WIDTH / 2; //BANNER_WIDTH + ACTION_MARGIN_W;
 
 class Display {
-    svg = null; // note: brunch doesn't do `#private`
     _team1;
     _team2;
 
@@ -61,7 +60,7 @@ class Display {
 
         // Thanks to https://jsfiddle.net/x5qf7bz4/
         let svg = Snap(WIDTH, HEIGHT);
-        document.getElementById("container").appendChild(svg.node);
+        parentElement.getElementById("container").appendChild(svg.node);
         svg.node.id = "disp"; // for convenience in debugging
 
         // Background
@@ -268,7 +267,7 @@ class Display {
                 svg,
                 WIDTH / 2,
                 BANNER_TOP + BANNER_HEIGHT,
-                rowHeight,
+                rowHeight * 1.15,
                 "bc"
             );
 
@@ -278,8 +277,8 @@ class Display {
             this.thisOver.recordDelivery(0, [Marker.WICKET]);
             this.thisOver.recordDelivery(4);
             this.thisOver.recordDelivery(5);
-            this.thisOver.recordDelivery(6);
-            this.thisOver.recordDelivery(7);
+            //this.thisOver.recordDelivery(6);
+            //this.thisOver.recordDelivery(7);
         }
 
         // EBU margins

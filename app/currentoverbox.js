@@ -107,42 +107,6 @@ class DeliveryMarker extends Shape {
             }
         );
         this.labelRuns.update(text);
-
-        /*
-        // TODO fixme --- this is very hackish
-        let textAndStyles = [
-            {
-                text: totalRuns.toString() + "R",
-                styles: Styles.scoreStyles,
-            },
-        ];
-
-        if (hasMarker) {
-            textAndStyles.push({
-                text: markers.map((o) => o.label).join(" "),
-                styles: Utils.extend(Styles.textStyles, {
-                    "font-size": Styles.labelTextSize,
-                }),
-            });
-        }
-
-        this.label = new TextBox(
-            this.svg,
-            0,
-            0,
-            this.bbox.w,
-            this.bbox.h,
-            "tl",
-            textAndStyles
-        );
-
-        // TODO clean this up --- it's currently empirical
-        this.label.svgText.children()[0].attr({ x: 1, y: 3 });
-        if (hasMarker) {
-            this.label.svgText.children()[1].attr({ x: 3, y: 11 });
-        }
-        */
-
         this.labelRuns.addTo(this.group);
     }
 }
@@ -189,13 +153,14 @@ class CurrentOverBox extends Shape {
 
     constructor(svg, x, y, h, corner) {
         let currWidth;
+        let innerH = h - 2 * PADDING;
 
         // Initialize with a placeholder width.  We will update it later
         // based on currWidth.
         super(svg, x, y, 1, h, corner);
         this.content = svg.g().addClass("CurrentOverBox-Content");
 
-        this.label = new TextBox(svg, 0, 0, -1, h, "tl", [
+        this.label = new TextBox(svg, PADDING, PADDING, -1, h, "tl", [
             {
                 text: "THIS",
                 styles: CurrentOverBox.labelStyles,
@@ -207,16 +172,17 @@ class CurrentOverBox extends Shape {
         ]);
 
         // TODO clean this up --- it's currently empirical
-        this.label.svgText.children()[0].attr({ x: 1, y: 3 });
-        this.label.svgText.children()[1].attr({ x: 0, y: 11 });
+        this.label.svgText.children()[0].attr({ x: 1, y: 1 });
+        this.label.svgText.children()[1].attr({ x: 0, y: 9 });
         this.label.lineUp();
 
         this.label.addTo(this.content);
 
-        this.ball0Left = currWidth = this.label.bbox.w + PADDING;
+        this.ball0Left = currWidth =
+            this.label.bbox.ulx + this.label.bbox.w + PADDING;
 
         // Add the DeliveryMarker instances for the first six balls of the over
-        this.ballRadius = h * 0.45;
+        this.ballRadius = (h - 2 * PADDING) * 0.45;
         this.ballSpacing = this.ballRadius * 0.25;
         this.balls = [];
 
@@ -231,15 +197,10 @@ class CurrentOverBox extends Shape {
             6 * (this.ballRadius * 2 + this.ballSpacing) - this.ballSpacing;
 
         // Update the bbox now that we have the width
-        this.setBBox(x, y, currWidth, h, corner);
+        this.setBBox(x, y, currWidth + 2 * PADDING, h, corner);
 
         // Make the background
-        this.background = svg.rect(
-            -PADDING,
-            -PADDING,
-            this.bbox.w + 2 * PADDING,
-            this.bbox.h + 2 * PADDING
-        );
+        this.background = svg.rect(0, 0, this.bbox.w, this.bbox.h);
         this.background.attr({
             //fill: BGCOLOR, "fill-opacity": "50%"
             fill: svg.gradient("l(0,0,0,1)#c0c0c0-#c0c0c0:50-#838996"),
@@ -248,6 +209,10 @@ class CurrentOverBox extends Shape {
         // Assemble
         this.group.add(this.background);
         this.group.add(this.content);
+
+        // TODO Move up so the bottom is where we expect --- the background hangs over.
+        //this.setBBox(this.bbox.x, this.bbox.y - PADDING, this.background.getBBox().w,
+        //    this.background.getBBox().h, this.bbox.corner);
     } // ctor
 
     /**

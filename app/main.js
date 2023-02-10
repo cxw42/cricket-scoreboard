@@ -39,7 +39,7 @@ team2.batters = {
 };
 
 // team2 won the toss and elected to bat
-let display = new Display(document.body, team2, team1);
+let display = new Display(document, team2, team1);
 let score = new Score([team1, team2], team2);
 score.battingOrder = ["Dhananjaya", "Wellalage"];
 score.bowler = "Nauman";
