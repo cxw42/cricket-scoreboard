@@ -17,6 +17,7 @@ const Snap = require("snapsvg");
 const Marker = require("rules").Marker;
 
 const BatterBox = require("batterbox");
+const BatterBox2 = require("batterbox2");
 const BowlerBox = require("bowlerbox");
 const CurrentOverBox = require("currentoverbox");
 //const Score = require('score');
@@ -290,6 +291,8 @@ class Display {
                 this.thisOver.recordDelivery(3);
             }, 3000);
         } else if (TRY == 3) {
+            // Left side
+
             this.teamView1 = new TeamView(
                 svg,
                 ACTION_MARGIN_W,
@@ -302,6 +305,56 @@ class Display {
                     toss: team2,
                     battingNow: team1,
                 }
+            );
+
+            // TODO center: overs, and this over
+
+            // Right side
+
+            let textStyles = Utils.extend(Styles.textStyles, {
+                "letter-spacing": "1", // empirical
+                size: "1.2em",
+            });
+            let x = WIDTH - ACTION_MARGIN_W - NAME_BOX_WIDTH;
+            let rowHeight = BANNER_HEIGHT / 2;
+            this.onFieldLabel = new TextBox(
+                svg,
+                x,
+                BANNER_TOP - rowHeight * 2,
+                NAME_BOX_WIDTH,
+                rowHeight,
+                "tl",
+                [{ text: "On field" }]
+            );
+            this.batterOnStrike = new BatterBox2(
+                svg,
+                x,
+                BANNER_TOP - rowHeight,
+                NAME_BOX_WIDTH,
+                rowHeight,
+                "tl",
+                textStyles,
+                true // onStrike
+            );
+
+            this.batterNotOnStrike = new BatterBox(
+                svg,
+                x,
+                BANNER_TOP,
+                NAME_BOX_WIDTH,
+                rowHeight,
+                {} //textStyles
+            );
+
+            delete textStyles.fill;
+            this.bowler = new BowlerBox(
+                svg,
+                x,
+                BANNER_TOP + rowHeight,
+                NAME_BOX_WIDTH,
+                BANNER_HEIGHT,
+                textStyles,
+                { oneLineOnly: true }
             );
 
             // DEBUG: the other team is batting
@@ -349,7 +402,7 @@ class Display {
     } //ctor
 
     update(score) {
-        if (TRY == 1) {
+        if (TRY == 1 || TRY == 3) {
             //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
             this.batterOnStrike.name = score.battingOrder[0]; // XXX
             this.batterOnStrike.runs = 64;

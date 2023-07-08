@@ -42,7 +42,7 @@ const COL_X = [...Array(NCOLS + 1).keys()].map(
 );
 
 // TODO replace this with the native width of the score, plus padding
-const scoreX = MARGIN + ROW_HEIGHT * 4.1;
+const scoreX = 85;
 
 /**
  * Teams and score
@@ -134,7 +134,7 @@ class TeamView extends Shape {
             );
             let vs = (this.vs = new TextBox(
                 svg,
-                nameX + 10, // TODO permit centering text even when corner=="ml"
+                nameX + 11, // TODO permit centering text even when corner=="ml"
                 FULL_HEIGHT / 2,
                 FULL_WIDTH * 0.25,
                 FULL_HEIGHT * 0.25,
@@ -142,13 +142,15 @@ class TeamView extends Shape {
                 [
                     {
                         text: "VS.",
-                        styles: Styles.scoreStyles,
+                        styles: Utils.extend(Styles.scoreStyles, {
+                            "font-size": "12px",
+                        }),
                     },
                 ],
                 {
                     background: {
                         fill: gradient,
-                        stroke: "#000",
+                        //stroke: "#000",
                     },
                 }
             ));
@@ -210,11 +212,9 @@ class TeamView extends Shape {
             if (i == battingTeamIdx) {
                 this.makeBattingScore(svg, sh, textColor);
             } else {
-                /*
                 // Bowling team: if it's still the first innings, show "---"
                 // for the number of runs.
-                this.showRuns(svg, g, textColor, i == 1 ? EMDASH : "123");
-                */
+                this.showRuns(svg, sh, textColor, i == 1 ? EMDASH : "123");
             }
         }
 
@@ -333,23 +333,16 @@ class TeamView extends Shape {
      * @method showRuns
      * @param {string} runsStr The runs, as a string.
      */
-    showRuns(svg, g, textColor, runsStr) {
+    showRuns(svg, sh, textColor, runsStr) {
         const baseStyles = Utils.extend(Styles.textStyles, Styles.scoreStyles);
         let score = new TextBox(
             svg,
-            COL_WIDTH - MARGIN,
-            cy,
-            COL_WIDTH - scoreX,
-            ROW_HEIGHT,
+            sh.bbox.w,
+            sh.bbox.h / 2,
+            sh.bbox.w - scoreX,
+            sh.bbox.h,
             "mr",
             [
-                {
-                    text: runsStr,
-                    styles: Utils.extend(baseStyles, {
-                        fill: textColor,
-                        class: "inningsFigures",
-                    }),
-                },
                 {
                     text: "R",
                     styles: Utils.extend(baseStyles, {
@@ -357,12 +350,19 @@ class TeamView extends Shape {
                         "font-size": Styles.labelTextSize,
                     }),
                 },
+                {
+                    text: runsStr,
+                    styles: Utils.extend(baseStyles, {
+                        fill: textColor,
+                        class: "inningsFigures",
+                    }),
+                },
             ]
         );
         score.group.attr({
             class: "battingScore",
         });
-        score.addTo(g);
+        score.addTo(sh.group);
     }
 
     makeDuration(svg, g, durationRow, styles) {

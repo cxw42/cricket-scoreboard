@@ -3,13 +3,15 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Shape = require("shape");
 const Styles = require("styles");
+const TextBox = require("textbox");
 const Utils = require("utils");
 
 /**
  * The box showing a batter's information
  *
- * @class BatterBox
+ * @class BatterBox2
  * @constructor
  * @param {Snap} svg SVG surface
  * @param {int} ulx Upper-left X
@@ -17,15 +19,7 @@ const Utils = require("utils");
  * @param {int} w Width
  * @param {int} h Height
  */
-class BatterBox {
-    // User-specified bounding-box coordinates
-    bbox = {};
-
-    // two.js coordinates
-    twoX;
-    twoY;
-
-    group; // the group of shapes
+class BatterBox2 extends Shape {
     outline; // visible outline
 
     // text nodes
@@ -37,11 +31,8 @@ class BatterBox {
     ballsLabel; // "B" label for balls
     onStrikeIcon;
 
-    constructor(svg, ulx, uly, w, h, styles = {}, onStrike = false) {
-        this.bbox.ulx = ulx;
-        this.bbox.uly = uly;
-        this.bbox.w = w;
-        this.bbox.h = h;
+    constructor(svg, x, y, w, h, corner, styles = {}, onStrike = false) {
+        super(svg, x, y, w, h, corner);
 
         // Grid params: where to put the components as a percentage of width
         // TODO make parameterizable
@@ -50,30 +41,37 @@ class BatterBox {
         let runsPct = 0.2;
         let ballsPct = 0.2;
 
-        // Clone the styles since we are going to change params
-        styles = Utils.extend(styles, { baseline: "baseline" });
-
-        this.twoX = ulx + w / 2;
-        this.twoY = uly + h / 2;
-
-        this.textGroup = svg.g();
-
         // Create shapes.  All have baseline x = 0, y=0.  addTo() will
         // position the group containing the shapes.
 
         // Name: left-aligned
-        styles["text-align"] = styles["text-anchor"] = "start";
 
         // Use "My Name" as the initial value so it will have both
         // ascenders and descenders.
-        this.tName = svg.text(2, 0, "My Name").attr(styles);
-        this.textGroup.add(this.tName);
+        this.tName = new TextBox(svg, 2, 0, w * namePct, -1, "tl", [
+            { text: "My Name", styles },
+        ]);
+        this.tName.addTo(this.group);
 
         // Runs and balls
         let runStyles = Utils.extend(styles, Styles.scoreStyles);
-        runStyles["text-align"] = runStyles["text-anchor"] = "end";
-        this.tRuns = svg.text(w * (namePct + runsPct), 0, "42").attr(runStyles);
-        this.textGroup.add(this.tRuns);
+        this.tRuns = new TextBox(svg, w * (namePct + runsPct), 0, -1, h, "tr", [
+            {
+                text: "R",
+                styles: Utils.extend(runStyles, {
+                    fill: "#000",
+                    "font-size": Styles.labelTextSize,
+                }),
+            },
+            {
+                text: "99",
+                styles: Utils.extend(runStyles, {
+                    fill: "#000",
+                }),
+            },
+        ]);
+        this.tRuns.addTo(this.group);
+        /*
 
         styles["text-align"] = styles["text-anchor"] = "end";
         styles["font-size"] = Styles.powerplayTextSize;
@@ -99,9 +97,10 @@ class BatterBox {
             .attr(styles);
         this.textGroup.add(this.ballsLabel);
 
-        this.group = svg.g().addClass("BatterBox");
+        this.group = svg.g().addClass("BatterBox2");
         this.group.add(this.textGroup);
 
+        */
         /*
         // DEBUG
         let bbox = this.textGroup.getBBox();
@@ -125,28 +124,18 @@ class BatterBox {
 
         // this.group.transform('t100,100');   // XXX DEBUG for visibility
 
-        // Position the group
-        const pos = Utils.positionGroupAt(
-            this.group,
-            this.textGroup,
-            ulx,
-            uly,
-            w,
-            h
-        );
-
+        /*
         // Add the outline now that we have a center
         this.outline = svg.rect(pos.xInGroup, pos.yInGroup, w, h).attr({
             fill: "none",
             stroke: "none", // '#0ff'
         });
         this.group.add(this.outline);
+        */
     } // ctor
 
     set name(value) {
-        this.tName.attr({
-            text: value,
-        });
+        this.tName.setValue(value);
     }
 
     set runs(value) {
@@ -162,4 +151,4 @@ class BatterBox {
     }
 }
 
-module.exports = BatterBox;
+module.exports = BatterBox2;
