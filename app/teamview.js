@@ -19,9 +19,11 @@ const POWERPLAY = String.fromCodePoint(0x24c5); // circled P
 const EMDASH = String.fromCodePoint(0x2014);
 
 // Layout is margin around, plus margin between individual rows
+const MARGIN = 2;
+// TODO padding
+
 // Grid: vertical
 const ROW_HEIGHT = 30;
-const MARGIN = 2;
 const NROWS = 2;
 const FULL_HEIGHT = NROWS * (MARGIN + ROW_HEIGHT) + MARGIN;
 const ROW_Y = [...Array(NROWS + 1).keys()].map(
@@ -33,8 +35,8 @@ const NCOLS = 1;
 const COL_WIDTH = 150;
 const FULL_WIDTH = NCOLS * (MARGIN + COL_WIDTH) + MARGIN;
 const homeX = MARGIN;
-const tossX = MARGIN + ROW_HEIGHT;
-const nameX = MARGIN + ROW_HEIGHT * 2;
+const tossX = MARGIN + 20;
+const nameX = MARGIN + 20 * 2;
 const COL_X = [...Array(NCOLS + 1).keys()].map(
     (i) => MARGIN + (COL_WIDTH + MARGIN) * i
 );
@@ -124,61 +126,75 @@ class TeamView extends Shape {
         }
 
         // "Vs." marker
-        let vs = (this.vs = new TextBox(
-            svg,
-            FULL_WIDTH / 2,
-            FULL_HEIGHT / 2,
-            FULL_WIDTH * 0.3,
-            FULL_HEIGHT * 0.3,
-            "mc",
-            [
+        {
+            const lighter = "#ccc";
+            const darker = D3Color.color(lighter).darker();
+            const gradient = svg.gradient(
+                `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
+            );
+            let vs = (this.vs = new TextBox(
+                svg,
+                nameX + 10, // TODO permit centering text even when corner=="ml"
+                FULL_HEIGHT / 2,
+                FULL_WIDTH * 0.25,
+                FULL_HEIGHT * 0.25,
+                "mc",
+                [
+                    {
+                        text: "VS.",
+                        styles: Styles.scoreStyles,
+                    },
+                ],
                 {
-                    text: "VS.",
-                    styles: Styles.scoreStyles, //Utils.extend(styles, {
-                    //"font-size": Styles.labelTextSize,
-                    //}),
-                },
-            ],
-            {
-                background: {
-                    fill: "#fff",
-                    stroke: "#000",
-                },
-            }
-        ));
-        vs.svgOutline.attr({
-            ry: vs.bbox.h / 2,
-            rx: vs.bbox.h / 2, // same as rx
-        });
-        vs.addTo(this.group);
+                    background: {
+                        fill: gradient,
+                        stroke: "#000",
+                    },
+                }
+            ));
+            vs.svgOutline.attr({
+                ry: vs.bbox.h / 2,
+                rx: vs.bbox.h / 2, // same as rx
+            });
+            vs.addTo(this.group);
+        }
 
-        /*************
         this.teamGroups = [];
         for (const [i, team] of this.battingTeams.entries()) {
-            const y = ROW_Y[teamRows[i]];
+            // Team batting first aligns at the top; team batting second
+            // aligns at the bottom.
+            const y = ROW_Y[i] + (i == 0 ? MARGIN : ROW_HEIGHT - MARGIN);
+            const corner = i == 0 ? "tl" : "bl";
+
             const textColor = Utils.getContrastingTextColor(team.color);
 
             // Group to hold this team's items, except for the background.
-            let g = svg.g();
-            Utils.freeTransformTo(g, 0, y);
-            this.teamGroups.push(g);
-            this.group.add(g);
+            let sh = new Shape(
+                svg,
+                0,
+                y,
+                COL_WIDTH,
+                (ROW_HEIGHT * 2) / 3,
+                corner
+            );
+            this.teamGroups.push(sh);
+            sh.addTo(this.group);
 
             if (team == home) {
-                this.addIcon(svg, g, homeX, HOME);
+                this.addIcon(svg, sh, homeX, HOME);
             }
 
             if (team == toss) {
-                this.addIcon(svg, g, tossX, TOSS);
+                this.addIcon(svg, sh, tossX, TOSS);
             }
 
             // Team's name (abbreviated)
             let teamAbbr = new TextBox(
                 svg,
                 nameX,
-                0, //cy,
-                WIDTH - nameX,
-                ROW_HEIGHT,
+                sh.bbox.h / 2,
+                sh.bbox.w - nameX,
+                sh.bbox.h,
                 "ml",
                 [
                     {
@@ -189,17 +205,20 @@ class TeamView extends Shape {
                     },
                 ]
             );
-            teamAbbr.addTo(g);
+            teamAbbr.addTo(sh.group);
 
             if (i == battingTeamIdx) {
-                this.makeBattingScore(svg, g, textColor);
+                this.makeBattingScore(svg, sh, textColor);
             } else {
+                /*
                 // Bowling team: if it's still the first innings, show "---"
                 // for the number of runs.
                 this.showRuns(svg, g, textColor, i == 1 ? EMDASH : "123");
+                */
             }
         }
 
+        /*************
         // Current overs
         this.duration = this.makeDuration(
             svg,
@@ -228,17 +247,25 @@ class TeamView extends Shape {
         */
     } // ctor
 
-    addIcon(svg, g, x, text) {
-        let icon = new TextBox(svg, x, cy, ROW_HEIGHT, ROW_HEIGHT, "ml", [
-            {
-                text,
-                styles: Styles.iconStyles,
-            },
-        ]);
-        icon.addTo(g);
+    addIcon(svg, sh, x, text) {
+        let icon = new TextBox(
+            svg,
+            x,
+            sh.bbox.h / 2,
+            sh.bbox.h,
+            sh.bbox.h,
+            "ml",
+            [
+                {
+                    text,
+                    styles: Styles.iconStyles,
+                },
+            ]
+        );
+        icon.addTo(sh.group);
     }
 
-    makeBattingScore(svg, g, scoreColor) {
+    makeBattingScore(svg, sh, scoreColor) {
         /*
         // TODO figure out a better way to make the scores pop out.  Maybe
         // always dark text on yellow BG?
@@ -259,10 +286,10 @@ class TeamView extends Shape {
 
         let score = new TextBox(
             svg,
-            WIDTH - MARGIN,
-            cy,
-            WIDTH - scoreX,
-            ROW_HEIGHT,
+            sh.bbox.w,
+            sh.bbox.h / 2,
+            sh.bbox.w - scoreX,
+            sh.bbox.h,
             "mr",
             [
                 {
@@ -299,7 +326,7 @@ class TeamView extends Shape {
         score.group.attr({
             class: "battingScore",
         });
-        score.addTo(g);
+        score.addTo(sh.group);
     }
 
     /**
@@ -310,9 +337,9 @@ class TeamView extends Shape {
         const baseStyles = Utils.extend(Styles.textStyles, Styles.scoreStyles);
         let score = new TextBox(
             svg,
-            WIDTH - MARGIN,
+            COL_WIDTH - MARGIN,
             cy,
-            WIDTH - scoreX,
+            COL_WIDTH - scoreX,
             ROW_HEIGHT,
             "mr",
             [
@@ -367,9 +394,9 @@ class TeamView extends Shape {
 
         this.duration = new TextBox(
             svg,
-            WIDTH - MARGIN,
+            COL_WIDTH - MARGIN,
             ROW_Y[durationRow] + cy,
-            WIDTH,
+            COL_WIDTH,
             ROW_HEIGHT,
             "mr",
             [
