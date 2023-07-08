@@ -211,14 +211,14 @@ class QuickView {
             "mr",
             [
                 {
-                    text: "W",
+                    text: "R",
                     styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
                         "font-size": Styles.labelTextSize,
                     }),
                 },
                 {
-                    text: "9-456",
+                    text: "456-9",
                     styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
                         class: "inningsFigures",
@@ -226,7 +226,7 @@ class QuickView {
                     }),
                 },
                 {
-                    text: "R",
+                    text: "W",
                     styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
                         "font-size": Styles.labelTextSize,

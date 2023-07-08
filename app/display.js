@@ -6,10 +6,10 @@
 
 // For debugging
 const SHOW_EBU_MARGINS = false;
-const SHOW_SECOND_INNINGS_QUICKVIEW = false;
+const SHOW_SECOND_INNINGS_QUICKVIEW = true;
 
 // Which layout we are trying
-const TRY = 1;
+const TRY = 3;
 
 const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
@@ -24,6 +24,7 @@ const CurrentOverBox = require("currentoverbox");
 const InningsBox = require("inningsbox");
 const QuickView = require("quickview");
 const Styles = require("styles");
+const TeamView = require("teamview");
 const Utils = require("utils");
 
 // DEBUG
@@ -288,6 +289,37 @@ class Display {
             window.setTimeout(() => {
                 this.thisOver.recordDelivery(3);
             }, 3000);
+        } else if (TRY == 3) {
+            this.teamView1 = new TeamView(
+                svg,
+                ACTION_MARGIN_W,
+                BANNER_BOTTOM,
+                "bl",
+                team1,
+                team2,
+                {
+                    home: team1,
+                    toss: team2,
+                    battingNow: team1,
+                }
+            );
+
+            // DEBUG: the other team is batting
+            if (SHOW_SECOND_INNINGS_QUICKVIEW) {
+                this.teamView2 = new TeamView(
+                    svg,
+                    ACTION_MARGIN_W + 200,
+                    BANNER_BOTTOM,
+                    "bl",
+                    team1,
+                    team2,
+                    {
+                        home: team1,
+                        toss: team2,
+                        battingNow: team2,
+                    }
+                );
+            }
         }
 
         // EBU margins
@@ -317,8 +349,7 @@ class Display {
     } //ctor
 
     update(score) {
-        if (true) {
-            // TRY==1
+        if (TRY == 1) {
             //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
             this.batterOnStrike.name = score.battingOrder[0]; // XXX
             this.batterOnStrike.runs = 64;

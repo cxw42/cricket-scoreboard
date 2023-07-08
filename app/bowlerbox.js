@@ -12,7 +12,7 @@ const CIRCLE = String.fromCodePoint(0x2b58);
  * The box showing a bowler's information.
  *
  * ```
- * Name         W${w}-${r}R   ${o}o${b}b
+ * Name         R${r}-${w}W   ${o}ov.
  * . . . . . .
  * ```
  *
@@ -56,7 +56,7 @@ class BowlerBox {
         // TODO make parameterizable
         let leftPadding = 10; // units???
         let namePct = 0.5;
-        let scorePct = 0.27; // wkt-run
+        let scorePct = 0.27; // run-wkt
         let ballsPct = 0.17;
 
         // Clone the styles since we are going to change params
@@ -80,7 +80,7 @@ class BowlerBox {
         styles["text-align"] = styles["text-anchor"] = "end";
         let scoreStyles = Utils.extend(styles, Styles.scoreStyles);
         this.tFigures = svg
-            .text(w * (namePct + scorePct), 0, ["W", "1-2", "R"])
+            .text(w * (namePct + scorePct), 0, ["R", "2-1", "W"])
             .attr(scoreStyles);
         let kids = this.tFigures.children();
         kids[0].attr({
@@ -97,10 +97,7 @@ class BowlerBox {
         // Overs
         //styles['font-size'] = 'small'; // TODO make parameterizable
         this.tOvers = svg
-            .text(w * (namePct + scorePct + ballsPct), 0, [
-                "1",
-                " OV.",
-            ])
+            .text(w * (namePct + scorePct + ballsPct), 0, ["1", " OV."])
             .attr(styles);
         kids = this.tOvers.children();
         kids[0].attr({
@@ -160,12 +157,11 @@ class BowlerBox {
                 this.thisOverGroup.add(rect);
             }
         }
-
     } // ctor
 
     _updateFigures() {
         this.tFigures.select(".bowlingFigures").attr({
-            text: `${this.currWickets}-${this.currRuns}`,
+            text: `${this.currRuns}-${this.currWickets}`,
         });
     }
 
