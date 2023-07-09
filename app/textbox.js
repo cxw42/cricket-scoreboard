@@ -39,6 +39,7 @@ class TextBox extends Shape {
 
     _linedUp = false; // whether lineUp() has been called
     _baseline = false; // whether we are baseline-aligned
+    _topToBaselineY; // how far from the top of the box to the baseline
 
     constructor(svg, x, y, w, h, corner, textAndStyles, opts = {}) {
         // If we are going to use the native size(s) of the text, create the shape with
@@ -62,7 +63,7 @@ class TextBox extends Shape {
             background = {};
         }
 
-        if (typeof textAndStyles !== typeof []) {
+        if (!Array.isArray(textAndStyles)) {
             textAndStyles = [textAndStyles];
         }
 
@@ -164,9 +165,10 @@ class TextBox extends Shape {
 
         // Text Y: we are shifting the baseline from y=0 so need to consider the corner.
         if (!this._linedUp || this.origBBox.h < 0) {
+            this._topToBaselineY = textBBox.y;
             let translateY;
             if (this._baseline) {
-                translateY = -textBBox.y; // TODO is this right?
+                translateY = this._topToBaselineY - this.origBBox.y; // TODO is this right?
             } else if (this.origBBox.corner.includes("t")) {
                 translateY = -textBBox.y; // shift baseline down
             } else if (this.origBBox.corner.includes("m")) {
