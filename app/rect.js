@@ -18,6 +18,7 @@ require("3rdparty/snap.svg.free_transform");
  * @param {int} y Reference Y
  * @param {int} w Width
  * @param {int} h Height
+ * @param {String} corner Corner
  * @param {Object} opts Options.  Keys include:
  *      - `background`: styles for the background (Object or 'none')
  */

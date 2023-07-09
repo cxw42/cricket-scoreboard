@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
+const Rect = require("rect");
 const Shape = require("shape");
 const Styles = require("styles");
 const TextBox = require("textbox");
@@ -20,6 +21,8 @@ const Utils = require("utils");
  * @param {int} h Height
  * @param {String} corner Corner
  * @param {Object} [styles] Text styles
+ * @param {Object} [styles.background] Background for the box
+ * @param {Object} [styles.teamColor=#fff] Team's color
  * @param {bool} [onStrike=false] Whether the batter is on strike
  */
 class BatterBox2 extends Shape {
@@ -30,12 +33,26 @@ class BatterBox2 extends Shape {
     constructor(svg, x, y, w, h, corner, styles = {}, onStrike = false) {
         super(svg, x, y, w, h, corner);
 
+        const teamColor = styles.teamColor || "#ffffff";
+        const textColor = Utils.getContrastingTextColor(teamColor);
+
+        styles = Utils.extend(styles, { fill: textColor });
+
         // Grid params: where to put the components as a percentage of width
         // TODO make parameterizable
         let leftPadding = 2; // units???
         let namePct = 0.5;
         let runsPct = 0.2;
         let ballsPct = 0.2;
+
+        // Background
+        this.outline = new Rect(svg, 0, 0, w, h, "tl", {
+            background: styles.background || {
+                stroke: "none",
+                fill: "none",
+            },
+        });
+        this.outline.addTo(this.group);
 
         // Build up the text and styles.  We will then create them in one
         // TextBox so they share a baseline.
@@ -52,33 +69,29 @@ class BatterBox2 extends Shape {
         });
 
         // Runs
-        let runStyles = Utils.extend(styles, Styles.scoreStyles, {
-            fill: "#000",
-        });
         textAndStyles.push(
             {
                 text: "R",
-                styles: Utils.extend(runStyles, {
+                styles: Utils.extend(styles, Styles.scoreStyles, {
                     "font-size": Styles.labelTextSize,
                     x: leftPadding + w * namePct,
                 }),
             },
             {
                 text: "999",
-                styles: runStyles,
+                styles: Utils.extend(styles, Styles.scoreStyles),
                 label: "runs",
             }
         );
 
         // Balls
         let ballStyles = Utils.extend(styles, Styles.numberStyles, {
-            fill: "#000",
             "font-size": "x-small",
         });
         textAndStyles.push(
             {
-                text: " (",
-                styles: ballStyles,
+                text: "(",
+                styles: Utils.extend(ballStyles, { dx: 10 }),
             },
             {
                 text: "999",
@@ -89,6 +102,7 @@ class BatterBox2 extends Shape {
                 text: "B",
                 styles: Utils.extend(ballStyles, {
                     "font-size": Styles.labelTextSize,
+                    dx: 1,
                 }),
             },
             {

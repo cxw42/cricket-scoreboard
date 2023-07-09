@@ -326,6 +326,16 @@ class Display {
                 "tl",
                 [{ text: "On field" }]
             );
+
+            // TODO refactor this
+            const team1lighter = team1.color;
+            const team1darker = D3Color.color(team1lighter).darker();
+            const team1gradient = svg.gradient(
+                `l(0,0,0,1)${team1lighter}-${team1lighter}:50-${team1darker}`
+            );
+            // Make sure team1gradient is attached to the SVG.
+            svg.rect(-1, -1, 0, 0).attr({ fill: team1gradient });
+
             this.batterOnStrike = new BatterBox2(
                 svg,
                 x,
@@ -333,7 +343,13 @@ class Display {
                 NAME_BOX_WIDTH,
                 rowHeight,
                 "tl",
-                textStyles,
+                Utils.extend(textStyles, {
+                    teamColor: team1.color,
+                    // Background: we can't use team1gradient directly
+                    // because it can't be structuredCloned as required
+                    // down the call stack.  Therefore, reference it by ID.
+                    background: { fill: `url(#${team1gradient.id})` },
+                }),
                 true // onStrike
             );
 
