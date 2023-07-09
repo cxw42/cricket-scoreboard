@@ -18,17 +18,13 @@ const Utils = require("utils");
  * @param {int} uly Upper-left Y
  * @param {int} w Width
  * @param {int} h Height
+ * @param {String} corner Corner
+ * @param {Object} [styles] Text styles
+ * @param {bool} [onStrike=false] Whether the batter is on strike
  */
 class BatterBox2 extends Shape {
     outline; // visible outline
-
-    // text nodes
-    textGroup;
-    tName; // batter's name
-    tRuns; // batter's run count
-    runsLabel; // "R" label for runs
-    tBalls; // batter's ball count
-    ballsLabel; // "B" label for balls
+    textBox; // all the text
     onStrikeIcon;
 
     constructor(svg, x, y, w, h, corner, styles = {}, onStrike = false) {
@@ -36,81 +32,74 @@ class BatterBox2 extends Shape {
 
         // Grid params: where to put the components as a percentage of width
         // TODO make parameterizable
-        let leftPadding = 10; // units???
+        let leftPadding = 2; // units???
         let namePct = 0.5;
         let runsPct = 0.2;
         let ballsPct = 0.2;
 
-        // Create shapes.  All have baseline x = 0, y=0.  addTo() will
-        // position the group containing the shapes.
+        // Build up the text and styles.  We will then create them in one
+        // TextBox so they share a baseline.
+        let textAndStyles = [];
 
-        // Name: left-aligned
-
-        // Use "My Name" as the initial value so it will have both
-        // ascenders and descenders.
-        this.tName = new TextBox(svg, 2, 0, w * namePct, -1, "tl", [
-            { text: "My Name", styles },
-        ]);
-        this.tName.addTo(this.group);
+        // Name.  Use "My Name" as the initial value so it will
+        // have both ascenders and descenders.
+        textAndStyles.push({
+            text: "My Name",
+            styles: Utils.extend(styles, {
+                x: leftPadding,
+            }),
+            label: "name",
+        });
 
         // Runs
-        let runStyles = Utils.extend(styles, Styles.scoreStyles);
-        this.tRuns = new TextBox(svg, w * (namePct + runsPct), 0, -1, h, "tr", [
+        let runStyles = Utils.extend(styles, Styles.scoreStyles, {
+            fill: "#000",
+        });
+        textAndStyles.push(
             {
                 text: "R",
                 styles: Utils.extend(runStyles, {
-                    fill: "#000",
                     "font-size": Styles.labelTextSize,
+                    x: leftPadding + w * namePct,
                 }),
             },
             {
                 text: "999",
-                styles: Utils.extend(runStyles, {
-                    fill: "#000",
-                }),
-                label: "value",
-            },
-        ]);
-        this.tRuns.addTo(this.group);
-
-        // Get the Y baseline of the runs
-        let runsBBox = this.tRuns.svgText.getBBox();
+                styles: runStyles,
+                label: "runs",
+            }
+        );
 
         // Balls
         let ballStyles = Utils.extend(styles, Styles.numberStyles, {
             fill: "#000",
             "font-size": "x-small",
         });
-        this.tBalls = new TextBox(
-            svg,
-            w * (namePct + runsPct + 0.05),
-            runsBBox.y,
-            -1,
-            -1,
-            "al",
-            [
-                {
-                    text: "(",
-                    styles: ballStyles,
-                },
-                {
-                    text: "999",
-                    styles: ballStyles,
-                    label: "value",
-                },
-                {
-                    text: "B",
-                    styles: Utils.extend(ballStyles, {
-                        "font-size": Styles.labelTextSize,
-                    }),
-                },
-                {
-                    text: ")",
-                    styles: ballStyles,
-                },
-            ]
+        textAndStyles.push(
+            {
+                text: " (",
+                styles: ballStyles,
+            },
+            {
+                text: "999",
+                styles: ballStyles,
+                label: "balls",
+            },
+            {
+                text: "B",
+                styles: Utils.extend(ballStyles, {
+                    "font-size": Styles.labelTextSize,
+                }),
+            },
+            {
+                text: ")",
+                styles: ballStyles,
+            }
         );
-        this.tBalls.addTo(this.group);
+
+        // Now create the text line
+        this.textBox = new TextBox(svg, 0, 0, -1, -1, "tl", textAndStyles);
+        this.textBox.addTo(this.group);
 
         // On strike?
         if (
@@ -125,15 +114,15 @@ class BatterBox2 extends Shape {
     } // ctor
 
     set name(value) {
-        this.tName.setValue(value);
+        this.textBox.setValue(value, "name");
     }
 
     set runs(value) {
-        this.tRuns.setValue(value, "value");
+        this.textBox.setValue(value, "runs");
     }
 
     set balls(value) {
-        this.tBalls.setValue(value, "value");
+        this.textBox.setValue(value, "balls");
     }
 }
 
