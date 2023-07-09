@@ -217,15 +217,15 @@ class TextBox extends Shape {
      *
      */
     setValue(value, label = null) {
+        let selector;
         if (label === null) {
-            this.svgText.attr({
-                text: value,
-            });
+            selector = "tspan"; // select() gives us the first match
         } else {
-            this.svgText.select(`.label-${label}`).attr({
-                "#text": value, // not sure why it has to be '#text' for tspans
-            });
+            selector = `.label-${label}`;
         }
+        this.svgText.select(selector).attr({
+            "#text": value, // not sure why it has to be '#text' for tspans
+        });
     }
 }
 
