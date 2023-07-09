@@ -111,45 +111,6 @@ class BatterBox2 extends Shape {
             ]
         );
         this.tBalls.addTo(this.group);
-        /*
-
-        styles["text-align"] = styles["text-anchor"] = "end";
-        styles["font-size"] = Styles.powerplayTextSize;
-        this.tBalls = svg
-            .text(w * (namePct + runsPct + ballsPct), 0, "84")
-            .attr(styles);
-        this.textGroup.add(this.tBalls);
-
-        // Labels
-        runStyles["font-size"] = Styles.labelTextSize;
-        styles["font-size"] = Styles.labelTextSize;
-        runStyles["text-align"] = runStyles["text-anchor"] = "start";
-        styles["text-align"] = styles["text-anchor"] = "start";
-
-        this.runsLabel = svg
-            .text(w * (namePct + runsPct) - 25, 0, "R") // FIXME --- use a TextBox
-            .attr(runStyles);
-        this.textGroup.add(this.runsLabel);
-
-        styles["font-size"] = "x-small";
-        this.ballsLabel = svg
-            .text(w * (namePct + runsPct + ballsPct), 0, "B")
-            .attr(styles);
-        this.textGroup.add(this.ballsLabel);
-
-        this.group = svg.g().addClass("BatterBox2");
-        this.group.add(this.textGroup);
-
-        */
-        /*
-        // DEBUG
-        let bbox = this.textGroup.getBBox();
-        this.group.add(svg.rect(bbox.x, bbox.y, bbox.width, bbox.height)
-            .attr({
-                fill: 'none',
-                stroke: '#ff0'
-            }));
-        */
 
         // On strike?
         if (
@@ -161,17 +122,6 @@ class BatterBox2 extends Shape {
             this.onStrikeIcon.scale = 0.15; // hack --- FIXME
             this.group.add(this.onStrikeIcon);
         }
-
-        // this.group.transform('t100,100');   // XXX DEBUG for visibility
-
-        /*
-        // Add the outline now that we have a center
-        this.outline = svg.rect(pos.xInGroup, pos.yInGroup, w, h).attr({
-            fill: "none",
-            stroke: "none", // '#0ff'
-        });
-        this.group.add(this.outline);
-        */
     } // ctor
 
     set name(value) {
