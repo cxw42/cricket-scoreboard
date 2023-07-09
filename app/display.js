@@ -71,18 +71,6 @@ class Display {
             fill: "#ddd",
         });
 
-        svg.line(200, 200, 800, 200).attr({ stroke: "#ee0" });
-        let tl = new TextBox(svg, 200, 200, -1, -1, "tl", { text: "tl Mj" });
-        tl.addTo(svg);
-        let tm = new TextBox(svg, 250, 200, -1, -1, "ml", { text: "ml Mj" });
-        tm.addTo(svg);
-        let tb = new TextBox(svg, 300, 200, -1, -1, "bl", { text: "bl Mj" });
-        tb.addTo(svg);
-        let ta = new TextBox(svg, 350, 200, -1, -1, "al", { text: "al Mj" });
-        ta.addTo(svg);
-
-        return; // XXX
-
         // Background image
         this._bg = svg.image("/slc-sample.png", 0, 0, "100%", "100%");
 
@@ -414,7 +402,6 @@ class Display {
     } //ctor
 
     update(score) {
-        return; // XXX
         if (TRY == 1 || TRY == 3) {
             //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
             this.batterOnStrike.name = score.battingOrder[0]; // XXX
