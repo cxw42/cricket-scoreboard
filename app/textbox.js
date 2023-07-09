@@ -190,25 +190,6 @@ class TextBox extends Shape {
     }
 
     /**
-     * Add this instance to an SVG element
-     *
-     * @method addTo
-     * @param {Object} parent The element
-     */
-    addTo(parent) {
-        parent.add(this.group);
-    }
-
-    /**
-     * Remove this instance from the SVG
-     *
-     * @method remove
-     */
-    remove() {
-        this.group.remove();
-    }
-
-    /**
      * Set the text.
      *
      * @method setValue

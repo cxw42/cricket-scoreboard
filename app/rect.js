@@ -45,24 +45,6 @@ class Rect extends Shape {
         this.group.add(this.svgRect);
     }
 
-    /**
-     * Add this instance to an SVG element
-     *
-     * @method addTo
-     * @param {Object} parent The element
-     */
-    addTo(parent) {
-        parent.add(this.group);
-    }
-
-    /**
-     * Remove this instance from the SVG
-     *
-     * @method remove
-     */
-    remove() {
-        this.group.remove();
-    }
 }
 
 module.exports = Rect;

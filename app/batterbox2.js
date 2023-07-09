@@ -14,7 +14,7 @@ const Utils = require("utils");
  *
  * @class BatterBox2
  * @constructor
- * @param {Snap} svg SVG surface
+ * @param {Snap} svg SVG surface (see {{#crossLink "Shape"}}{{/crossLink}})
  * @param {int} ulx Upper-left X
  * @param {int} uly Upper-left Y
  * @param {int} w Width
@@ -52,7 +52,7 @@ class BatterBox2 extends Shape {
                 fill: "none",
             },
         });
-        this.outline.addTo(this.group);
+        this.outline.addTo(this);
 
         // Build up the text and styles.  We will then create them in one
         // TextBox so they share a baseline.

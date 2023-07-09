@@ -89,7 +89,11 @@ class Shape {
      * @param {Object} parent The element
      */
     addTo(parent) {
-        parent.add(this.group);
+        if (parent instanceof Shape) {
+            parent.group.add(this.group);
+        } else {
+            parent.add(this.group);
+        }
     }
 
     /**
