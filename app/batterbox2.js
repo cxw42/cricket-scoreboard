@@ -53,7 +53,7 @@ class BatterBox2 extends Shape {
         ]);
         this.tName.addTo(this.group);
 
-        // Runs and balls
+        // Runs
         let runStyles = Utils.extend(styles, Styles.scoreStyles);
         this.tRuns = new TextBox(svg, w * (namePct + runsPct), 0, -1, h, "tr", [
             {
@@ -64,13 +64,54 @@ class BatterBox2 extends Shape {
                 }),
             },
             {
-                text: "99",
+                text: "999",
                 styles: Utils.extend(runStyles, {
                     fill: "#000",
+                    class: "value",
                 }),
             },
         ]);
         this.tRuns.addTo(this.group);
+
+        // Get the Y baseline of the runs
+        let runsBBox = this.tRuns.svgText.getBBox();
+
+        // Balls
+        let ballStyles = Utils.extend(styles, Styles.numberStyles, {
+            fill: "#000",
+            "font-size": "x-small",
+        });
+        this.tBalls = new TextBox(
+            svg,
+            w * (namePct + runsPct + 0.05),
+            runsBBox.y,
+            -1,
+            -1,
+            "al",
+            [
+                {
+                    text: "(",
+                    styles: ballStyles,
+                },
+                {
+                    text: "999",
+                    styles: Utils.extend(ballStyles, {
+                        class: "value",
+                    }),
+                },
+                {
+                    text: "B",
+                    styles: Utils.extend(ballStyles, {
+                        "font-size": Styles.labelTextSize,
+                    }),
+                },
+                {
+                    text: ")",
+                    styles: ballStyles,
+                },
+            ]
+        );
+        this.tBalls.addTo(this.group);
         /*
 
         styles["text-align"] = styles["text-anchor"] = "end";
@@ -139,14 +180,15 @@ class BatterBox2 extends Shape {
     }
 
     set runs(value) {
-        this.tRuns.attr({
-            text: value,
+        this.tRuns.svgText.select(".value").attr({
+            "#text": value, // not sure why it has to be '#text' for tspans
         });
     }
 
     set balls(value) {
-        this.tBalls.attr({
-            text: value,
+        this.tBalls.svgText.select(".value").attr({
+            // XXX
+            "#text": value,
         });
     }
 }

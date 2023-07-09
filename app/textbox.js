@@ -19,7 +19,9 @@ require("3rdparty/snap.svg.free_transform");
  * @param {int} w Width.  If w<0, use the native width of the text.
  * @param {int} h Height.  If h<0, use the native height of the text.
  * @param {String} corner Which corner `x` and `y` relate to.
- *                        Must be `[TMB][LCR]`.
+ *                        Must be `[TMAB][LCR]`.
+ *                        TMB/LCR are per class Shape.  Corner "A" means the
+ *                        Y coordinate is the bAseline of the text.
  * @param {Object|Array[Object]} textAndStyles: array of {text, styles}, where
  *                               styles are per
  *                               [Two.Text](https://two.js.org/docs/text/).
@@ -32,11 +34,22 @@ class Textbox extends Shape {
     fttText; // freetransform for svgText
 
     _linedUp = false; // whether lineUp() has been called
+    _baseline = false; // whether we are baseline-aligned
 
     constructor(svg, x, y, w, h, corner, textAndStyles, opts = {}) {
         // If we are going to use the native size(s) of the text, create the shape with
         // interim size(s).
-        super(svg, x, y, w < 0 ? 1 : w, h < 0 ? 1 : h, corner);
+
+        // Baseline: give the parent class something it can understand.
+        let superCorner = corner.toLowerCase();
+        let baseline = false;
+        if (superCorner.includes("a")) {
+            baseline = true;
+            superCorner = superCorner.replace("a", "t");
+        }
+
+        super(svg, x, y, w < 0 ? 1 : w, h < 0 ? 1 : h, superCorner);
+        this._baseline = baseline;
         this.origBBox.w = w;
         this.origBBox.h = h;
 
@@ -68,7 +81,7 @@ class Textbox extends Shape {
         this.svgText = svg.text(
             0,
             0,
-            textAndStyles.map((o) => Utils.extend(o.text, localStyles))
+            textAndStyles.map((o) => o.text)
         );
         const kids = this.svgText.children();
         for (let i = 0; i < textAndStyles.length; ++i) {
@@ -145,7 +158,9 @@ class Textbox extends Shape {
         // Text Y: we are shifting the baseline from y=0 so need to consider the corner.
         if (!this._linedUp || this.origBBox.h < 0) {
             let translateY;
-            if (this.origBBox.corner.includes("t")) {
+            if (this._baseline) {
+                translateY = -textBBox.y; // TODO is this right?
+            } else if (this.origBBox.corner.includes("t")) {
                 translateY = -textBBox.y; // shift baseline down
             } else if (this.origBBox.corner.includes("m")) {
                 translateY = this.bbox.h / 2 - textBBox.cy;
