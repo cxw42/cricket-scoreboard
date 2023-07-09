@@ -11,7 +11,7 @@ require("3rdparty/snap.svg.free_transform");
 /**
  * A text box anchored at a point
  *
- * @class Textbox
+ * @class TextBox
  * @constructor
  * @param {Snap} svg The SVG
  * @param {int} x Reference X
@@ -22,13 +22,17 @@ require("3rdparty/snap.svg.free_transform");
  *                        Must be `[TMAB][LCR]`.
  *                        TMB/LCR are per class Shape.  Corner "A" means the
  *                        Y coordinate is the bAseline of the text.
- * @param {Object|Array[Object]} textAndStyles: array of {text, styles}, where
- *                               styles are per
- *                               [Two.Text](https://two.js.org/docs/text/).
- * @param {Object} opts Options.  Keys include:
+ * @param {Object|Array[Object]} textAndStyles Array of `{text, styles[, label]}`,
+ * @param {String} textAndStyles.text The text
+ * @param {String} textAndStyles.styles SVG `<text>` styles
+ * @param {String} [textAndStyles.label] Label usable with
+ *      {{#crossLink "TextBox/setValue:method"}}{{/crossLink}}.
+ *      The label must be a valid CSS class name (no leading dot).
+ *
+ * @param {Object} [opts] Options.  Keys include:
  *      - `background`: styles for the background (Object or 'none')
  */
-class Textbox extends Shape {
+class TextBox extends Shape {
     svgOutline; // visible outline or background - svg <rect>
     svgText; // svg <text> node
     fttText; // freetransform for svgText
@@ -199,11 +203,27 @@ class Textbox extends Shape {
         this.group.remove();
     }
 
-    setValue(value) {
-        this.svgText.attr({
-            text: value,
-        });
+    /**
+     * Set the text.
+     *
+     * @method setValue
+     * @param {String} value The new text
+     * @param {String} [label] If given, update the `<tspan>` with
+     *                         the given label.  Otherwise, update the
+     *                         whole `<text>` element.
+     *
+     */
+    setValue(value, label = null) {
+        if(label === null) {
+            this.svgText.attr({
+                text: value,
+            });
+        } else {
+            this.svgText.select(`.label-${label}`).attr({
+                '#text': value
+            });
+        }
     }
 }
 
-module.exports = Textbox;
+module.exports = TextBox;

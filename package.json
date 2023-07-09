@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx brunch watch -s",
-    "doc": "npx yuidoc -o doc -x .git,public .",
+    "doc": "npx yuidoc -o doc -x .git,public,3rdparty .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "p": "npx prettier --cache --write ."
   },

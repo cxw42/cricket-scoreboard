@@ -62,9 +62,9 @@ module.exports = {
 };
 
 /*************************************************************************
- * Test of Textbox corner options
+ * Test of TextBox corner options
 const Snap = require('snapsvg');
-const Textbox = require('textbox');
+const TextBox = require('textbox');
 
 let svg = Snap();
 svg.rect(0, 0, 100, 100).attr({
@@ -75,7 +75,7 @@ svg.circle(50, 50, 2);
 
 let texts = {};
 for (const corner of ['tl', 'ml', 'bl', 'tc', 'mc', 'bc', 'tr', 'mr', 'br']) {
-    texts[corner] = new Textbox(svg, 50, 50, 50, 50, corner, [{
+    texts[corner] = new TextBox(svg, 50, 50, 50, 50, corner, [{
         text: corner
     }]);
 }

@@ -5,7 +5,7 @@
 
 const Shape = require("shape");
 const Styles = require("styles");
-const Textbox = require("textbox");
+const TextBox = require("textbox");
 const Utils = require("utils");
 
 /**
@@ -27,7 +27,7 @@ const Utils = require("utils");
  *  - teamColor for the team's color (default #fff)
  *  - labels: object with "w" and "r" bools for whether to show the "W" and "R" labels, respectively
  */
-class ScoreReadout extends Textbox {
+class ScoreReadout extends TextBox {
     showWickets; // whether to show the wickets
 
     text; // The textbox

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 "use strict";
 
-const Textbox = require("textbox");
+const TextBox = require("textbox");
 const Utils = require("utils");
 const HOME = String.fromCodePoint(0x1f3e0); // or U+2302
 const TOSS = String.fromCodePoint(0x1fa99);
@@ -117,7 +117,7 @@ class InningsBox {
         this.scoresGroup = svg.g();
         styles.fill = "#fff"; // XXX
         // TODO text padding
-        this.tTeam1Score = new Textbox(
+        this.tTeam1Score = new TextBox(
             svg,
             w * 0.5 - topPadding, // XXX
             0,
@@ -150,7 +150,7 @@ class InningsBox {
         this.tTeam1Score.addTo(this.scoresGroup);
 
         styles.fill = "#000"; // XXX
-        this.tTeam2Score = new Textbox(
+        this.tTeam2Score = new TextBox(
             svg,
             w * 0.5 + topPadding, // XXX
             0,
