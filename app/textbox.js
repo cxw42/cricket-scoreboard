@@ -92,6 +92,9 @@ class TextBox extends Shape {
             kids[i].attr(
                 Utils.extend(textAndStyles[i].styles || {}, localStyles)
             );
+            if (textAndStyles[i].label) {
+                kids[i].addClass(`label-${textAndStyles[i].label}`);
+            }
         }
 
         // Position the text within the group
@@ -214,13 +217,13 @@ class TextBox extends Shape {
      *
      */
     setValue(value, label = null) {
-        if(label === null) {
+        if (label === null) {
             this.svgText.attr({
                 text: value,
             });
         } else {
             this.svgText.select(`.label-${label}`).attr({
-                '#text': value
+                "#text": value, // not sure why it has to be '#text' for tspans
             });
         }
     }

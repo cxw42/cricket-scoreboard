@@ -67,8 +67,8 @@ class BatterBox2 extends Shape {
                 text: "999",
                 styles: Utils.extend(runStyles, {
                     fill: "#000",
-                    class: "value",
                 }),
+                label: "value",
             },
         ]);
         this.tRuns.addTo(this.group);
@@ -95,9 +95,8 @@ class BatterBox2 extends Shape {
                 },
                 {
                     text: "999",
-                    styles: Utils.extend(ballStyles, {
-                        class: "value",
-                    }),
+                    styles: ballStyles,
+                    label: "value",
                 },
                 {
                     text: "B",
@@ -180,16 +179,11 @@ class BatterBox2 extends Shape {
     }
 
     set runs(value) {
-        this.tRuns.svgText.select(".value").attr({
-            "#text": value, // not sure why it has to be '#text' for tspans
-        });
+        this.tRuns.setValue(value, "value");
     }
 
     set balls(value) {
-        this.tBalls.svgText.select(".value").attr({
-            // XXX
-            "#text": value,
-        });
+        this.tBalls.setValue(value, "value");
     }
 }
 
