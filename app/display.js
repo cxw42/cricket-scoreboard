@@ -23,6 +23,7 @@ const CurrentOverBox = require("currentoverbox");
 //const Score = require('score');
 //const TextBox = require('textbox');
 const InningsBox = require("inningsbox");
+const OnFieldView = require("onfieldview");
 const QuickView = require("quickview");
 const Styles = require("styles");
 const TeamView = require("teamview");
@@ -371,6 +372,17 @@ class Display {
                 BANNER_HEIGHT,
                 textStyles,
                 { oneLineOnly: true }
+            );
+
+            // XXX trying out OnFieldView
+            this.onFieldView = new OnFieldView(
+                svg,
+                x,
+                100,
+                NAME_BOX_WIDTH,
+                3 * BANNER_HEIGHT,
+                "tl",
+                [team1.color, team2.color]
             );
 
             // DEBUG: the other team is batting

@@ -44,7 +44,6 @@ class Rect extends Shape {
         );
         this.group.add(this.svgRect);
     }
-
 }
 
 module.exports = Rect;
