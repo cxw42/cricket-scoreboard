@@ -5,7 +5,7 @@
 "use strict";
 
 // For debugging
-const SHOW_EBU_MARGINS = false;
+const SHOW_EBU_MARGINS = true;
 const SHOW_SECOND_INNINGS_QUICKVIEW = true;
 
 // Which layout we are trying
@@ -318,6 +318,8 @@ class Display {
             });
             let x = WIDTH - ACTION_MARGIN_W - NAME_BOX_WIDTH;
             let rowHeight = BANNER_HEIGHT / 2;
+
+            /*
             this.onFieldLabel = new TextBox(
                 svg,
                 x,
@@ -373,16 +375,17 @@ class Display {
                 textStyles,
                 { oneLineOnly: true }
             );
+            */
 
-            // XXX trying out OnFieldView
             this.onFieldView = new OnFieldView(
                 svg,
                 x,
-                100,
+                BANNER_BOTTOM,
                 NAME_BOX_WIDTH,
-                3 * BANNER_HEIGHT,
-                "tl",
-                [team1.color, team2.color]
+                "bl",
+                rowHeight,
+                [team1.color, team2.color],
+                textStyles,
             );
 
             // DEBUG: the other team is batting

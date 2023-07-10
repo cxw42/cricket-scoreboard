@@ -7,6 +7,8 @@ const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
 const WcagContrast = require("wcag-contrast");
 
+const BatterBox2 = require("batterbox2");
+const BowlerBox2 = require("bowlerbox2");
 const Rect = require("rect");
 const Shape = require("shape");
 const Styles = require("styles");
@@ -60,18 +62,19 @@ const scoreX = 85;
  * @param {int} ulx Upper-left X
  * @param {int} uly Upper-left Y
  * @param {int} w Width
- * @param {int} h Height
  * @param {String} corner Corner
+ * @param {int} rowHeight Row height --- **not** whole-box height!
  * @param {Array} teamColors Colors for each team (batting, then bowling).
+ * @param {Object} [textStyles] Text styles
  * @param {Object} [opts] Options
  */
 class OnFieldView extends Shape {
-    constructor(svg, x, y, w, h, corner, teamColors, opts = {}) {
-        super(svg, x, y, w, h, corner);
+    constructor(svg, x, y, w, corner, rowHeight, teamColors, textStyles = {}, opts = {}) {
 
         const gap = 0.125; // percent of a row's height
-        const rowHeight = h / (4 + 2 * gap);
+        const h = rowHeight * 4 + gap * 2;
 
+        super(svg, x, y, w, h, corner);
         // Overall background
         {
             const lighter = "#ccc";
@@ -87,11 +90,6 @@ class OnFieldView extends Shape {
             this.bg.addTo(this.group);
         }
 
-        // Label
-        this.label = new TextBox(svg, 0, 0, w, rowHeight, "tl", {
-            text: "On field",
-        });
-
         // Backgrounds for the rows
         this.bgBatting = this.makeGradientRect(
             teamColors[0],
@@ -105,6 +103,37 @@ class OnFieldView extends Shape {
             rowHeight
         );
         this.bgBowling.addTo(this);
+
+        // Label
+        this.label = new TextBox(svg, 0, 0, w, rowHeight, "tl", {
+            text: "On field", styles: textStyles,
+        });
+        this.label.addTo(this);
+
+        // Batters
+        this.batterOnStrike = new BatterBox2(svg, 0,
+            rowHeight*(1+gap), w, rowHeight, 'tl',
+            Utils.extend(textStyles, {
+                teamColor: teamColors[0]
+            }));
+        this.batterOnStrike.addTo(this);
+
+        this.batterNotOnStrike = new BatterBox2(svg, 0,
+            rowHeight*(1+gap+1), w, rowHeight, 'tl',
+            Utils.extend(textStyles, {
+                teamColor: teamColors[0],
+            }));
+        this.batterNotOnStrike.addTo(this);
+
+        // Bowler
+        this.bowler = new BowlerBox2(
+            svg, 0,
+            rowHeight*(1+gap+1+1+gap), w, rowHeight, 'tl',
+            Utils.extend(textStyles, {
+                teamColor: teamColors[1],
+            }));
+        this.bowler.addTo(this);
+
 
         return; // XXX
         for (const [i, color] of teamColors) {

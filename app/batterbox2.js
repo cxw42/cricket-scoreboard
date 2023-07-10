@@ -46,13 +46,13 @@ class BatterBox2 extends Shape {
         let ballsPct = 0.2;
 
         // Background
-        this.outline = new Rect(svg, 0, 0, w, h, "tl", {
-            background: styles.background || {
-                stroke: "none",
-                fill: "none",
-            },
-        });
-        this.outline.addTo(this);
+        if(styles.background) {
+            this.outline = new Rect(svg, 0, 0, w, h, "tl", {
+                    background: styles.background
+                },
+            );
+            this.outline.addTo(this);
+        }
 
         // Build up the text and styles.  We will then create them in one
         // TextBox so they share a baseline.
