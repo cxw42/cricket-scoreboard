@@ -385,7 +385,7 @@ class Display {
                 "bl",
                 rowHeight,
                 [team1.color, team2.color],
-                textStyles,
+                textStyles
             );
 
             // DEBUG: the other team is batting

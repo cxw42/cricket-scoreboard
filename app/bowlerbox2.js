@@ -10,9 +10,9 @@ const TextBox = require("textbox");
 const Utils = require("utils");
 
 /**
- * The box showing a batter's information
+ * The box showing a bowler's information
  *
- * @class BatterBox2
+ * @class BowlerBox2
  * @constructor
  * @param {Snap} svg SVG surface (see {{#crossLink "Shape"}}{{/crossLink}})
  * @param {int} ulx Upper-left X
@@ -23,14 +23,13 @@ const Utils = require("utils");
  * @param {Object} [styles] Text styles
  * @param {Object} [styles.background] Background for the box
  * @param {Object} [styles.teamColor=#fff] Team's color
- * @param {bool} [onStrike=false] Whether the batter is on strike
  */
-class BatterBox2 extends Shape {
+class BowlerBox2 extends Shape {
     outline; // visible outline
     textBox; // all the text
     onStrikeIcon;
 
-    constructor(svg, x, y, w, h, corner, styles = {}, onStrike = false) {
+    constructor(svg, x, y, w, h, corner, styles = {}) {
         super(svg, x, y, w, h, corner);
 
         const teamColor = styles.teamColor || "#ffffff";
@@ -41,9 +40,8 @@ class BatterBox2 extends Shape {
         // Grid params: where to put the components as a percentage of width
         // TODO make parameterizable
         let leftPadding = 2; // units???
-        let namePct = 0.5;
-        let runsPct = 0.2;
-        let ballsPct = 0.2;
+        let namePct = 0.4;
+        let runsPct = 0.4;
 
         // Background
         if (styles.background) {
@@ -67,7 +65,7 @@ class BatterBox2 extends Shape {
             label: "name",
         });
 
-        // Runs
+        // Runs and wickets
         textAndStyles.push(
             {
                 text: "R",
@@ -80,51 +78,47 @@ class BatterBox2 extends Shape {
                 text: "999",
                 styles: Utils.extend(styles, Styles.scoreStyles),
                 label: "runs",
+            },
+            {
+                text: "-",
+                styles: Utils.extend(styles, Styles.scoreStyles),
+            },
+            {
+                text: "9",
+                styles: Utils.extend(styles, Styles.scoreStyles),
+                label: "wickets",
+            },
+            {
+                text: "W",
+                styles: Utils.extend(styles, Styles.scoreStyles, {
+                    "font-size": Styles.labelTextSize,
+                }),
             }
         );
 
-        // Balls
-        let ballStyles = Utils.extend(styles, Styles.numberStyles, {
-            "font-size": "x-small",
-        });
+        // Overs
         textAndStyles.push(
             {
-                text: "(",
-                styles: Utils.extend(ballStyles, { dx: 10 }),
-            },
-            {
                 text: "999",
-                styles: ballStyles,
+                styles: Utils.extend(Styles.numberStyles, {
+                    fontSize: Styles.powerplayTextSize,
+                    x: leftPadding + w * (namePct + runsPct),
+                }),
                 label: "balls",
             },
             {
-                text: "B",
-                styles: Utils.extend(ballStyles, {
-                    "font-size": Styles.labelTextSize,
-                    dx: 1,
+                text: " OV.",
+                styles: Utils.extend(Styles.numberStyles, {
+                    fontSize: Styles.labelTextSize,
+                    //dx: 1,
                 }),
-            },
-            {
-                text: ")",
-                styles: ballStyles,
             }
         );
 
         // Now create the text line
         this.textBox = new TextBox(svg, 0, 0, -1, -1, "tl", textAndStyles);
-        this.textBox.addTo(this.group);
-
-        // On strike?
-        if (
-            false && // XXX
-            onStrike
-        ) {
-            // TODO put this back
-            this.onStrikeIcon = svg.image("/bat-icon.png", 0, 0);
-            this.onStrikeIcon.scale = 0.15; // hack --- FIXME
-            this.group.add(this.onStrikeIcon);
-        }
-    } // ctor
+        this.textBox.addTo(this);
+    }
 
     set name(value) {
         this.textBox.setValue(value, "name");
@@ -139,4 +133,4 @@ class BatterBox2 extends Shape {
     }
 }
 
-module.exports = BatterBox2;
+module.exports = BowlerBox2;
