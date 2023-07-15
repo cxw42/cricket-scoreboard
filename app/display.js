@@ -294,7 +294,21 @@ class Display {
             }, 3000);
         } else if (TRY == 3) {
             let rowHeight = BANNER_HEIGHT / 2;
-            let situation = new Situation(20, [team1, team2], team2);
+            let situation = new Situation({
+                maxOvers: 20,
+                teams: [team1, team2],
+                home: team1,
+                toss: team2,
+                battingNow: team1,
+                batters: ["Dhananjaya", "Wellalage"],
+                onStrikeIdx: 0,
+                batterRuns: [64, 14],
+                batterBalls: [118, 22],
+                bowler: "Nauman",
+                bowlerRuns: 2,
+                bowlerWickets: 1,
+                bowlerCompleteOvers: 1,
+            });
 
             // Left side
 
@@ -303,13 +317,7 @@ class Display {
                 ACTION_MARGIN_W,
                 BANNER_BOTTOM,
                 "bl",
-                team1,
-                team2,
-                {
-                    home: team1,
-                    toss: team2,
-                    battingNow: team1,
-                }
+                situation
             );
 
             // --- Center ---
@@ -352,7 +360,7 @@ class Display {
                 NAME_BOX_WIDTH,
                 "bl",
                 rowHeight,
-                [team1.color, team2.color],
+                situation,
                 textStyles
             );
 

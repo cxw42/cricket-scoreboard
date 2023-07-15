@@ -50,23 +50,14 @@ const scoreX = 85;
  * @class TeamView
  */
 class TeamView extends Shape {
-    battingTeams = [];
+    teams = [];
     bg = null;
 
-    constructor(
-        svg,
-        x,
-        y,
-        corner,
-        teamBattingFirst,
-        teamBattingSecond,
-        whichTeams
-    ) {
+    constructor(svg, x, y, corner, situation) {
         super(svg, x, y, FULL_WIDTH, FULL_HEIGHT, corner);
 
         // Decide where things go
-        const { home, toss, battingNow } = whichTeams;
-        this.battingTeams = [teamBattingFirst, teamBattingSecond];
+        this.teams = situation.teams;
 
         let styles = Utils.extend(Styles.textStyles, {
             fill: "#000",
@@ -74,7 +65,7 @@ class TeamView extends Shape {
 
         // Where the boxes are
         let battingTeamIdx, fieldingTeamIdx;
-        if (teamBattingFirst === battingNow) {
+        if (this.teams[0] === situation.battingNow) {
             battingTeamIdx = 0;
         } else {
             battingTeamIdx = 1;
@@ -97,13 +88,13 @@ class TeamView extends Shape {
         }
 
         //const durationColor = Utils.getContrastingTextColor(
-        //    this.battingTeams[battingTeamIdx].color
+        //    this.teams[battingTeamIdx].color
         //);
 
         // Backgrounds for the rows
         let backgrounds = [];
-        for (const [i, team] of this.battingTeams.entries()) {
-            const lighter = this.battingTeams[i].color;
+        for (const [i, team] of this.teams.entries()) {
+            const lighter = this.teams[i].color;
             const darker = D3Color.color(lighter).darker();
             const gradient = svg.gradient(
                 `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
@@ -162,7 +153,7 @@ class TeamView extends Shape {
         }
 
         this.teamGroups = [];
-        for (const [i, team] of this.battingTeams.entries()) {
+        for (const [i, team] of this.teams.entries()) {
             // Team batting first aligns at the top; team batting second
             // aligns at the bottom.
             const y = ROW_Y[i] + (i == 0 ? MARGIN : ROW_HEIGHT - MARGIN);
@@ -182,11 +173,11 @@ class TeamView extends Shape {
             this.teamGroups.push(sh);
             sh.addTo(this.group);
 
-            if (team == home) {
+            if (team == situation.home) {
                 this.addIcon(svg, sh, homeX, HOME);
             }
 
-            if (team == toss) {
+            if (team == situation.toss) {
                 this.addIcon(svg, sh, tossX, TOSS);
             }
 

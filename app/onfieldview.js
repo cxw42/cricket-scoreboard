@@ -64,7 +64,7 @@ const scoreX = 85;
  * @param {int} w Width
  * @param {String} corner Corner
  * @param {int} rowHeight Row height --- **not** whole-box height!
- * @param {Array} teamColors Colors for each team (batting, then bowling).
+ * @param {Object} situation The current situation
  * @param {Object} [textStyles] Text styles
  * @param {Object} [opts] Options
  */
@@ -76,10 +76,11 @@ class OnFieldView extends Shape {
         w,
         corner,
         rowHeight,
-        teamColors,
+        situation,
         textStyles = {},
         opts = {}
     ) {
+        const teamColors = [situation.teams[0].color, situation.teams[1].color];
         const gap = 0.125; // percent of a row's height
         const h = rowHeight * (4 + gap * 2);
 

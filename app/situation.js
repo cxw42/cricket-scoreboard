@@ -9,6 +9,13 @@
  *
  * @class Situation
  * @constructor
+ * @param {object} data Values to save
+ * @param {int} data.maxOvers Maximum number of overs (omit for first-class)
+ * @param {Array[Team]} data.teams The teams, listed in the order
+ *                      they are batting.
+ * @param {Team} data.home Which team is the home team
+ * @param {Team} data.toss Which team won the toss
+ * @param {Team} data.battingNow Which team is currently batting
  */
 class Situation {
     inningsIdx = 0; // 0 for first innings, 1 for second
@@ -19,24 +26,29 @@ class Situation {
     maxOvers; // null => first-class
 
     // which team batted first, second
-    battingTeams = [null, null];
+    teams = [null, null];
 
-    /**
-     * toss === battingTeams[0] or battingTeams[1]
-     */
+    // each of home, toss must be === teams[0] or teams[1]
+    home = null;
     toss = null;
 
     batters = ["", ""]; // batters' names
+    batterRuns = [0, 0];
+    batterBalls = [0, 0];
+
     onStrikeIdx = 0; // which batter is on strike
     bowler = ""; // bowler's name
+    bowlerRuns = 0;
+    bowlerWickets = 0;
+    bowlerCompleteOvers = 0;
 
     // TODO DLS
 
-    constructor(maxOvers = null, teams, toss) {
-        this.maxOvers = maxOvers;
-        this.battingTeams = teams;
-        this.toss = toss;
-        if (toss !== teams[0] && toss !== teams[1]) {
+    constructor(data) {
+        for (const k in data) {
+            this[k] = data[k];
+        }
+        if (this.toss !== this.teams[0] && this.toss !== this.teams[1]) {
             throw "Toss must have been won by one of the two teams";
         }
     }
