@@ -5,8 +5,8 @@
 "use strict";
 
 // For debugging
-const SHOW_EBU_MARGINS = true;
-const SHOW_SECOND_INNINGS_QUICKVIEW = true;
+const SHOW_EBU_MARGINS = false;
+const SHOW_SECOND_INNINGS_QUICKVIEW = false;
 
 // Which layout we are trying
 const TRY = 3;
@@ -21,6 +21,7 @@ const BatterBox2 = require("batterbox2");
 const BowlerBox = require("bowlerbox");
 const CurrentOverBox = require("currentoverbox");
 //const Score = require('score');
+const Situation = require("situation");
 //const TextBox = require('textbox');
 const InningsBox = require("inningsbox");
 const OnFieldView = require("onfieldview");
@@ -292,6 +293,9 @@ class Display {
                 this.thisOver.recordDelivery(3);
             }, 3000);
         } else if (TRY == 3) {
+            let rowHeight = BANNER_HEIGHT / 2;
+            let situation = new Situation(20, [team1, team2], team2);
+
             // Left side
 
             this.teamView1 = new TeamView(
@@ -308,7 +312,31 @@ class Display {
                 }
             );
 
-            // TODO center: overs, and this over
+            // --- Center ---
+
+            const thisOverWidth = 100;
+            this.thisOver = new CurrentOverBox(
+                svg,
+                WIDTH / 2,
+                BANNER_TOP + BANNER_HEIGHT,
+                rowHeight,
+                "bc"
+            );
+
+            // XXX DEBUG
+            this.thisOver.recordDelivery(1);
+            this.thisOver.recordDelivery(2, [Marker.WIDE]);
+            this.thisOver.recordDelivery(0, [Marker.WICKET]);
+            this.thisOver.recordDelivery(4);
+            this.thisOver.recordDelivery(5);
+            this.thisOver.recordDelivery(6);
+            this.thisOver.recordDelivery(7);
+            window.setTimeout(() => {
+                this.thisOver.newOver();
+            }, 2000);
+            window.setTimeout(() => {
+                this.thisOver.recordDelivery(3);
+            }, 3000);
 
             // Right side
 
@@ -317,66 +345,6 @@ class Display {
                 size: "1.2em",
             });
             let x = WIDTH - ACTION_MARGIN_W - NAME_BOX_WIDTH;
-            let rowHeight = BANNER_HEIGHT / 2;
-
-            /*
-            this.onFieldLabel = new TextBox(
-                svg,
-                x,
-                BANNER_TOP - rowHeight * 2,
-                NAME_BOX_WIDTH,
-                rowHeight,
-                "tl",
-                [{ text: "On field" }]
-            );
-
-            // TODO refactor this
-            const team1lighter = team1.color;
-            const team1darker = D3Color.color(team1lighter).darker();
-            const team1gradient = svg.gradient(
-                `l(0,0,0,1)${team1lighter}-${team1lighter}:50-${team1darker}`
-            );
-            // Make sure team1gradient is attached to the SVG.
-            svg.rect(-1, -1, 0, 0).attr({ fill: team1gradient });
-
-            this.batterOnStrike = new BatterBox2(
-                svg,
-                x,
-                BANNER_TOP - rowHeight,
-                NAME_BOX_WIDTH,
-                rowHeight,
-                "tl",
-                Utils.extend(textStyles, {
-                    teamColor: team1.color,
-                    // Background: we can't use team1gradient directly
-                    // because it can't be structuredCloned as required
-                    // down the call stack.  Therefore, reference it by ID.
-                    background: { fill: `url(#${team1gradient.id})` },
-                }),
-                true // onStrike
-            );
-
-            this.batterNotOnStrike = new BatterBox(
-                svg,
-                x,
-                BANNER_TOP,
-                NAME_BOX_WIDTH,
-                rowHeight,
-                {} //textStyles
-            );
-
-            delete textStyles.fill;
-            this.bowler = new BowlerBox(
-                svg,
-                x,
-                BANNER_TOP + rowHeight,
-                NAME_BOX_WIDTH,
-                BANNER_HEIGHT,
-                textStyles,
-                { oneLineOnly: true }
-            );
-            */
-
             this.onFieldView = new OnFieldView(
                 svg,
                 x,
