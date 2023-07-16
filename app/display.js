@@ -300,6 +300,8 @@ class Display {
                 home: team1,
                 toss: team2,
                 battingNow: team1,
+                runs: 123,
+                wickets: 4,
                 batters: ["Dhananjaya", "Wellalage"],
                 onStrikeIdx: 0,
                 batterRuns: [64, 14],
@@ -409,7 +411,7 @@ class Display {
     } //ctor
 
     update(score) {
-        if (TRY == 1 || TRY == 3) {
+        if (TRY == 1) {
             //this.wkts.setValue(`W ${score.wickets}-${score.runs} R`);
             this.batterOnStrike.name = score.battingOrder[0]; // XXX
             this.batterOnStrike.runs = 64;

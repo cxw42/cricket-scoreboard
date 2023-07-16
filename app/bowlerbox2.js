@@ -104,7 +104,7 @@ class BowlerBox2 extends Shape {
                     fontSize: Styles.powerplayTextSize,
                     x: leftPadding + w * (namePct + runsPct),
                 }),
-                label: "balls",
+                label: "overs",
             },
             {
                 text: " OV.",
@@ -128,8 +128,12 @@ class BowlerBox2 extends Shape {
         this.textBox.setValue(value, "runs");
     }
 
-    set balls(value) {
-        this.textBox.setValue(value, "balls");
+    set wickets(value) {
+        this.textBox.setValue(value, "wickets");
+    }
+
+    set overs(value) {
+        this.textBox.setValue(value, "overs");
     }
 }
 

@@ -209,33 +209,7 @@ class TeamView extends Shape {
             }
         }
 
-        /*************
-        // Current overs
-        this.duration = this.makeDuration(
-            svg,
-            this.group,
-            durationRow,
-            Utils.extend(styles, {
-                fill: durationColor,
-                "font-style": "normal",
-            })
-        );
-
-        *********/
-        /*
-        // Outline around the current team
-        this.currentTeamMarker = svg.rect(
-            0,
-            ROW_Y[activeRowStart],
-            WIDTH,
-            ROW_HEIGHT * 2
-        );
-        this.currentTeamMarker.attr({
-            stroke: "#ff0",
-            fill: "none",
-        });
-        this.group.add(this.currentTeamMarker);
-        */
+        this.update(situation);
     } // ctor
 
     addIcon(svg, sh, x, text) {
@@ -294,9 +268,9 @@ class TeamView extends Shape {
                     text: "456-9",
                     styles: Utils.extend(baseStyles, {
                         fill: scoreColor,
-                        class: "inningsFigures",
                         "font-weight": "bold",
                     }),
+                    label: "inningsFigures",
                 },
                 {
                     text: "W",
@@ -318,6 +292,7 @@ class TeamView extends Shape {
             class: "battingScore",
         });
         score.addTo(sh.group);
+        this.battingScore = score;
     }
 
     /**
@@ -356,91 +331,16 @@ class TeamView extends Shape {
         score.addTo(sh.group);
     }
 
-    makeDuration(svg, g, durationRow, styles) {
-        this.powerplay = new TextBox(
-            svg,
-            MARGIN,
-            ROW_Y[durationRow] + cy,
-            ROW_HEIGHT,
-            ROW_HEIGHT,
-            "ml",
-            [
-                {
-                    // powerplay
-                    text: POWERPLAY,
-                    styles: Utils.extend(styles, {
-                        "font-size": Styles.powerplayTextSize,
-                    }),
-                },
-                {
-                    // powerplay number
-                    text: "3",
-                    styles: Utils.extend(styles, {
-                        "font-size": Styles.powerplayTextSize,
-                    }),
-                },
-            ]
+    /**
+     * Update the score.  Doesn't update anything else.
+     *
+     * @method update
+     */
+    update(situation) {
+        this.battingScore.setValue(
+            `${situation.runs}-${situation.wickets}`,
+            "inningsFigures"
         );
-        this.powerplay.addTo(g);
-
-        this.duration = new TextBox(
-            svg,
-            COL_WIDTH - MARGIN,
-            ROW_Y[durationRow] + cy,
-            COL_WIDTH,
-            ROW_HEIGHT,
-            "mr",
-            [
-                {
-                    text: "OVERS ",
-                    styles: Utils.extend(styles, {
-                        "font-size": Styles.labelTextSize,
-                    }),
-                },
-                {
-                    // completed overs
-                    text: "37",
-                    styles: Utils.extend(
-                        styles,
-                        {
-                            "font-size": Styles.powerplayTextSize,
-                        },
-                        Styles.numberStyles
-                    ),
-                },
-                {
-                    text: " OF ",
-                    styles: Utils.extend(styles, {
-                        "font-size": Styles.labelTextSize,
-                    }),
-                },
-                {
-                    // total overs
-                    text: "50",
-                    styles: Utils.extend(
-                        styles,
-                        {
-                            "font-size": Styles.powerplayTextSize,
-                        },
-                        Styles.numberStyles
-                    ),
-                },
-            ]
-        );
-        this.duration.addTo(g);
-    }
-
-    update(score) {
-        this.batterOnStrike.name = score.battingOrder[0]; // XXX
-        this.batterOnStrike.runs = 64;
-        this.batterOnStrike.balls = 118;
-        this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
-        this.batterNotOnStrike.runs = 14;
-        this.batterNotOnStrike.balls = 22;
-        this.bowler.name = score.bowler;
-        this.bowler.wickets = 1;
-        this.bowler.runs = 43;
-        this.bowler.balls = 12 * 6 + 2; // 12.2 ov.
     }
 }
 

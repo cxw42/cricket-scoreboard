@@ -161,6 +161,8 @@ class OnFieldView extends Shape {
             })
         );
         this.bowler.addTo(this);
+
+        this.update(situation);
     } // ctor
 
     makeGradientRect(color, y, h) {
@@ -176,18 +178,21 @@ class OnFieldView extends Shape {
         return bg;
     }
 
-    update(score) {
-        return; // TODO RESUME HERE
-        this.batterOnStrike.name = score.battingOrder[0]; // XXX
-        this.batterOnStrike.runs = 64;
-        this.batterOnStrike.balls = 118;
-        this.batterNotOnStrike.name = score.battingOrder[1]; // XXX
-        this.batterNotOnStrike.runs = 14;
-        this.batterNotOnStrike.balls = 22;
-        this.bowler.name = score.bowler;
-        this.bowler.wickets = 1;
-        this.bowler.runs = 43;
-        this.bowler.balls = 12 * 6 + 2; // 12.2 ov.
+    update(situation) {
+        this.batterOnStrike.name = situation.batters[situation.onStrikeIdx];
+        this.batterOnStrike.runs = situation.batterRuns[situation.onStrikeIdx];
+        this.batterOnStrike.balls =
+            situation.batterBalls[situation.onStrikeIdx];
+        this.batterNotOnStrike.name =
+            situation.batters[1 - situation.onStrikeIdx];
+        this.batterNotOnStrike.runs =
+            situation.batterRuns[1 - situation.onStrikeIdx];
+        this.batterNotOnStrike.balls =
+            situation.batterBalls[1 - situation.onStrikeIdx];
+        this.bowler.name = situation.bowler;
+        this.bowler.runs = situation.bowlerRuns;
+        this.bowler.wickets = situation.bowlerWickets;
+        this.bowler.overs = situation.bowlerCompleteOvers;
     }
 }
 
