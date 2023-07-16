@@ -295,21 +295,21 @@ class Display {
         } else if (TRY == 3) {
             let rowHeight = BANNER_HEIGHT / 2;
             let situation = new Situation({
-                maxOvers: 20,
+                maxOvers: null, // Test match
                 teams: [team1, team2],
                 home: team1,
                 toss: team2,
                 battingNow: team1,
-                runs: 123,
-                wickets: 4,
+                runs: 264,
+                wickets: 6,
                 batters: ["Dhananjaya", "Wellalage"],
                 onStrikeIdx: 0,
                 batterRuns: [64, 14],
                 batterBalls: [118, 22],
                 bowler: "Nauman",
-                bowlerRuns: 2,
+                bowlerRuns: 43,
                 bowlerWickets: 1,
-                bowlerCompleteOvers: 1,
+                bowlerCompleteOvers: 12,
             });
 
             // Left side
