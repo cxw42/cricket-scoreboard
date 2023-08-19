@@ -125,7 +125,7 @@ class TeamView extends Shape {
             );
             let vs = (this.vs = new TextBox(
                 svg,
-                nameX + 11, // TODO permit centering text even when corner=="ml"
+                nameX + 11,
                 FULL_HEIGHT / 2,
                 FULL_WIDTH * 0.25,
                 FULL_HEIGHT * 0.25,
@@ -139,6 +139,7 @@ class TeamView extends Shape {
                     },
                 ],
                 {
+                    alignment: "c",
                     background: {
                         fill: gradient,
                         //stroke: "#000",
