@@ -25,36 +25,19 @@ const MARGIN = 2;
 // TODO padding
 
 // Grid: vertical
-const ROW_HEIGHT = 30;
-const NROWS = 2;
+const ROW_HEIGHT = 20;
+const NROWS = 4; // batter 1, batter 2, gap, bowler
 const FULL_HEIGHT = NROWS * (MARGIN + ROW_HEIGHT) + MARGIN;
-const ROW_Y = [...Array(NROWS + 1).keys()].map(
-    (i) => MARGIN + (ROW_HEIGHT + MARGIN) * i
-);
-
-// Grid: horizontal
-const NCOLS = 1;
-const COL_WIDTH = 150;
-const FULL_WIDTH = NCOLS * (MARGIN + COL_WIDTH) + MARGIN;
-const homeX = MARGIN;
-const tossX = MARGIN + 20;
-const nameX = MARGIN + 20 * 2;
-const COL_X = [...Array(NCOLS + 1).keys()].map(
-    (i) => MARGIN + (COL_WIDTH + MARGIN) * i
-);
-
-// TODO replace this with the native width of the score, plus padding
-const scoreX = 85;
 
 /**
  * Batters and bowlers on the field.  The layout is:
  *
- * - "On field" label
- * - gap
+ * - margin
  * - Batter on strike
  * - Batter not on strike
- * - gap
+ * - gap with "On field" lozenge in it
  * - Bowler
+ * - margin
  *
  * @class OnFieldView
  * @constructor
@@ -82,9 +65,8 @@ class OnFieldView extends Shape {
     ) {
         const teamColors = [situation.teams[0].color, situation.teams[1].color];
         const gap = 0.125; // percent of a row's height
-        const h = rowHeight * (4 + gap * 2);
 
-        super(svg, x, y, w, h, corner);
+        super(svg, x, y, w, FULL_HEIGHT, corner);
         // Overall background
         {
             const lighter = "#ccc";
@@ -92,7 +74,7 @@ class OnFieldView extends Shape {
             const gradient = svg.gradient(
                 `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
             );
-            this.bg = new Rect(svg, 0, rowHeight, w, h-rowHeight, "tl", {
+            this.bg = new Rect(svg, 0, 0, w, FULL_HEIGHT, "tl", {
                 background: {
                     fill: gradient,
                 },
@@ -103,31 +85,24 @@ class OnFieldView extends Shape {
         // Backgrounds for the rows
         this.bgBatting = this.makeGradientRect(
             teamColors[0],
-            rowHeight * (1 + gap),
-            2 * rowHeight
+            MARGIN,
+            2.5 * ROW_HEIGHT
         );
         this.bgBatting.addTo(this);
         this.bgBowling = this.makeGradientRect(
             teamColors[1],
-            rowHeight * (1 + gap + 2 + gap),
-            rowHeight
+            MARGIN + 2.5 * ROW_HEIGHT + MARGIN,
+            ROW_HEIGHT * 1.5
         );
         this.bgBowling.addTo(this);
-
-        // Label
-        this.label = new TextBox(svg, 0, rowHeight, w, rowHeight, "bl", {
-            text: "On field",
-            styles: Utils.extend(textStyles, { fill: "#000", 'font-size': 'small' }),
-        });
-        this.label.addTo(this);
 
         // Batters
         this.batterOnStrike = new BatterBox2(
             svg,
             0,
-            rowHeight * (1 + gap),
+            MARGIN,
             w,
-            rowHeight,
+            ROW_HEIGHT,
             "tl",
             Utils.extend(textStyles, {
                 teamColor: teamColors[0],
@@ -138,9 +113,9 @@ class OnFieldView extends Shape {
         this.batterNotOnStrike = new BatterBox2(
             svg,
             0,
-            rowHeight * (1 + gap + 1),
+            MARGIN + ROW_HEIGHT,
             w,
-            rowHeight,
+            ROW_HEIGHT,
             "tl",
             Utils.extend(textStyles, {
                 teamColor: teamColors[0],
@@ -148,13 +123,37 @@ class OnFieldView extends Shape {
         );
         this.batterNotOnStrike.addTo(this);
 
+        // Label
+        this.label = new TextBox(
+            svg,
+            0,
+            MARGIN + 2.5 * ROW_HEIGHT,
+            w,
+            ROW_HEIGHT,
+            "ml",
+            [
+                {
+                    text: "On field",
+                    styles: Utils.extend(textStyles, {
+                        fill: "#000",
+                        "font-size": "small",
+                    }),
+                },
+            ]
+        );
+        this.label.svgOutline.attr({
+            ry: this.label.bbox.h / 2,
+            rx: this.label.bbox.h / 2, // same as rx
+        });
+        this.label.addTo(this);
+
         // Bowler
         this.bowler = new BowlerBox2(
             svg,
             0,
-            rowHeight * (1 + gap + 1 + 1 + gap),
+            ROW_HEIGHT * (1 + gap + 1 + 1 + gap),
             w,
-            rowHeight,
+            ROW_HEIGHT,
             "tl",
             Utils.extend(textStyles, {
                 teamColor: teamColors[1],
