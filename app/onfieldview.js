@@ -74,11 +74,19 @@ class OnFieldView extends Shape {
             const gradient = svg.gradient(
                 `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
             );
-            this.bg = new Rect(svg, 0, 0, w, FULL_HEIGHT, "tl", {
-                background: {
-                    fill: gradient,
-                },
-            });
+            this.bg = new Rect(
+                svg,
+                -MARGIN,
+                0,
+                w + 2 * MARGIN,
+                FULL_HEIGHT,
+                "tl",
+                {
+                    background: {
+                        fill: gradient,
+                    },
+                }
+            );
             this.bg.addTo(this.group);
         }
 
@@ -126,20 +134,25 @@ class OnFieldView extends Shape {
         // Label
         this.label = new TextBox(
             svg,
-            0,
-            MARGIN + 2.5 * ROW_HEIGHT,
-            w,
-            ROW_HEIGHT,
+            MARGIN + 11,
+            MARGIN + 2.5 * ROW_HEIGHT + MARGIN,
+            -1,
+            ROW_HEIGHT * 0.65,
             "ml",
             [
                 {
-                    text: "On field",
-                    styles: Utils.extend(textStyles, {
-                        fill: "#000",
-                        "font-size": "small",
+                    text: " On field ",
+                    styles: Utils.extend(Styles.scoreStyles, {
+                        "font-size": "12px",
+                        "letter-spacing": Styles.textStyles["letter-spacing"],
                     }),
                 },
-            ]
+            ],
+            {
+                background: {
+                    fill: "#ccc",
+                },
+            }
         );
         this.label.svgOutline.attr({
             ry: this.label.bbox.h / 2,
