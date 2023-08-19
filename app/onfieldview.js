@@ -92,7 +92,7 @@ class OnFieldView extends Shape {
             const gradient = svg.gradient(
                 `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
             );
-            this.bg = new Rect(svg, 0, 0, w, h, "tl", {
+            this.bg = new Rect(svg, 0, rowHeight, w, h-rowHeight, "tl", {
                 background: {
                     fill: gradient,
                 },
@@ -115,9 +115,9 @@ class OnFieldView extends Shape {
         this.bgBowling.addTo(this);
 
         // Label
-        this.label = new TextBox(svg, 0, 0, w, rowHeight, "tl", {
+        this.label = new TextBox(svg, 0, rowHeight, w, rowHeight, "bl", {
             text: "On field",
-            styles: Utils.extend(textStyles, { fill: "#000" }),
+            styles: Utils.extend(textStyles, { fill: "#000", 'font-size': 'small' }),
         });
         this.label.addTo(this);
 

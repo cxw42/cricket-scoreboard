@@ -132,7 +132,7 @@ class TeamView extends Shape {
                 "mc",
                 [
                     {
-                        text: "VS.",
+                        text: "V.",
                         styles: Utils.extend(Styles.scoreStyles, {
                             "font-size": "12px",
                         }),
