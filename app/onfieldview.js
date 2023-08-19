@@ -24,10 +24,13 @@ const EMDASH = String.fromCodePoint(0x2014);
 const MARGIN = 2;
 // TODO padding
 
-// Grid: vertical
+// Vertical layout
 const ROW_HEIGHT = 20;
-const NROWS = 4; // batter 1, batter 2, gap, bowler
-const FULL_HEIGHT = NROWS * (MARGIN + ROW_HEIGHT) + MARGIN;
+const MARKER_ROW_HEIGHT = ROW_HEIGHT * 0.8;
+const MARKER_HEIGHT = ROW_HEIGHT * 0.65;
+const MARKER_Y_CENTER = MARGIN + 2 * ROW_HEIGHT + MARKER_ROW_HEIGHT / 2;
+const NROWS = 3; // batter 1, batter 2, gap, bowler
+const FULL_HEIGHT = NROWS * ROW_HEIGHT + 2 * MARGIN + MARKER_ROW_HEIGHT;
 
 /**
  * Batters and bowlers on the field.  The layout is:
@@ -74,19 +77,11 @@ class OnFieldView extends Shape {
             const gradient = svg.gradient(
                 `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
             );
-            this.bg = new Rect(
-                svg,
-                -MARGIN,
-                0,
-                w + 2 * MARGIN,
-                FULL_HEIGHT,
-                "tl",
-                {
-                    background: {
-                        fill: gradient,
-                    },
-                }
-            );
+            this.bg = new Rect(svg, 0, 0, w + MARGIN, FULL_HEIGHT, "tl", {
+                background: {
+                    fill: gradient,
+                },
+            });
             this.bg.addTo(this.group);
         }
 
@@ -94,22 +89,22 @@ class OnFieldView extends Shape {
         this.bgBatting = this.makeGradientRect(
             teamColors[0],
             MARGIN,
-            2.5 * ROW_HEIGHT
+            2 * ROW_HEIGHT + MARKER_ROW_HEIGHT / 2 - MARGIN
         );
         this.bgBatting.addTo(this);
         this.bgBowling = this.makeGradientRect(
             teamColors[1],
-            MARGIN + 2.5 * ROW_HEIGHT + MARGIN,
-            ROW_HEIGHT * 1.5
+            2 * ROW_HEIGHT + MARKER_ROW_HEIGHT / 2 + MARGIN,
+            ROW_HEIGHT + MARKER_ROW_HEIGHT / 2
         );
         this.bgBowling.addTo(this);
 
         // Batters
         this.batterOnStrike = new BatterBox2(
             svg,
-            0,
             MARGIN,
-            w,
+            MARGIN,
+            w - MARGIN,
             ROW_HEIGHT,
             "tl",
             Utils.extend(textStyles, {
@@ -120,9 +115,9 @@ class OnFieldView extends Shape {
 
         this.batterNotOnStrike = new BatterBox2(
             svg,
-            0,
+            MARGIN,
             MARGIN + ROW_HEIGHT,
-            w,
+            w - MARGIN,
             ROW_HEIGHT,
             "tl",
             Utils.extend(textStyles, {
@@ -132,40 +127,50 @@ class OnFieldView extends Shape {
         this.batterNotOnStrike.addTo(this);
 
         // Label
-        this.label = new TextBox(
-            svg,
-            MARGIN + 11,
-            MARGIN + 2.5 * ROW_HEIGHT + MARGIN,
-            -1,
-            ROW_HEIGHT * 0.65,
-            "ml",
-            [
+        {
+            const lighter = "#ccc";
+            const darker = D3Color.color(lighter).darker();
+            const gradient = svg.gradient(
+                `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
+            );
+            this.label = new TextBox(
+                svg,
+                MARGIN + 11,
+                MARKER_Y_CENTER,
+                55,
+                MARKER_HEIGHT,
+                "ml",
+                [
+                    {
+                        // HACK: put an NBSP at the front for spacing.
+                        text: String.fromCharCode(0xa0) + "On Field",
+                        styles: Utils.extend(Styles.scoreStyles, {
+                            "font-size": "12px",
+                            "letter-spacing":
+                                Styles.textStyles["letter-spacing"],
+                            "font-variant": "small-caps",
+                        }),
+                    },
+                ],
                 {
-                    text: " On field ",
-                    styles: Utils.extend(Styles.scoreStyles, {
-                        "font-size": "12px",
-                        "letter-spacing": Styles.textStyles["letter-spacing"],
-                    }),
-                },
-            ],
-            {
-                background: {
-                    fill: "#ccc",
-                },
-            }
-        );
-        this.label.svgOutline.attr({
-            ry: this.label.bbox.h / 2,
-            rx: this.label.bbox.h / 2, // same as rx
-        });
-        this.label.addTo(this);
+                    background: {
+                        fill: gradient,
+                    },
+                }
+            );
+            this.label.svgOutline.attr({
+                ry: this.label.bbox.h / 2,
+                rx: this.label.bbox.h / 2, // same as rx
+            });
+            this.label.addTo(this);
+        }
 
         // Bowler
         this.bowler = new BowlerBox2(
             svg,
-            0,
-            ROW_HEIGHT * (1 + gap + 1 + 1 + gap),
-            w,
+            MARGIN,
+            MARKER_Y_CENTER + MARKER_ROW_HEIGHT / 2,
+            w - MARGIN,
             ROW_HEIGHT,
             "tl",
             Utils.extend(textStyles, {
@@ -182,7 +187,7 @@ class OnFieldView extends Shape {
         const gradient = this.svg.gradient(
             `l(0,0,0,1)${color}-${color}:50-${darker}`
         );
-        let bg = new Rect(this.svg, 0, y, this.bbox.w, h, "tl", {
+        let bg = new Rect(this.svg, MARGIN, y, this.bbox.w - MARGIN, h, "tl", {
             background: {
                 fill: gradient,
             },
