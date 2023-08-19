@@ -40,11 +40,9 @@ class TextBox extends Shape {
     _linedUp = false; // whether lineUp() has been called
     _baseline = false; // whether we are baseline-aligned
     _topToBaselineY; // how far from the top of the box to the baseline
+    _realign_to = null; // whether lineUp() should change the text alignment
 
     constructor(svg, x, y, w, h, corner, textAndStyles, opts = {}) {
-        // If we are going to use the native size(s) of the text, create the shape with
-        // interim size(s).
-
         // Baseline: give the parent class something it can understand.
         let superCorner = corner.toLowerCase();
         let baseline = false;
@@ -53,10 +51,14 @@ class TextBox extends Shape {
             superCorner = superCorner.replace("a", "t");
         }
 
+        // If we are going to use the native size(s) of the text, create the shape with
+        // interim size(s).
         super(svg, x, y, w < 0 ? 1 : w, h < 0 ? 1 : h, superCorner);
-        this._baseline = baseline;
         this.origBBox.w = w;
         this.origBBox.h = h;
+
+        this._baseline = baseline;
+        this._realign_to = opts.alignment;
 
         let background = opts.background || "none";
         if (background === "none") {
@@ -67,7 +69,8 @@ class TextBox extends Shape {
             textAndStyles = [textAndStyles];
         }
 
-        // always put the text on the baseline
+        // Always start out with the text on the baseline because I can't
+        // figure out any way to get the top-to-baseline offset otherwise.
         let localStyles = {};
         localStyles.baseline = "baseline";
 
@@ -185,6 +188,14 @@ class TextBox extends Shape {
 
         // Resize the outline
         this.svgOutline.attr({ width: this.bbox.w, height: this.bbox.h });
+
+        if(this._realign_to) {
+            this.svgText.attr({
+                "text-align": this._realign_to,
+                "text-anchor": this._realign_to,
+            });
+            this._realign_to = null;
+        }
 
         this._linedUp = true;
     }

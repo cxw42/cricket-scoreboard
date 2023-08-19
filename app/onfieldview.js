@@ -143,7 +143,7 @@ class OnFieldView extends Shape {
                 [
                     {
                         // HACK: put an NBSP at the front for spacing.
-                        text: String.fromCharCode(0xa0) + "On Field",
+                        text: /*String.fromCharCode(0xa0) +*/ "On Field",
                         styles: Utils.extend(Styles.scoreStyles, {
                             "font-size": "12px",
                             "letter-spacing":
@@ -153,6 +153,7 @@ class OnFieldView extends Shape {
                     },
                 ],
                 {
+                    alignment: 'middle',
                     background: {
                         fill: gradient,
                     },
