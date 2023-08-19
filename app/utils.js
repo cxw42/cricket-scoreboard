@@ -51,35 +51,55 @@ function freeTransformTo(el, ulx, uly) {
 /**
  * Get the bounding box of a rectangle anchored at a particular corner.
  *
+ * Returns an object with the following members:
+ * * ulx: upper-left corner's X coordinate
+ * * uly: upper-left corner's Y coordinate
+ * * w: width
+ * * h: height
+ * * cornerX: the `x` parameter
+ * * cornerY: the `y` parameter
+ * * corner: the `corner` parameter, but normalized
+ * * cornerH: the horizontal part of `corner` (`l`, `c`, or `r`)
+ * * cornerV: the vertical part of `corner` (`t`, `m`, or `b`)
+ * * cx: center's X coordinate
+ * * cy: center's Y coordinate
+ *
  * @method getBBox
  * @param {int} x Reference X
  * @param {int} y Reference Y
  * @param {int} w Width
  * @param {int} h Height
  * @param {String} corner Which corner `x` and `y` relate to.
- *                        Must be `[TMB][LCR]`.
- * @return {Object} {ulx, uly, w, h, corner, cx, cy, cornerX, cornerY}.
+ *                        Must be `[TMB][LCR]` (case-insensitive).
+ * @return {Object} The bounding box
  */
 function getBBox(x, y, w, h, corner) {
     corner = corner.toLowerCase();
+    let cornerH, cornerV;
 
     // Get the upper-left corner
     let ulx, uly;
     if (corner.includes("l")) {
+        cornerH = "l";
         ulx = x;
     } else if (corner.includes("c")) {
+        cornerH = "c";
         ulx = x - w / 2;
     } else if (corner.includes("r")) {
+        cornerH = "r";
         ulx = x - w;
     } else {
         throw "corner must specify l, c, or r";
     }
 
     if (corner.includes("t")) {
+        cornerV = "t";
         uly = y;
     } else if (corner.includes("m")) {
+        cornerV = "m";
         uly = y - h / 2;
     } else if (corner.includes("b")) {
+        cornerV = "b";
         uly = y - h;
     } else {
         throw "corner must specify t, m, or b";
@@ -87,7 +107,19 @@ function getBBox(x, y, w, h, corner) {
 
     let cx = ulx + w / 2;
     let cy = uly + h / 2;
-    return { ulx, uly, w, h, corner, cx, cy, cornerX: x, cornerY: y };
+    return {
+        ulx,
+        uly,
+        w,
+        h,
+        cornerX: x,
+        cornerY: y,
+        corner,
+        cornerH,
+        cornerV,
+        cx,
+        cy,
+    };
 }
 
 /**

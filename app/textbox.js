@@ -58,7 +58,7 @@ class TextBox extends Shape {
         this.origBBox.h = h;
 
         this._baseline = baseline;
-        this._realign_to = opts.alignment;
+        this._realign_to = opts.alignment || this.origBBox.cornerH;
 
         let background = opts.background || "none";
         if (background === "none") {
@@ -189,15 +189,62 @@ class TextBox extends Shape {
         // Resize the outline
         this.svgOutline.attr({ width: this.bbox.w, height: this.bbox.h });
 
-        if(this._realign_to) {
-            this.svgText.attr({
-                "text-align": this._realign_to,
-                "text-anchor": this._realign_to,
-            });
-            this._realign_to = null;
-        }
+        this._realign_if_necessary();
 
         this._linedUp = true;
+    }
+
+    /**
+     * Realign the text.
+     *
+     * @private
+     * @method _realign
+     */
+    _realign_if_necessary() {
+        if (this.origBBox.cornerH == this._realign_to) {
+            return;
+        }
+
+        // Six possible cases:
+        //  ->  l   c   r
+        //  l   -   1   2
+        //  c   3   -   4
+        //  r   5   6   -
+        const which = `${this.origBBox.cornerH}->${this._realign_to}`;
+        if (which == "l->c") {
+            // Change the children all to middle
+            const kids = this.svgText.children();
+            for (const kid of this.svgText.children()) {
+                kid.attr({
+                    "text-align": "middle",
+                    "text-anchor": "middle",
+                });
+            }
+
+            // Reposition the bbox
+            const newBBox = Utils.getBBox(
+                this.bbox.cx,
+                this.bbox.cornerY,
+                this.bbox.w,
+                this.bbox.h,
+                `${this._realign_to}${this.origBBox.cornerV}`
+            );
+            this.fttText.attrs.translate.x = this.bbox.cx - this.bbox.ulx;
+            this.fttText.apply();
+            this.bbox = newBBox;
+        } else if (which == "l->r") {
+            throw "Unimplemented";
+        } else if (which == "c->l") {
+            throw "Unimplemented";
+        } else if (which == "c->r") {
+            throw "Unimplemented";
+        } else if (which == "r->l") {
+            throw "Unimplemented";
+        } else if (which == "r->c") {
+            throw "Unimplemented";
+        }
+
+        this._realign_to = null;
     }
 
     /**
