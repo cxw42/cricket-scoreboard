@@ -142,7 +142,7 @@ class OnFieldView extends Shape {
                 "ml",
                 [
                     {
-                        text: "On Field",
+                        text: "In the Middle",
                         styles: Utils.extend(Styles.scoreStyles, {
                             "font-size": "12px",
                             "letter-spacing":
