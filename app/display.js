@@ -26,6 +26,7 @@ const Situation = require("situation");
 const InningsBox = require("inningsbox");
 const OnFieldView = require("onfieldview");
 const QuickView = require("quickview");
+const RoundedDisplay = require("rounded-display");
 const Styles = require("styles");
 const TeamView = require("teamview");
 const Utils = require("utils");
@@ -114,6 +115,16 @@ class Display {
         let textStyles = Utils.extend(Styles.textStyles, {
             "letter-spacing": "1", // empirical
         });
+
+        this._roundedDisplay = new RoundedDisplay(
+            svg,
+            100,
+            100,
+            100,
+            "tl",
+            1,
+            20
+        );
 
         if (TRY == 1) {
             // Color backgrounds
