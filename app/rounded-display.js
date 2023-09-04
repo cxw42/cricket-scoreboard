@@ -140,21 +140,12 @@ class RoundedDisplay extends Shape {
         });
         */
         let y = this.bbox.h - this.layout.padding - actualRowHeight;
+
+        // Top half of the path, which is squared off if nRows > 1 and
+        // rounded if nRows == 1.
         let pathTop;
         if (this.layout.nRows > 1) {
-            pathTop =
-                /*
-                `
-                M 0,0
-                h ${this.bbox.w}
-                v ${actualRowHeight - radius}
-                a ${radius} ${radius} 0 0 1 ${-radius} ${radius}
-                h ${-(this.bbox.w - 2*radius)}
-                a ${radius} ${radius} 0 0 1 ${-radius} ${-radius}
-                z
-                `;
-                */
-                `
+            pathTop = `
                 M 0,${actualRowHeight / 2}
                 V 0
                 H ${this.bbox.w}
@@ -168,7 +159,9 @@ class RoundedDisplay extends Shape {
                 A ${radius} ${radius} 0 0 1 ${this.bbox.w} ${radius}
                 `;
         }
-        const path =
+
+        // Whole path: top, plus a rounded bottom half.
+        let path =
             pathTop +
             `
             V ${actualRowHeight - radius}
@@ -177,6 +170,7 @@ class RoundedDisplay extends Shape {
             a ${radius} ${radius} 0 0 1 ${-radius} ${-radius}
             z
             `;
+
         bg = new Path(
             this.svg,
             0,
@@ -198,6 +192,7 @@ class RoundedDisplay extends Shape {
         }
 
         // One background for all other rows
+        /*
         bg = this.makeGradientRect(
             colors[0],
             this.layout.padding,
@@ -209,6 +204,34 @@ class RoundedDisplay extends Shape {
             rx: radius,
             ry: radius,
         });
+        */
+        let h =
+            (this.layout.nRows - 1) * this.layout.rowHeight +
+            this.layout.markerRowHeight / 2 -
+            this.layout.padding;
+        path = `
+            M 0,${radius}
+            A ${radius} ${radius} 0 0 1 ${radius} 0
+            H ${this.bbox.w - radius}
+            A ${radius} ${radius} 0 0 1 ${this.bbox.w} ${radius}
+            V ${h}
+            H 0
+            z
+            `;
+        bg = new Path(
+            this.svg,
+            0,
+            this.layout.padding,
+            this.bbox.w,
+            h,
+            "tl",
+            path,
+            {
+                background: {
+                    fill: "#cff",
+                },
+            }
+        );
         result.unshift(bg);
 
         return result;
