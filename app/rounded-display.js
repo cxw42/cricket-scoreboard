@@ -7,6 +7,7 @@ const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
 // const WcagContrast = require("wcag-contrast");
 
+const Path = require("path");
 const Rect = require("rect");
 const Shape = require("shape");
 const Styles = require("styles");
@@ -22,7 +23,7 @@ const NBSP = String.fromCharCode(0xa0);
  * Display in a rounded rectangle.  The number of rows is >=1.  The order is:
  *
  * - margin
- * - N-1 rows above the marker
+ * - N-1 rows above the marker (if applicable)
  * - marker (capsule)
  * - one row below the marker
  * - margin
@@ -62,6 +63,11 @@ class RoundedDisplay extends Shape {
         textStyles = {},
         opts = {}
     ) {
+        // Preconditions
+        if (nRows < 1) {
+            throw new Error(`nRows was ${nRows} but must be >= 1`);
+        }
+
         // Compute vertical layout
         const padding = opts.padding || DEFAULT_PADDING;
         const markerRowHeight = rowHeight * 0.8;
@@ -112,51 +118,6 @@ class RoundedDisplay extends Shape {
         // Marker
         this.marker = this.makeMarker("#ccc");
         this.marker.addTo(this.group);
-
-        /*
-        // Batters
-        this.batterOnStrike = new BatterBox2(
-            svg,
-            padding,
-            padding,
-            w - padding,
-            rowHeight,
-            "tl",
-            Utils.extend(textStyles, {
-                teamColor: colors[0],
-            })
-        );
-        this.batterOnStrike.addTo(this);
-
-        this.batterNotOnStrike = new BatterBox2(
-            svg,
-            padding,
-            padding + rowHeight,
-            w - padding,
-            rowHeight,
-            "tl",
-            Utils.extend(textStyles, {
-                teamColor: colors[0],
-            })
-        );
-        this.batterNotOnStrike.addTo(this);
-        */
-
-        /*
-        // Bowler
-        this.bowler = new BowlerBox2(
-            svg,
-            padding,
-            markerYCenter + markerRowHeight / 2,
-            w - padding,
-            rowHeight,
-            "tl",
-            Utils.extend(textStyles, {
-                teamColor: colors[1],
-            })
-        );
-        this.bowler.addTo(this);
-        */
     } // ctor
 
     makeRowBackgrounds(colors, radius) {
@@ -167,6 +128,7 @@ class RoundedDisplay extends Shape {
         // Bottom row's background
         let actualRowHeight =
             this.layout.rowHeight + this.layout.markerRowHeight / 2;
+        /*
         bg = this.makeGradientRect(
             colors[1],
             this.bbox.h - this.layout.padding - actualRowHeight,
@@ -176,6 +138,59 @@ class RoundedDisplay extends Shape {
             rx: radius,
             ry: radius,
         });
+        */
+        let y = this.bbox.h - this.layout.padding - actualRowHeight;
+        let pathTop;
+        if (this.layout.nRows > 1) {
+            pathTop =
+                /*
+                `
+                M 0,0
+                h ${this.bbox.w}
+                v ${actualRowHeight - radius}
+                a ${radius} ${radius} 0 0 1 ${-radius} ${radius}
+                h ${-(this.bbox.w - 2*radius)}
+                a ${radius} ${radius} 0 0 1 ${-radius} ${-radius}
+                z
+                `;
+                */
+                `
+                M 0,${actualRowHeight / 2}
+                V 0
+                H ${this.bbox.w}
+                `;
+        } else {
+            pathTop = `
+                M 0,${actualRowHeight / 2}
+                V ${radius}
+                A ${radius} ${radius} 0 0 1 ${radius} 0
+                H ${this.bbox.w - radius}
+                A ${radius} ${radius} 0 0 1 ${this.bbox.w} ${radius}
+                `;
+        }
+        const path =
+            pathTop +
+            `
+            V ${actualRowHeight - radius}
+            a ${radius} ${radius} 0 0 1 ${-radius} ${radius}
+            h ${-(this.bbox.w - 2 * radius)}
+            a ${radius} ${radius} 0 0 1 ${-radius} ${-radius}
+            z
+            `;
+        bg = new Path(
+            this.svg,
+            0,
+            y,
+            this.bbox.w,
+            actualRowHeight,
+            "tl",
+            path,
+            {
+                background: {
+                    fill: "#ffc",
+                },
+            }
+        );
         result.unshift(bg);
 
         if (this.layout.nRows == 1) {
