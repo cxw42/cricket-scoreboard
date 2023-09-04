@@ -63,6 +63,8 @@ function freeTransformTo(el, ulx, uly) {
  * * cornerV: the vertical part of `corner` (`t`, `m`, or `b`)
  * * cx: center's X coordinate
  * * cy: center's Y coordinate
+ * * cornerDX: X distance from `ulx` to the original `x`
+ * * cornerDY: Y distance from `uly` to the original `y`
  *
  * @method getBBox
  * @param {int} x Reference X
@@ -76,34 +78,37 @@ function freeTransformTo(el, ulx, uly) {
 function getBBox(x, y, w, h, corner) {
     corner = corner.toLowerCase();
     let cornerH, cornerV;
+    let cornerDX, cornerDY;
 
     // Get the upper-left corner
     let ulx, uly;
     if (corner.includes("l")) {
         cornerH = "l";
-        ulx = x;
+        cornerDX = 0;
     } else if (corner.includes("c")) {
         cornerH = "c";
-        ulx = x - w / 2;
+        cornerDX = w / 2;
     } else if (corner.includes("r")) {
         cornerH = "r";
-        ulx = x - w;
+        cornerDX = w;
     } else {
         throw "corner must specify l, c, or r";
     }
+    ulx = x - cornerDX;
 
     if (corner.includes("t")) {
         cornerV = "t";
-        uly = y;
+        cornerDY = 0;
     } else if (corner.includes("m")) {
         cornerV = "m";
-        uly = y - h / 2;
+        cornerDY = h / 2;
     } else if (corner.includes("b")) {
         cornerV = "b";
-        uly = y - h;
+        cornerDY = h;
     } else {
         throw "corner must specify t, m, or b";
     }
+    uly = y - cornerDY;
 
     let cx = ulx + w / 2;
     let cy = uly + h / 2;
@@ -119,6 +124,8 @@ function getBBox(x, y, w, h, corner) {
         cornerV,
         cx,
         cy,
+        cornerDX,
+        cornerDY,
     };
 }
 

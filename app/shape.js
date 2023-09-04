@@ -19,6 +19,8 @@ require("3rdparty/snap.svg.free_transform");
  * @param {int} h Height
  * @param {String} corner Which corner `x` and `y` relate to.
  *                        Must be `[TMB][LCR]`.
+ * @param {Object} [opts] Options
+ * @param {Object} [opts.showCorner] If truthy, visibly mark (x,y).
  */
 class Shape {
     /**
@@ -67,7 +69,8 @@ class Shape {
 
     //outline; // visible outline --- TODO addme?
 
-    constructor(svg, x, y, w, h, corner) {
+    constructor(svg, x, y, w, h, corner, opts) {
+        opts = opts || {};
         this.svg = svg;
         this.group = svg.g();
         this.group.addClass(this.constructor.name);
@@ -80,6 +83,19 @@ class Shape {
         );
 
         svg.add(this.group);
+
+        if (opts.showCorner) {
+            const marker = svg.circle(
+                this.bbox.cornerDX,
+                this.bbox.cornerDY,
+                2
+            );
+            marker.attr({
+                fill: "#f00",
+                stroke: "none",
+            });
+            this.group.add(marker);
+        }
     }
 
     /**

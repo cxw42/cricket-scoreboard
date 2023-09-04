@@ -29,8 +29,9 @@ require("3rdparty/snap.svg.free_transform");
  *      {{#crossLink "TextBox/setValue:method"}}{{/crossLink}}.
  *      The label must be a valid CSS class name (no leading dot).
  *
- * @param {Object} [opts] Options.  Keys include:
- *      - `background`: styles for the background (Object or 'none')
+ * @param {Object} [opts] Options.
+ * @param {Object} [opts.background] Styles for the background (Object or 'none')
+ * @param {Object} [opts.shape] Options to pass to the Shape constructor.
  */
 class TextBox extends Shape {
     svgOutline; // visible outline or background - svg <rect>
@@ -53,7 +54,7 @@ class TextBox extends Shape {
 
         // If we are going to use the native size(s) of the text, create the shape with
         // interim size(s).
-        super(svg, x, y, w < 0 ? 1 : w, h < 0 ? 1 : h, superCorner);
+        super(svg, x, y, w < 0 ? 1 : w, h < 0 ? 1 : h, superCorner, opts.shape);
         this.origBBox.w = w;
         this.origBBox.h = h;
 
