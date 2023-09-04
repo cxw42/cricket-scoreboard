@@ -126,6 +126,26 @@ class Display {
             20
         );
 
+        this._roundedDisplay2 = new RoundedDisplay(
+            svg,
+            225,
+            100,
+            100,
+            "tl",
+            2,
+            20
+        );
+
+        this._roundedDisplay3 = new RoundedDisplay(
+            svg,
+            350,
+            100,
+            100,
+            "tl",
+            3,
+            20
+        );
+
         if (TRY == 1) {
             // Color backgrounds
             this._team1Banner = svg.rect(

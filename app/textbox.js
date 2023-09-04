@@ -157,6 +157,8 @@ class TextBox extends Shape {
                 actualH,
                 this.origBBox.corner
             );
+            // TODO also permit padding at the left and right ends so you
+            // don't have to add NBSP characters.
         }
 
         // Text X: the bbox already takes the corner and width into account, so

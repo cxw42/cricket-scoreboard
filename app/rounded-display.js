@@ -16,6 +16,8 @@ const Utils = require("utils");
 const DEFAULT_PADDING = 2;
 const DEFAULT_RADIUS = 10; // TODO adjust rounded-corner size?
 
+const NBSP = String.fromCharCode(0xa0);
+
 /**
  * Display in a rounded rectangle.  The number of rows is >=1.  The order is:
  *
@@ -86,10 +88,11 @@ class RoundedDisplay extends Shape {
         ];
 
         // Background.  TODO fix the size.
+        const yAdjust = nRows > 1 ? 0 : markerRowHeight / 2;
         this.bg = this.makeGradientRect(
             "#ccc",
-            0,
-            h,
+            yAdjust,
+            this.bbox.h - yAdjust,
             -padding,
             this.bbox.w + 2 * padding
         );
@@ -105,6 +108,10 @@ class RoundedDisplay extends Shape {
         for (const bg of this.rowBackgrounds) {
             bg.addTo(this.group);
         }
+
+        // Marker
+        this.marker = this.makeMarker("#ccc");
+        this.marker.addTo(this.group);
 
         /*
         // Batters
@@ -135,45 +142,6 @@ class RoundedDisplay extends Shape {
         this.batterNotOnStrike.addTo(this);
         */
 
-        // Label
-        {
-            const lighter = "#ccc";
-            const darker = D3Color.color(lighter).darker();
-            const gradient = svg.gradient(
-                `l(0,0,0,1)${lighter}-${lighter}:50-${darker}`
-            );
-            this.label = new TextBox(
-                svg,
-                padding + 11,
-                markerYCenter,
-                55,
-                markerHeight,
-                "ml",
-                [
-                    {
-                        text: "In the Middle",
-                        styles: Utils.extend(Styles.scoreStyles, {
-                            "font-size": "12px",
-                            "letter-spacing":
-                                Styles.textStyles["letter-spacing"],
-                            "font-variant": "small-caps",
-                        }),
-                    },
-                ],
-                {
-                    alignment: "c",
-                    background: {
-                        fill: gradient,
-                    },
-                }
-            );
-            this.label.svgOutline.attr({
-                ry: this.label.bbox.h / 2,
-                rx: this.label.bbox.h / 2, // same as rx
-            });
-            this.label.addTo(this);
-        }
-
         /*
         // Bowler
         this.bowler = new BowlerBox2(
@@ -201,7 +169,7 @@ class RoundedDisplay extends Shape {
             this.layout.rowHeight + this.layout.markerRowHeight / 2;
         bg = this.makeGradientRect(
             colors[1],
-            this.bbox.y - this.layout.padding - actualRowHeight,
+            this.bbox.h - this.layout.padding - actualRowHeight,
             actualRowHeight
         );
         bg.svgRect.attr({
@@ -230,6 +198,48 @@ class RoundedDisplay extends Shape {
 
         return result;
     } // makeRowBackgrounds()
+
+    // The marker
+    makeMarker(color, text) {
+        const darker = D3Color.color(color).darker();
+        const gradient = this.svg.gradient(
+            `l(0,0,0,1)${color}-${color}:50-${darker}`
+        );
+        const cy =
+            this.bbox.h -
+            this.layout.padding -
+            (this.layout.rowHeight + this.layout.markerRowHeight / 2);
+
+        let label = new TextBox(
+            this.svg,
+            this.layout.padding + 11, // TODO make non-arbitrary?
+            cy,
+            -1,
+            this.layout.markerHeight,
+            "ml",
+            [
+                {
+                    text: text || NBSP + "Lorem ipsum" + NBSP,
+                    styles: Utils.extend(Styles.scoreStyles, {
+                        "font-size": "12px",
+                        "letter-spacing": Styles.textStyles["letter-spacing"],
+                        "font-variant": "small-caps",
+                    }),
+                },
+            ],
+            {
+                //alignment: "c",
+                background: {
+                    fill: gradient,
+                },
+            }
+        );
+        label.svgOutline.attr({
+            ry: label.bbox.h / 2,
+            rx: label.bbox.h / 2, // same as rx
+        });
+        return label;
+    }
 
     makeGradientRect(color, y, h, x, w) {
         x = x || 0;
