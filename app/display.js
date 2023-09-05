@@ -6,10 +6,10 @@
 
 // For debugging
 const SHOW_EBU_MARGINS = false;
-const SHOW_SECOND_INNINGS_QUICKVIEW = false;
+const SHOW_SECOND_INNINGS_QUICKVIEW = true;
 
 // Which layout we are trying
-const TRY = 3;
+const TRY = 4;
 
 const D3Color = require("3rdparty/d3-color.v2.min");
 const Snap = require("snapsvg");
@@ -116,14 +116,19 @@ class Display {
             "letter-spacing": "1", // empirical
         });
 
+        /*
         this._roundedDisplay = new RoundedDisplay(
             svg,
             100,
             100,
             100,
-            "tl",
+            "bl",
             1,
-            20
+            20,
+            {},
+            {
+                padding: 1.5,
+            }
         );
 
         this._roundedDisplay2 = new RoundedDisplay(
@@ -131,9 +136,13 @@ class Display {
             225,
             100,
             100,
-            "tl",
+            "bl",
             2,
-            20
+            20,
+            {},
+            {
+                padding: 1.5,
+            }
         );
 
         this._roundedDisplay3 = new RoundedDisplay(
@@ -141,10 +150,15 @@ class Display {
             350,
             100,
             100,
-            "tl",
+            "bl",
             3,
-            20
+            20,
+            {},
+            {
+                padding: 1.5,
+            }
         );
+        */
 
         if (TRY == 1) {
             // Color backgrounds
@@ -399,20 +413,70 @@ class Display {
 
             // DEBUG: the other team is batting
             if (SHOW_SECOND_INNINGS_QUICKVIEW) {
+                let situation2 = new Situation({
+                    maxOvers: null, // Test match
+                    teams: [team1, team2],
+                    home: team1,
+                    toss: team2,
+                    battingNow: team2,
+                    runs: 264,
+                    wickets: 6,
+                    batters: ["Azam", "Afridi"],
+                    onStrikeIdx: 0,
+                    batterRuns: [64, 14],
+                    batterBalls: [118, 22],
+                    bowler: "Nauman",
+                    bowlerRuns: 43,
+                    bowlerWickets: 1,
+                    bowlerCompleteOvers: 12,
+                });
                 this.teamView2 = new TeamView(
                     svg,
                     ACTION_MARGIN_W + 200,
                     BANNER_BOTTOM,
                     "bl",
-                    team1,
-                    team2,
-                    {
-                        home: team1,
-                        toss: team2,
-                        battingNow: team2,
-                    }
+                    situation2
                 );
             }
+        } else if (TRY == 4) {
+            let rowHeight = BANNER_HEIGHT / 2;
+
+            // Left side
+
+            this.teamView1 = new RoundedDisplay(
+                svg,
+                ACTION_MARGIN_W,
+                BANNER_BOTTOM,
+                150,
+                "bl",
+                2,
+                rowHeight,
+                {},
+                {
+                    colors: [team1.color, team2.color],
+                }
+            );
+
+            // Right side
+
+            let textStyles = Utils.extend(Styles.textStyles, {
+                "letter-spacing": "1", // empirical
+                size: "1.2em",
+            });
+            let x = WIDTH - ACTION_MARGIN_W - NAME_BOX_WIDTH;
+            this.onFieldView = new RoundedDisplay(
+                svg,
+                x,
+                BANNER_BOTTOM,
+                NAME_BOX_WIDTH,
+                "bl",
+                3,
+                rowHeight,
+                textStyles,
+                {
+                    colors: [team1.color, team2.color],
+                }
+            );
         }
 
         // EBU margins
