@@ -35,8 +35,8 @@ const NBSP = String.fromCharCode(0xa0);
  * @param {int} y Anchor Y coordinate
  * @param {int} w Width
  * @param {String} corner Corner
- * @param {int} rowHeight Row height --- **not** whole-box height!
  * @param {int} nRows Number of rows, >= 1.
+ * @param {int} rowHeight Row height --- **not** whole-box height!
  * @param {Object} [textStyles] Text styles
  * @param {Object} [opts] Options
  * @param {Object} [opts.colors] Array of two colors, first for above the marker
@@ -95,12 +95,19 @@ class RoundedDisplay extends Shape {
 
         // Background.  TODO fix the size.
         const yAdjust = nRows > 1 ? 0 : markerRowHeight / 2;
-        this.bg = this.makeGradientRect(
-            "#ccc",
-            yAdjust,
-            this.bbox.h - yAdjust,
+        const gradient = this.makeGradient("#ccc");
+        this.bg = new Rect(
+            this.svg,
             -padding,
-            this.bbox.w + 2 * padding
+            yAdjust,
+            this.bbox.w + 2 * padding,
+            this.bbox.h - yAdjust,
+            "tl",
+            {
+                background: {
+                    fill: gradient,
+                },
+            }
         );
         this.bg.svgRect.attr({
             // TODO adjust rounded-corner size?
@@ -118,6 +125,9 @@ class RoundedDisplay extends Shape {
         // Marker
         this.marker = this.makeMarker("#ccc");
         this.marker.addTo(this.group);
+
+        // TODO RESUME HERE --- add groups that can hold content
+        // for the rows.
     } // ctor
 
     makeRowBackgrounds(colors, radius) {
@@ -128,17 +138,6 @@ class RoundedDisplay extends Shape {
         // Bottom row's background
         let actualRowHeight =
             this.layout.rowHeight + this.layout.markerRowHeight / 2;
-        /*
-        bg = this.makeGradientRect(
-            colors[1],
-            this.bbox.h - this.layout.padding - actualRowHeight,
-            actualRowHeight
-        );
-        bg.svgRect.attr({
-            rx: radius,
-            ry: radius,
-        });
-        */
         let y = this.bbox.h - this.layout.padding - actualRowHeight;
 
         // Top half of the path, which is squared off if nRows > 1 and
@@ -181,7 +180,7 @@ class RoundedDisplay extends Shape {
             path,
             {
                 background: {
-                    fill: "#ffc",
+                    fill: this.makeGradient(colors[1]),
                 },
             }
         );
@@ -192,19 +191,6 @@ class RoundedDisplay extends Shape {
         }
 
         // One background for all other rows
-        /*
-        bg = this.makeGradientRect(
-            colors[0],
-            this.layout.padding,
-            (this.layout.nRows - 1) * this.layout.rowHeight +
-                this.layout.markerRowHeight / 2 -
-                this.layout.padding
-        );
-        bg.svgRect.attr({
-            rx: radius,
-            ry: radius,
-        });
-        */
         let h =
             (this.layout.nRows - 1) * this.layout.rowHeight +
             this.layout.markerRowHeight / 2 -
@@ -228,7 +214,7 @@ class RoundedDisplay extends Shape {
             path,
             {
                 background: {
-                    fill: "#cff",
+                    fill: this.makeGradient(colors[0]),
                 },
             }
         );
@@ -240,9 +226,7 @@ class RoundedDisplay extends Shape {
     // The marker
     makeMarker(color, text) {
         const darker = D3Color.color(color).darker();
-        const gradient = this.svg.gradient(
-            `l(0,0,0,1)${color}-${color}:50-${darker}`
-        );
+        const gradient = this.makeGradient(color);
         const cy =
             this.bbox.h -
             this.layout.padding -
@@ -251,7 +235,9 @@ class RoundedDisplay extends Shape {
         let label = new TextBox(
             this.svg,
             this.layout.padding + 11, // TODO make non-arbitrary?
-            cy,
+            // TODO the padding/2 is empirical --- make this fit into
+            // the formulas.
+            cy - this.layout.padding / 2,
             -1,
             this.layout.markerHeight,
             "ml",
@@ -270,6 +256,9 @@ class RoundedDisplay extends Shape {
                 background: {
                     fill: gradient,
                 },
+                shape: {
+                    //showCorner: true,
+                },
             }
         );
         label.svgOutline.attr({
@@ -279,14 +268,20 @@ class RoundedDisplay extends Shape {
         return label;
     }
 
-    makeGradientRect(color, y, h, x, w) {
-        x = x || 0;
-        w = w || this.bbox.w;
-
+    makeGradient(color) {
         const darker = D3Color.color(color).darker();
         const gradient = this.svg.gradient(
             `l(0,0,0,1)${color}-${color}:50-${darker}`
         );
+
+        return gradient;
+    }
+
+    makeGradientRect(color, y, h, x, w) {
+        x = x || 0;
+        w = w || this.bbox.w;
+
+        const gradient = this.makeGradient(color);
         let bg = new Rect(this.svg, x, y, w, h, "tl", {
             background: {
                 fill: gradient,
